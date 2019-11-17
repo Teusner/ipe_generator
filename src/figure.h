@@ -30,8 +30,11 @@ public:
     void draw_axis(const std::string &name_x, const std::string &name_y);
     void draw_arrow(const double x0, const double y0, const double x1, const double y1, const std::string &color_stroke="", const std::string &layer_name="data");
     void draw_text(const std::string &text, const double x, const double y, const std::string& color="", const std::string &layer_name="data");
-    void draw_box(const ibex::IntervalVector &box, const std::string &color_stroke="", const std::string &color_fill="", const int fill_rule=0, const std::string &layer_name="data");
+    void draw_box(const ibex::IntervalVector &box, const std::string &color_stroke="", const std::string &color_fill="", const ipe::TPathMode fill_rule=ipe::EStrokedOnly, const std::string &layer_name="data");
     void draw_curve(const std::vector<double> &x, const std::vector<double> &y, const std::string &color_stroke="", const std::string &layer_name="data");
+    void draw_ellipse(const double x, const double y, const double r1, const double r2,  const std::string &color_stroke="", const std::string &color_fill="", const ipe::TPathMode fill_rule=ipe::EStrokedOnly, const int opacity=100, const std::string& layer_name="data");
+    void draw_circle(const double x, const double y, const double r,  const std::string &color_stroke="", const std::string &color_fill="", const ipe::TPathMode fill_rule=ipe::EStrokedOnly, const int opacity=100, const std::string& layer_name="data");
+    void draw_circle_keep_min_ratio(const double x, const double y, const double r,  const std::string &color_stroke="", const std::string &color_fill="", const ipe::TPathMode fill_rule=ipe::EStrokedOnly, const int opacity=100, const std::string& layer_name="data");
 
     // Style functions
     void set_thickness_pen_factor(const double val);

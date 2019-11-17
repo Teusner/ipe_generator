@@ -73,8 +73,8 @@ void Figure::style_size()
 
 void Figure::set_layout()
 {
-    m_layout.iPaperSize = ipe::Vector(m_output_width+2*m_offset_drawing_x,m_output_height+2*m_offset_drawing_y);
-    m_layout.iFrameSize = ipe::Vector(m_output_width+2*m_offset_drawing_x,m_output_height+2*m_offset_drawing_y);
+    m_layout.iPaperSize = ipe::Vector(m_output_width+3*m_offset_drawing_x,m_output_height+2*m_offset_drawing_y);
+    m_layout.iFrameSize = ipe::Vector(m_output_width+3*m_offset_drawing_x,m_output_height+2*m_offset_drawing_y);
     m_layout.iOrigin = ipe::Vector(0, 0);
     m_layout.iCrop = true;
     m_steel_sheet->setLayout(m_layout);
@@ -238,7 +238,7 @@ void Figure::draw_text(const std::string& text, const double x, const double y, 
 
 }
 
-void Figure::draw_box(const ibex::IntervalVector& box, const std::string &color_stroke, const std::string &color_fill, const int fill_rule, const std::string& layer_name)
+void Figure::draw_box(const ibex::IntervalVector& box, const std::string &color_stroke, const std::string &color_fill, const ipe::TPathMode fill_rule, const std::string& layer_name)
 {
     ipe::Rect rec(ipe::Vector(s_t_x(box[0].lb()), s_t_y(box[1].lb())), ipe::Vector(s_t_x(box[0].ub()), s_t_y(box[1].ub())));
     ipe::AllAttributes attr;
@@ -252,20 +252,7 @@ void Figure::draw_box(const ibex::IntervalVector& box, const std::string &color_
         attr.iFill = m_steel_sheet->find(ipe::EColor,ipe::Attribute(true, color_fill.c_str()));
     else
         attr.iFill = ipe::Attribute::WHITE();
-
-    switch (fill_rule) {
-    case 0:
-        attr.iPathMode =ipe::EStrokedOnly;
-        break;
-    case 1:
-        attr.iPathMode =ipe::EFilledOnly;
-        break;
-    case 2:
-        attr.iPathMode =ipe::EStrokedAndFilled;
-        break;
-    default:
-        break;
-    }
+    attr.iPathMode = fill_rule;
 
     ipe::Shape shape(rec);
     ipe::Path *path = new ipe::Path(attr, shape);
@@ -286,6 +273,42 @@ void Figure::draw_curve(const std::vector<double>& x, const std::vector<double>&
     shape.appendSubPath(curve);
     ipe::Path *path = new ipe::Path(attr, shape);
     m_page->append(ipe::TSelect::ENotSelected, m_page->findLayer(layer_name.c_str()), path);
+}
+
+void Figure::draw_ellipse(const double x, const double y, const double r1, const double r2,  const std::string &color_stroke, const std::string &color_fill, const ipe::TPathMode fill_rule, const int opacity, const std::string& layer_name)
+{
+    ipe::Matrix m(ipe::Linear(s_t_x(r1), 0, 0, s_t_y(r2)), ipe::Vector(s_t_x(x), s_t_y(y)));
+    ipe::Ellipse *ellipse = new ipe::Ellipse(m);
+    ipe::AllAttributes attr;
+
+    if(color_stroke!="")
+        attr.iStroke = m_steel_sheet->find(ipe::EColor,ipe::Attribute(true, color_stroke.c_str()));
+    else
+        attr.iStroke = ipe::Attribute::BLACK();
+
+    if(color_fill!="")
+        attr.iFill = m_steel_sheet->find(ipe::EColor,ipe::Attribute(true, color_fill.c_str()));
+    else
+        attr.iFill = ipe::Attribute::WHITE();
+    attr.iPathMode = fill_rule;
+    std::string opacity_value = std::to_string(opacity)+"%";
+    attr.iOpacity = m_steel_sheet->find(ipe::EOpacity,ipe::Attribute(true, opacity_value.c_str()));
+
+    ipe::Shape shape;
+    shape.appendSubPath(ellipse);
+    ipe::Path *path = new ipe::Path(attr, shape);
+    m_page->append(ipe::TSelect::ENotSelected, m_page->findLayer(layer_name.c_str()), path);
+}
+
+void Figure::draw_circle(const double x, const double y, const double r,  const std::string &color_stroke, const std::string &color_fill, const ipe::TPathMode fill_rule, const int opacity, const std::string& layer_name)
+{
+    draw_ellipse(x, y, r, r,  color_stroke, color_fill, fill_rule, opacity, layer_name);
+}
+
+void Figure::draw_circle_keep_min_ratio(const double x, const double y, const double r,  const std::string &color_stroke, const std::string &color_fill, const ipe::TPathMode fill_rule, const int opacity, const std::string& layer_name)
+{
+    double min_ratio = std::min(s_t_x(r), s_t_y(r));
+    draw_ellipse(x, y, s_t_x_inv(min_ratio), s_t_y_inv(min_ratio),  color_stroke, color_fill, fill_rule, opacity, layer_name);
 }
 
 }
