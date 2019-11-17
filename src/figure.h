@@ -34,7 +34,7 @@ public:
     void draw_curve(const std::vector<double> &x, const std::vector<double> &y, const std::string &color_stroke="", const std::string &layer_name="data");
     void draw_ellipse(const double x, const double y, const double r1, const double r2,  const std::string &color_stroke="", const std::string &color_fill="", const ipe::TPathMode fill_rule=ipe::EStrokedOnly, const int opacity=100, const std::string& layer_name="data");
     void draw_circle(const double x, const double y, const double r,  const std::string &color_stroke="", const std::string &color_fill="", const ipe::TPathMode fill_rule=ipe::EStrokedOnly, const int opacity=100, const std::string& layer_name="data");
-    void draw_circle_keep_min_ratio(const double x, const double y, const double r,  const std::string &color_stroke="", const std::string &color_fill="", const ipe::TPathMode fill_rule=ipe::EStrokedOnly, const int opacity=100, const std::string& layer_name="data");
+    void draw_circle_radius_final(const double x, const double y, const double r,  const std::string &color_stroke="", const std::string &color_fill="", const ipe::TPathMode fill_rule=ipe::EStrokedOnly, const int opacity=100, const std::string& layer_name="data");
 
     // Style functions
     void set_thickness_pen_factor(const double val);

@@ -39,7 +39,7 @@ int main(int argc, char *argv[]){
     fig.draw_curve(x, y);
 
     fig.draw_circle(10, 1.0, 2.0, "black", "red", ipe::EStrokedAndFilled,30);
-    fig.draw_circle_keep_min_ratio(100.0, 1.0, 2.0, "black", "red", ipe::EStrokedAndFilled,30);
+    fig.draw_circle_radius_final(100.0, 1.0, 10.0, "black", "red", ipe::EStrokedAndFilled,30);
 
     fig.save_ipe("test.ipe");
     fig.save_pdf("test.pdf");

@@ -305,10 +305,9 @@ void Figure::draw_circle(const double x, const double y, const double r,  const 
     draw_ellipse(x, y, r, r,  color_stroke, color_fill, fill_rule, opacity, layer_name);
 }
 
-void Figure::draw_circle_keep_min_ratio(const double x, const double y, const double r,  const std::string &color_stroke, const std::string &color_fill, const ipe::TPathMode fill_rule, const int opacity, const std::string& layer_name)
+void Figure::draw_circle_radius_final(const double x, const double y, const double r,  const std::string &color_stroke, const std::string &color_fill, const ipe::TPathMode fill_rule, const int opacity, const std::string& layer_name)
 {
-    double min_ratio = std::min(s_t_x(r), s_t_y(r));
-    draw_ellipse(x, y, s_t_x_inv(min_ratio), s_t_y_inv(min_ratio),  color_stroke, color_fill, fill_rule, opacity, layer_name);
+    draw_ellipse(x, y, s_t_x_inv(r), s_t_y_inv(r),  color_stroke, color_fill, fill_rule, opacity, layer_name);
 }
 
 }
