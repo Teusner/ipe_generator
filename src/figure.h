@@ -4,7 +4,7 @@
 #include "ipelib.h"
 #include "ibex_IntervalVector.h"
 
-namespace vibesipe {
+namespace ipegenerator {
 
 #define MM_TO_BP 2.83467
 
@@ -18,6 +18,7 @@ public:
      * @param height in mm (default A4=297)
      */
     Figure(const ibex::IntervalVector &frame_data, const double width=210, const double height=297, const bool keep_ratio=false);
+    ~Figure();
 
     void save_pdf(const std::string &file_name);
     void save_ipe(const std::string &file_name);
@@ -77,7 +78,7 @@ private:
     ipe::StyleSheet * m_steel_sheet;
 
     // Ipe parameters
-    std::string m_ref_document = "/home/lemezoth/workspaceQT/ipe_test/style/basic.ipe";
+    std::string m_ref_document = "/usr/local/etc/ipegenerator/basic.ipe";
     double m_thickness_pen_factor = 1e-3; // thickness of pen
     double m_arrow_size = 4.294; // Corresponds to /normalsize in latex
     double m_distance_axis_text = 3.0;

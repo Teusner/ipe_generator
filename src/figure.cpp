@@ -2,7 +2,7 @@
 #include <math.h>
 #include <sstream>
 
-namespace vibesipe{
+namespace ipegenerator{
 Figure::Figure(const ibex::IntervalVector &frame_data, const double width, const double height, const bool keep_ratio):
     m_frame_data(2)
 {
@@ -55,6 +55,10 @@ Figure::Figure(const ibex::IntervalVector &frame_data, const double width, const
 
     // Set the general style of the drawing (define standard size)
     style_size();
+}
+
+Figure::~Figure(){
+    delete(m_document);
 }
 
 void Figure::style_size()

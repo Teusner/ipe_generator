@@ -18,7 +18,7 @@ int main(int argc, char *argv[]){
     frame_data[0] = ibex::Interval(0.0, 1000);
     frame_data[1] = ibex::Interval(-0.3, 2.0);
 
-    vibesipe::Figure fig(frame_data, 120, 50);
+    ipegenerator::Figure fig(frame_data, 120, 50);
 
     fig.set_graduation_parameters(0.0, 100.0, 0.0, 0.5);
     fig.draw_axis("x_1", "x_2");
@@ -29,6 +29,14 @@ int main(int argc, char *argv[]){
     fig.draw_box(box);
 
     fig.draw_text("test", 100, 1.0);
+
+    vector<double> x, y;
+    for(double t=0.0; t<1000.0; ++t)
+    {
+        x.push_back(t);
+        y.push_back(sin(t/100.));
+    }
+    fig.draw_curve(x, y);
 
     fig.save_ipe("test.ipe");
     fig.save_pdf("test.pdf");
