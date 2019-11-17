@@ -11,6 +11,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
 set(PACKAGE_NAME ipegenerator)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
+set(CMAKE_CXX_FLAGS " -fPIC ${CMAKE_CXX_FLAGS}")
 
 set(CMAKE_BUILD_TYPE "DEBUG")
 set(PROJECT_VERSION 1.0.0)
@@ -77,6 +78,10 @@ include_directories(include/ipe)
 add_library(ipegenerator SHARED
  src/figure.cpp
  )
+target_link_libraries(ipegenerator
+ ${IPE_LIBRARY}
+ )
+
 set_target_properties(${PACKAGE_NAME} PROPERTIES VERSION 1.0)
 set_target_properties(${PACKAGE_NAME} PROPERTIES PUBLIC_HEADER src/figure.h)
 include(GNUInstallDirs)
@@ -97,9 +102,10 @@ configure_file(install/${PACKAGE_NAME}.pc.in ${PACKAGE_NAME}.pc @ONLY)
 install(FILES ${CMAKE_BINARY_DIR}/${PACKAGE_NAME}.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
 
 ### Generate .cmake
-#set(INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")
-#set(INSTALL_INCLUDE_DIR include CACHE PATH "Installation directory for header files")
-set(DEF_INSTALL_CMAKE_DIR "lib/CMake/${PACKAGE_NAME}")
+
+set(INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")
+set(INSTALL_INCLUDE_DIR include CACHE PATH "Installation directory for header files")
+set(DEF_INSTALL_CMAKE_DIR "lib/cmake/${PACKAGE_NAME}")
 set(INSTALL_CMAKE_DIR ${DEF_INSTALL_CMAKE_DIR} CACHE PATH "Installation directory for CMake files")
 
 foreach(p LIB BIN INCLUDE CMAKE)
@@ -114,10 +120,10 @@ export(PACKAGE ${PACKAGE_NAME})
 
 file(RELATIVE_PATH REL_INCLUDE_DIR "${INSTALL_CMAKE_DIR}" "${INSTALL_INCLUDE_DIR}")
 
-set(CONF_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}")
-configure_file(cmake/ipegeneratorConfig.cmake.in "${PROJECT_BINARY_DIR}/${PACKAGE_NAME}Config.cmake" @ONLY)
+set(CONF_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/${PACKAGE_NAME}")
+configure_file(cmake/ipegeneratorConfig.cmake.in "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${PACKAGE_NAME}Config.cmake" @ONLY)
 
-set(CONF_INCLUDE_DIRS "${CMAKE_INSTALL_LIBDIR}")
+set(CONF_LIBRARIES "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/lib${PACKAGE_NAME}.so")
 configure_file(cmake/ipegeneratorConfig.cmake.in "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${PACKAGE_NAME}Config.cmake" @ONLY)
 
 # ... for both
@@ -130,8 +136,7 @@ install(FILES
   DESTINATION "${INSTALL_CMAKE_DIR}" COMPONENT dev)
 
 ## Install the export set for use with the install-tree
-install(EXPORT ipegeneratorTargets DESTINATION
-  "${INSTALL_CMAKE_DIR}" COMPONENT dev)
+install(EXPORT ipegeneratorTargets DESTINATION "${INSTALL_CMAKE_DIR}" COMPONENT dev)
 
 #######################
 

@@ -5,8 +5,8 @@
 #  IPEGENERATOR_EXECUTABLE   - the bar executable
 
 # Compute paths
-get_filename_component(IPEGENERATOR_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+# get_filename_component(IPEGENERATOR_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 set(IPEGENERATOR_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
 
 # These are IMPORTED targets created by ipegeneratorTargets.cmake
-set(IPEGENERATOR_LIBRARIES ipegenerator)
+set(IPEGENERATOR_LIBRARIES "@CONF_LIBRARIES@")
