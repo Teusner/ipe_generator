@@ -84,8 +84,12 @@ void Figure::load_style()
 {
     int reason;
     ipe::Document *doc_ref = ipe::Document::load(m_ref_document.c_str(),reason);
-    m_document->replaceCascade(doc_ref->cascade());
+    m_cascade_ref = new ipe::Cascade(*doc_ref->cascade());
+    ipe::Cascade *old_cascade = m_document->cascade();
+    m_document->replaceCascade(m_cascade_ref);
+    delete(old_cascade);
     m_steel_sheet = m_document->cascade()->sheet(0);
+    delete(doc_ref);
 }
 
 void Figure::save_pdf(const std::string &file_name)

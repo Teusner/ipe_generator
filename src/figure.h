@@ -75,8 +75,9 @@ private:
     double m_offset_drawing_x, m_offset_drawing_y;
 
     // Ipe objects
-    ipe::Document * m_document;
-    ipe::Page     * m_page;
+    ipe::Document   * m_document;
+    ipe::Cascade    * m_cascade_ref;
+    ipe::Page       * m_page;
     ipe::Layout     m_layout;
     ipe::StyleSheet * m_steel_sheet;
 
