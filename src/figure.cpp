@@ -295,7 +295,7 @@ void Figure::draw_ellipse(const double x, const double y, const double r1, const
     else
         attr.iFill = ipe::Attribute::WHITE();
     attr.iPathMode = fill_rule;
-    std::string opacity_value = std::to_string(opacity)+"%";
+    std::string opacity_value = std::to_string(opacity)+"\%";
     attr.iOpacity = m_steel_sheet->find(ipe::EOpacity,ipe::Attribute(true, opacity_value.c_str()));
 
     ipe::Shape shape;
