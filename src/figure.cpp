@@ -291,6 +291,10 @@ void Figure::draw_box(const ibex::IntervalVector& box, const std::string &color_
 
 void Figure::draw_curve(const std::vector<double>& x, const std::vector<double>& y, const std::string& color_stroke, const std::string& layer_name)
 {
+    draw_polygon(x, y, color_stroke, "", ipe::EStrokedOnly, layer_name, false);
+}
+
+void Figure::draw_polygon(const std::vector<double>& x, const std::vector<double>& y, const std::string& color_stroke, const std::string &color_fill, const ipe::TPathMode fill_rule,const std::string& layer_name, const bool closed){
     ipe::Curve *curve=new ipe::Curve();
     for(size_t i=0; i<x.size()-1; ++i)
         curve->appendSegment(ipe::Vector(s_t_x(x[i]), s_t_y(y[i])),ipe::Vector(s_t_x(x[i+1]), s_t_y(y[i+1])));
@@ -299,6 +303,13 @@ void Figure::draw_curve(const std::vector<double>& x, const std::vector<double>&
         attr.iStroke = m_steel_sheet->find(ipe::EColor,ipe::Attribute(true, color_stroke.c_str()));
     else
         attr.iStroke = ipe::Attribute::BLACK();
+
+    if(color_fill!="")
+        attr.iFill = m_steel_sheet->find(ipe::EColor,ipe::Attribute(true, color_fill.c_str()));
+    else
+        attr.iFill = ipe::Attribute::WHITE();
+    attr.iPathMode = fill_rule;
+    curve->setClosed(closed);
     ipe::Shape shape;
     shape.appendSubPath(curve);
     ipe::Path *path = new ipe::Path(attr, shape);

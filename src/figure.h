@@ -43,6 +43,7 @@ public:
     void draw_text(const std::string &text, const double x, const double y, const std::string& color="", const std::string &layer_name="data");
     void draw_box(const ibex::IntervalVector &box, const std::string &color_stroke="", const std::string &color_fill="", const ipe::TPathMode fill_rule=ipe::EStrokedOnly, const std::string &layer_name="data");
     void draw_curve(const std::vector<double> &x, const std::vector<double> &y, const std::string &color_stroke="", const std::string &layer_name="data");
+    void draw_polygon(const std::vector<double>& x, const std::vector<double>& y, const std::string& color_stroke="", const std::string &color_fill="", const ipe::TPathMode fill_rule=ipe::EStrokedOnly, const std::string& layer_name="data", const bool closed=true);
     void draw_ellipse(const double x, const double y, const double r1, const double r2,  const std::string &color_stroke="", const std::string &color_fill="", const ipe::TPathMode fill_rule=ipe::EStrokedOnly, const int opacity=100, const std::string& layer_name="data");
     void draw_circle(const double x, const double y, const double r,  const std::string &color_stroke="", const std::string &color_fill="", const ipe::TPathMode fill_rule=ipe::EStrokedOnly, const int opacity=100, const std::string& layer_name="data");
     void draw_circle_radius_final(const double x, const double y, const double r,  const std::string &color_stroke="", const std::string &color_fill="", const ipe::TPathMode fill_rule=ipe::EStrokedOnly, const int opacity=100, const std::string& layer_name="data");
