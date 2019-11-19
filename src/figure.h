@@ -18,6 +18,17 @@ public:
      * @param height in mm (default A4=297)
      */
     Figure(const ibex::IntervalVector &frame_data, const double width=210, const double height=297, const bool keep_ratio=false);
+
+    /**
+     * @brief Figure constructor with the load of an existing Figure
+     * @param filename
+     * @param frame_data
+     * @param width
+     * @param height
+     * @param keep_ratio
+     */
+    Figure(const std::string &filename, const ibex::IntervalVector &frame_data, const double width, const double height, const bool keep_ratio);
+
     ~Figure();
 
     void save_pdf(const std::string &file_name);
@@ -45,10 +56,13 @@ public:
     void set_size_axis_graduation(const double size_axis_graduation);
     void set_graduation_parameters(const double start_x, const double inter_x, const double start_y, const double inter_y);
 
+    void reset_scale(const double width, const double height, const bool keep_ratio);
+
 private:
     void load_style();
     void set_layout();
     void style_size();
+    void init_scale(const double width, const double height, const bool keep_ratio);
 
     void draw_arrow_axis(const ipe::Vector &pt1, const ipe::Vector &pt2);
 

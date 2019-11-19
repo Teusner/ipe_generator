@@ -205,6 +205,7 @@ h
 <color name="seagreen" value="0.18 0.545 0.341"/>
 <color name="turquoise" value="0.251 0.878 0.816"/>
 <color name="violet" value="0.933 0.51 0.933"/>
+<color name="magenta" value="1.0 0 1.0"/>
 <color name="darkblue" value="0 0 0.545"/>
 <color name="darkcyan" value="0 0.545 0.545"/>
 <color name="darkgray" value="0.663"/>

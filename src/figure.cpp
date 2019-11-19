@@ -3,30 +3,12 @@
 #include <sstream>
 
 namespace ipegenerator{
+
 Figure::Figure(const ibex::IntervalVector &frame_data, const double width, const double height, const bool keep_ratio):
     m_frame_data(2)
 {
     m_frame_data = frame_data;
-    m_output_width = width*MM_TO_BP;
-    m_output_height = height*MM_TO_BP;
-
-    m_scale_x = m_output_width/frame_data[0].diam();
-    m_scale_y = m_output_height/frame_data[1].diam();
-
-    // (Not tested yet)
-    if(keep_ratio)
-    {
-        m_scale_x = std::max(m_scale_x, m_scale_y);
-        m_scale_y = m_scale_x;
-        m_output_width = m_scale_x*frame_data[0].diam();
-        m_output_height = m_scale_y*frame_data[1].diam();
-    }
-
-    m_offset_x = -frame_data[0].lb()*m_scale_x;
-    m_offset_y = -frame_data[1].lb()*m_scale_y;
-
-    m_offset_drawing_x = m_distance_axis_text+m_size_axis_graduation+5*m_arrow_size;
-    m_offset_drawing_y = m_distance_axis_text+m_size_axis_graduation+5*m_arrow_size;
+    init_scale(width, height, keep_ratio);
 
     // Create new document
     ipe::Platform::initLib(ipe::IPELIB_VERSION); // init ipe
@@ -57,8 +39,47 @@ Figure::Figure(const ibex::IntervalVector &frame_data, const double width, const
     style_size();
 }
 
+Figure::Figure(const std::string &filename, const ibex::IntervalVector &frame_data, const double width, const double height, const bool keep_ratio):
+    m_frame_data(2)
+{
+    m_frame_data = frame_data;
+
+    init_scale(width, height, keep_ratio);
+
+    // Create new document
+    ipe::Platform::initLib(ipe::IPELIB_VERSION); // init ipe
+    int reason;
+    m_document = ipe::Document::load(filename.c_str(),reason);
+    m_page = m_document->page(0);
+}
+
 Figure::~Figure(){
     delete(m_document);
+}
+
+void Figure::init_scale(const double width, const double height, const bool keep_ratio)
+{
+
+    m_output_width = width*MM_TO_BP;
+    m_output_height = height*MM_TO_BP;
+
+    m_scale_x = m_output_width/m_frame_data[0].diam();
+    m_scale_y = m_output_height/m_frame_data[1].diam();
+
+    // (Not tested yet)
+    if(keep_ratio)
+    {
+        m_scale_x = std::max(m_scale_x, m_scale_y);
+        m_scale_y = m_scale_x;
+        m_output_width = m_scale_x*m_frame_data[0].diam();
+        m_output_height = m_scale_y*m_frame_data[1].diam();
+    }
+
+    m_offset_x = -m_frame_data[0].lb()*m_scale_x;
+    m_offset_y = -m_frame_data[1].lb()*m_scale_y;
+
+    m_offset_drawing_x = m_distance_axis_text+m_size_axis_graduation+5*m_arrow_size;
+    m_offset_drawing_y = m_distance_axis_text+m_size_axis_graduation+5*m_arrow_size;
 }
 
 void Figure::style_size()
@@ -80,6 +101,11 @@ void Figure::set_layout()
     m_steel_sheet->setLayout(m_layout);
 }
 
+void Figure::reset_scale(const double width, const double height, const bool keep_ratio){
+    init_scale(width, height, keep_ratio);
+    set_layout();
+}
+
 void Figure::load_style()
 {
     int reason;
@@ -94,20 +120,20 @@ void Figure::load_style()
 
 void Figure::save_pdf(const std::string &file_name)
 {
-    m_document->runLatex("main.tex");
+    m_document->runLatex("~/.main.tex");
     m_document->save(file_name.c_str(),ipe::FileFormat::Pdf,ipe::SaveFlag::SaveNormal);
 
 }
 void Figure::save_ipe(const std::string &file_name)
 {
-    m_document->runLatex("main.tex");
+//    m_document->runLatex("~/.main.tex");
     m_document->save(file_name.c_str(),ipe::FileFormat::Xml,ipe::SaveFlag::SaveNormal);
 }
 
 void Figure::draw_axis(const std::string &name_x, const std::string &name_y)
 {
-    ipe::Vector pt_x(s_t_x(m_frame_data[0].ub()), m_offset_drawing_y);
-    ipe::Vector pt_y(m_offset_drawing_x, s_t_y(m_frame_data[1].ub()));
+    ipe::Vector pt_x(s_t_x(m_frame_data[0].ub())+3*m_arrow_size, m_offset_drawing_y);
+    ipe::Vector pt_y(m_offset_drawing_x, s_t_y(m_frame_data[1].ub())+3*m_arrow_size);
     draw_arrow_axis(ipe::Vector(m_offset_drawing_x, m_offset_drawing_y), pt_x);
     draw_arrow_axis(ipe::Vector(m_offset_drawing_x, m_offset_drawing_y), pt_y);
 
@@ -202,9 +228,9 @@ void Figure::draw_axis_number(const double number, const ipe::Vector& pos, const
 
 void Figure::draw_axis_numbers()
 {
-    for(double x=std::max(m_start_number_graduation_x,m_frame_data[0].lb()); x<m_frame_data[0].ub(); x+=m_inter_graduation_x)
+    for(double x=std::max(m_start_number_graduation_x,m_frame_data[0].lb()); x<=m_frame_data[0].ub(); x+=m_inter_graduation_x)
         draw_axis_number(x, ipe::Vector(s_t_x(x), m_offset_drawing_y), AXIS_HORIZONTAL);
-    for(double y=std::max(m_start_number_graduation_y,m_frame_data[1].lb()); y<m_frame_data[1].ub(); y+=m_inter_graduation_y)
+    for(double y=std::max(m_start_number_graduation_y,m_frame_data[1].lb()); y<=m_frame_data[1].ub(); y+=m_inter_graduation_y)
         draw_axis_number(y, ipe::Vector(m_offset_drawing_x, s_t_y(y)), AXIS_VERTICAL);
 }
 
