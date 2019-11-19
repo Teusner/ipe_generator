@@ -49,7 +49,8 @@ public:
     void draw_circle_radius_final(const double x, const double y, const double r,  const std::string &color_stroke="", const std::string &color_fill="", const ipe::TPathMode fill_rule=ipe::EStrokedOnly, const int opacity=100, const std::string& layer_name="data");
 
     // Style functions
-    void set_thickness_pen_factor(const double val);
+    void set_thickness_pen_factor(const double val=1e-3);
+    void set_thickness_axis(const double val=1e-3);
     void set_distance_axis_text(const double val);
     void set_arrow_size(const double val);
 
@@ -137,11 +138,6 @@ inline double Figure::s_t_x_inv(const double &val)
 inline double Figure::s_t_y_inv(const double &val)
 {
     return (val-m_offset_y-m_offset_drawing_y)/m_scale_y;
-}
-
-inline void Figure::set_thickness_pen_factor(const double val)
-{
-    m_thickness_pen_factor = val;
 }
 
 inline void Figure::set_distance_axis_text(const double val)

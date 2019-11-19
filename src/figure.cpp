@@ -88,8 +88,26 @@ void Figure::style_size()
     double size_normal = m_thickness_pen_factor*std::max(m_layout.paper().height(),m_layout.paper().width());
     m_steel_sheet->add(ipe::EPen, ipe::Attribute(true, "normal"), ipe::Attribute(ipe::Fixed::fromDouble(size_normal)));
     m_steel_sheet->add(ipe::EPen, ipe::Attribute(true, "axis"), ipe::Attribute(ipe::Fixed::fromDouble(size_normal*1.5)));
+    m_steel_sheet->add(ipe::EPen, ipe::Attribute(true, "axis_segment"), ipe::Attribute(ipe::Fixed::fromDouble(size_normal)));
     m_steel_sheet->add(ipe::EArrowSize, ipe::Attribute(true, "normal"), ipe::Attribute(ipe::Fixed::fromDouble(m_arrow_size)));
     m_steel_sheet->add(ipe::ETextSize, ipe::Attribute(true, "normal"), ipe::Attribute(true, "\\normalsize"));
+}
+
+void Figure::set_thickness_pen_factor(const double val)
+{
+    m_thickness_pen_factor = val;
+    double size_normal = m_thickness_pen_factor*std::max(m_layout.paper().height(),m_layout.paper().width());
+    m_steel_sheet->remove(ipe::EPen, ipe::Attribute(true, "normal"));
+    m_steel_sheet->add(ipe::EPen, ipe::Attribute(true, "normal"), ipe::Attribute(ipe::Fixed::fromDouble(size_normal)));
+}
+
+void Figure::set_thickness_axis(const double val)
+{
+    double size_normal = val*std::max(m_layout.paper().height(),m_layout.paper().width());
+    m_steel_sheet->remove(ipe::EPen, ipe::Attribute(true, "axis"));
+    m_steel_sheet->remove(ipe::EPen, ipe::Attribute(true, "axis_segment"));
+    m_steel_sheet->add(ipe::EPen, ipe::Attribute(true, "axis"), ipe::Attribute(ipe::Fixed::fromDouble(size_normal*1.5)));
+    m_steel_sheet->add(ipe::EPen, ipe::Attribute(true, "axis_segment"), ipe::Attribute(ipe::Fixed::fromDouble(size_normal)));
 }
 
 void Figure::set_layout()
@@ -218,6 +236,7 @@ void Figure::draw_axis_number(const double number, const ipe::Vector& pos, const
     ipe::Segment seg(pos, pos+offset_graduation);
     ipe::AllAttributes attr_seg;
     attr_seg.iStroke = ipe::Attribute::BLACK();
+    attr.iPen = m_steel_sheet->find(ipe::EPen, ipe::Attribute(true, "axis_segment"));
     ipe::Shape shape(seg);
     ipe::Path *path = new ipe::Path(attr, shape, true);
 
