@@ -31,6 +31,9 @@ Figure::Figure(const ibex::IntervalVector &frame_data, const double &width, cons
     m_page->insertView(0, "");
     m_page->setVisible(0, "axis", true);
     m_page->setVisible(0, "data", true);
+    m_page->setVisible(0, "outer", true);
+    m_page->setVisible(0, "inner", true);
+    m_page->setVisible(0, "uncertain", true);
 
     // Add the page to the document
     m_document->push_back(m_page);
