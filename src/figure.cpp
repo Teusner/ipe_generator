@@ -337,7 +337,7 @@ void Figure::draw_polygon(const std::vector<double>& x, const std::vector<double
 
 void Figure::draw_ellipse(const double x, const double y, const double r1, const double r2,  const std::string &color_stroke, const std::string &color_fill, const ipe::TPathMode fill_rule, const int opacity, const std::string& layer_name)
 {
-    ipe::Matrix m(ipe::Linear(s_t_x(r1), 0, 0, s_t_y(r2)), ipe::Vector(s_t_x(x), s_t_y(y)));
+    ipe::Matrix m(ipe::Linear(m_scale_y*r1, 0, 0, m_scale_y*r2), ipe::Vector(s_t_x(x), s_t_y(y)));
     ipe::Ellipse *ellipse = new ipe::Ellipse(m);
     ipe::AllAttributes attr;
 
@@ -351,8 +351,11 @@ void Figure::draw_ellipse(const double x, const double y, const double r1, const
     else
         attr.iFill = ipe::Attribute::WHITE();
     attr.iPathMode = fill_rule;
-    std::string opacity_value = std::to_string(opacity)+"\%";
-    attr.iOpacity = m_steel_sheet->find(ipe::EOpacity,ipe::Attribute(true, opacity_value.c_str()));
+    if(opacity != 100)
+    {
+        std::string opacity_value = std::to_string(opacity)+"\%";
+        attr.iOpacity = m_steel_sheet->find(ipe::EOpacity,ipe::Attribute(true, opacity_value.c_str()));
+    }
 
     ipe::Shape shape;
     shape.appendSubPath(ellipse);
