@@ -36,6 +36,7 @@ public:
 
     // Ipe functions
     void add_layer(const std::string &layer_name);
+    void set_visible(const std::string &layer_name, bool visible=true);
 
     // Drawing functions
     void draw_axis(const std::string &name_x, const std::string &name_y);
@@ -131,6 +132,12 @@ private:
 inline void Figure::add_layer(const std::string &layer_name)
 {
     m_page->addLayer(layer_name.c_str());
+    m_page->setVisible(0, layer_name.c_str(), true);
+}
+
+inline void Figure::set_visible(const std::string &layer_name, bool visible)
+{
+    m_page->setVisible(0, layer_name.c_str(), visible);
 }
 
 inline double Figure::s_t_x(const double &val)

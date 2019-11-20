@@ -25,8 +25,6 @@ if(NOT IBEX_ROOT)
 	set(IBEX_ROOT "$ENV{HOME}/ibex")
 endif()
 
-set(CMAKE_CXX_FLAGS " -fPIC ${CMAKE_CXX_FLAGS}")
-
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/)
 
 ### Find package ###

@@ -49,6 +49,9 @@ int main(int argc, char *argv[]){
     fig.set_dashed("dotted");
     fig.draw_sector(500.0, 1.0, 1.0, 1.0, 0.0, M_PI_2);
 
+    fig.add_layer("test");
+    fig.set_visible("test");
+
     fig.save_ipe("test.ipe");
     fig.save_pdf("test.pdf");
 }

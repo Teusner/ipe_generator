@@ -23,6 +23,9 @@ Figure::Figure(const ibex::IntervalVector &frame_data, const double &width, cons
     // Add layers
     m_page->addLayer("axis");
     m_page->addLayer("data");
+    m_page->addLayer("outer");
+    m_page->addLayer("inner");
+    m_page->addLayer("uncertain");
 
     // Create a view and set layers visibility
     m_page->insertView(0, "");
