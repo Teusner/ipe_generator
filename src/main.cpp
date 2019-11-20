@@ -38,9 +38,9 @@ int main(int argc, char *argv[]){
     }
     fig.draw_curve(x, y);
 
-    fig.set_fill("black");
-    fig.set_stroke("red");
-    fig.set_path_type(ipegenerator::Figure::STROKE_AND_FILL);
+    fig.set_color_fill("black");
+    fig.set_color_stroke("red");
+    fig.set_color_type(ipegenerator::Figure::STROKE_AND_FILL);
     fig.set_opacity(30);
     fig.draw_circle(10, 1.0, 2.0);
 

@@ -63,9 +63,9 @@ public:
     void reset_scale(const double &width, const double &height, const bool &keep_ratio);
 
     enum PATH_TYPE{STROKE_ONLY,STROKE_AND_FILL,FILL_ONLY};
-    void set_stroke(const std::string &color_stroke="");
-    void set_fill(const std::string &color_fill="");
-    void set_path_type(const PATH_TYPE &type);
+    void set_color_stroke(const std::string &color_stroke="");
+    void set_color_fill(const std::string &color_fill="");
+    void set_color_type(const PATH_TYPE &type);
     void set_opacity(const int &opacity);
     void set_current_layer(const std::string &layer_name);
     void set_dashed(const std::string &dashed);

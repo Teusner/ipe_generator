@@ -341,7 +341,7 @@ void Figure::draw_sector(const double& x, const double& y, const double& r1, con
     m_page->append(ipe::TSelect::ENotSelected, m_current_layer, path);
 }
 
-void Figure::set_stroke(const std::string &color_stroke)
+void Figure::set_color_stroke(const std::string &color_stroke)
 {
     if(color_stroke!="")
         m_current_attr.iStroke = m_steel_sheet->find(ipe::EColor,ipe::Attribute(true, color_stroke.c_str()));
@@ -349,12 +349,12 @@ void Figure::set_stroke(const std::string &color_stroke)
         m_current_attr.iStroke = ipe::Attribute::BLACK();
 }
 
-void Figure::set_fill(const std::string &color_fill)
+void Figure::set_color_fill(const std::string &color_fill)
 {
     m_current_attr.iFill = m_steel_sheet->find(ipe::EColor,ipe::Attribute(true, color_fill.c_str()));
 }
 
-void Figure::set_path_type(const PATH_TYPE& type)
+void Figure::set_color_type(const PATH_TYPE& type)
 {
     m_current_attr.iPathMode = (ipe::TPathMode)type; // To be checked
 }
