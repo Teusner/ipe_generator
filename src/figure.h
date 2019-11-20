@@ -17,7 +17,7 @@ public:
      * @param width in mm (default A4=210)
      * @param height in mm (default A4=297)
      */
-    Figure(const ibex::IntervalVector &frame_data, const double width=210, const double height=297, const bool keep_ratio=false);
+    Figure(const ibex::IntervalVector &frame_data, const double &width=210, const double &height=297, const bool &keep_ratio=false);
 
     /**
      * @brief Figure constructor with the load of an existing Figure
@@ -27,7 +27,7 @@ public:
      * @param height
      * @param keep_ratio
      */
-    Figure(const std::string &filename, const ibex::IntervalVector &frame_data, const double width, const double height, const bool keep_ratio);
+    Figure(const std::string &filename, const ibex::IntervalVector &frame_data, const double &width, const double &height, const bool &keep_ratio);
 
     ~Figure();
 
@@ -39,37 +39,47 @@ public:
 
     // Drawing functions
     void draw_axis(const std::string &name_x, const std::string &name_y);
-    void draw_arrow(const double x0, const double y0, const double x1, const double y1, const std::string &color_stroke="", const std::string &layer_name="data");
-    void draw_text(const std::string &text, const double x, const double y, const std::string& color="", const std::string &layer_name="data");
-    void draw_box(const ibex::IntervalVector &box, const std::string &color_stroke="", const std::string &color_fill="", const ipe::TPathMode fill_rule=ipe::EStrokedOnly, const std::string &layer_name="data");
-    void draw_curve(const std::vector<double> &x, const std::vector<double> &y, const std::string &color_stroke="", const std::string &layer_name="data");
-    void draw_polygon(const std::vector<double>& x, const std::vector<double>& y, const std::string& color_stroke="", const std::string &color_fill="", const ipe::TPathMode fill_rule=ipe::EStrokedOnly, const std::string& layer_name="data", const bool closed=true);
-    void draw_ellipse(const double x, const double y, const double r1, const double r2,  const std::string &color_stroke="", const std::string &color_fill="", const ipe::TPathMode fill_rule=ipe::EStrokedOnly, const int opacity=100, const std::string& layer_name="data");
-    void draw_circle(const double x, const double y, const double r,  const std::string &color_stroke="", const std::string &color_fill="", const ipe::TPathMode fill_rule=ipe::EStrokedOnly, const int opacity=100, const std::string& layer_name="data");
-    void draw_circle_radius_final(const double x, const double y, const double r,  const std::string &color_stroke="", const std::string &color_fill="", const ipe::TPathMode fill_rule=ipe::EStrokedOnly, const int opacity=100, const std::string& layer_name="data");
+    void draw_arrow(const double &x0, const double &y0, const double &x1, const double &y1);
+    void draw_text(const std::string &text, const double &x, const double &y, const bool& math_mode=false);
+    void draw_box(const ibex::IntervalVector &box);
+    void draw_curve(const std::vector<double> &x, const std::vector<double> &y);
+    void draw_polygon(const std::vector<double>& x, const std::vector<double>& y, const bool& closed=true);
+    void draw_ellipse(const double& x, const double& y, const double& r1, const double& r2);
+    void draw_circle(const double &x, const double &y, const double &r);
+    void draw_circle_radius_final(const double &x, const double &y, const double &r);
+
+    void draw_sector(const double &x, const double &y, const double &r1, const double &r2, const double &alpha_start, const double& alpha_end);
 
     // Style functions
-    void set_thickness_pen_factor(const double val=1e-3);
-    void set_thickness_axis(const double val=1e-3);
-    void set_distance_axis_text(const double val);
-    void set_arrow_size(const double val);
+    void set_thickness_pen_factor(const double &val=1e-3);
+    void set_thickness_axis(const double &val=1e-3);
+    void set_distance_axis_text(const double &val);
+    void set_arrow_size(const double &val);
 
-    void set_distance_number_graduation(const double distance_number_graduation);
-    void set_size_axis_graduation(const double size_axis_graduation);
-    void set_graduation_parameters(const double start_x, const double inter_x, const double start_y, const double inter_y);
+    void set_distance_number_graduation(const double &distance_number_graduation);
+    void set_size_axis_graduation(const double &size_axis_graduation);
+    void set_graduation_parameters(const double &start_x, const double &inter_x, const double &start_y, const double &inter_y);
 
-    void reset_scale(const double width, const double height, const bool keep_ratio);
+    void reset_scale(const double &width, const double &height, const bool &keep_ratio);
+
+    enum PATH_TYPE{STROKE_ONLY,STROKE_AND_FILL,FILL_ONLY};
+    void set_stroke(const std::string &color_stroke="");
+    void set_fill(const std::string &color_fill="");
+    void set_path_type(const PATH_TYPE &type);
+    void set_opacity(const int &opacity);
+    void set_current_layer(const std::string &layer_name);
+    void set_dashed(const std::string &dashed);
 
 private:
     void load_style();
     void set_layout();
     void style_size();
-    void init_scale(const double width, const double height, const bool keep_ratio);
+    void init_scale(const double &width, const double &height, const bool &keep_ratio);
 
     void draw_arrow_axis(const ipe::Vector &pt1, const ipe::Vector &pt2);
 
     enum AXIS_SENS{AXIS_VERTICAL,AXIS_HORIZONTAL};
-    void draw_axis_number(const double number, const ipe::Vector &pos, const AXIS_SENS sens);
+    void draw_axis_number(const double &number, const ipe::Vector &pos, const AXIS_SENS &sens);
     void draw_axis_numbers();
 
 
@@ -96,6 +106,9 @@ private:
     ipe::Page       * m_page;
     ipe::Layout     m_layout;
     ipe::StyleSheet * m_steel_sheet;
+
+    ipe::AllAttributes m_current_attr;
+    int                 m_current_layer=1;
 
     // Ipe parameters
     std::string m_ref_document = "/usr/local/etc/ipegenerator/basic.ipe";
@@ -140,27 +153,27 @@ inline double Figure::s_t_y_inv(const double &val)
     return (val-m_offset_y-m_offset_drawing_y)/m_scale_y;
 }
 
-inline void Figure::set_distance_axis_text(const double val)
+inline void Figure::set_distance_axis_text(const double &val)
 {
     m_distance_axis_text = val;
 }
 
-inline void Figure::set_arrow_size(const double val)
+inline void Figure::set_arrow_size(const double &val)
 {
     m_arrow_size = val;
 }
 
-inline void Figure::set_distance_number_graduation(const double distance_number_graduation)
+inline void Figure::set_distance_number_graduation(const double &distance_number_graduation)
 {
     m_distance_number_graduation = distance_number_graduation;
 }
 
-inline void Figure::set_size_axis_graduation(const double size_axis_graduation)
+inline void Figure::set_size_axis_graduation(const double& size_axis_graduation)
 {
     m_size_axis_graduation = size_axis_graduation;
 }
 
-inline void Figure::set_graduation_parameters(const double start_x, const double inter_x, const double start_y, const double inter_y)
+inline void Figure::set_graduation_parameters(const double &start_x, const double &inter_x, const double &start_y, const double &inter_y)
 {
     m_start_number_graduation_x = start_x;
     m_inter_graduation_x = inter_x;

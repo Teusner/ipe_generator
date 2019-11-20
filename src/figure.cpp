@@ -4,7 +4,7 @@
 
 namespace ipegenerator{
 
-Figure::Figure(const ibex::IntervalVector &frame_data, const double width, const double height, const bool keep_ratio):
+Figure::Figure(const ibex::IntervalVector &frame_data, const double &width, const double &height, const bool &keep_ratio):
     m_frame_data(2)
 {
     m_frame_data = frame_data;
@@ -39,7 +39,7 @@ Figure::Figure(const ibex::IntervalVector &frame_data, const double width, const
     style_size();
 }
 
-Figure::Figure(const std::string &filename, const ibex::IntervalVector &frame_data, const double width, const double height, const bool keep_ratio):
+Figure::Figure(const std::string &filename, const ibex::IntervalVector &frame_data, const double &width, const double &height, const bool &keep_ratio):
     m_frame_data(2)
 {
     m_frame_data = frame_data;
@@ -57,7 +57,7 @@ Figure::~Figure(){
     delete(m_document);
 }
 
-void Figure::init_scale(const double width, const double height, const bool keep_ratio)
+void Figure::init_scale(const double &width, const double &height, const bool &keep_ratio)
 {
 
     m_output_width = width*MM_TO_BP;
@@ -93,7 +93,7 @@ void Figure::style_size()
     m_steel_sheet->add(ipe::ETextSize, ipe::Attribute(true, "normal"), ipe::Attribute(true, "\\normalsize"));
 }
 
-void Figure::set_thickness_pen_factor(const double val)
+void Figure::set_thickness_pen_factor(const double &val)
 {
     m_thickness_pen_factor = val;
     double size_normal = m_thickness_pen_factor*std::max(m_layout.paper().height(),m_layout.paper().width());
@@ -101,7 +101,7 @@ void Figure::set_thickness_pen_factor(const double val)
     m_steel_sheet->add(ipe::EPen, ipe::Attribute(true, "normal"), ipe::Attribute(ipe::Fixed::fromDouble(size_normal)));
 }
 
-void Figure::set_thickness_axis(const double val)
+void Figure::set_thickness_axis(const double &val)
 {
     double size_normal = val*std::max(m_layout.paper().height(),m_layout.paper().width());
     m_steel_sheet->remove(ipe::EPen, ipe::Attribute(true, "axis"));
@@ -119,7 +119,7 @@ void Figure::set_layout()
     m_steel_sheet->setLayout(m_layout);
 }
 
-void Figure::reset_scale(const double width, const double height, const bool keep_ratio){
+void Figure::reset_scale(const double &width, const double &height, const bool &keep_ratio){
     init_scale(width, height, keep_ratio);
     set_layout();
 }
@@ -197,7 +197,7 @@ void Figure::draw_arrow_axis(const ipe::Vector &pt1, const ipe::Vector &pt2)
     m_page->append(ipe::TSelect::ENotSelected, 0, path);
 }
 
-void Figure::draw_axis_number(const double number, const ipe::Vector& pos, const AXIS_SENS sens)
+void Figure::draw_axis_number(const double &number, const ipe::Vector& pos, const AXIS_SENS &sens)
 {
     ipe::Group *group = new ipe::Group();
     ipe::Vector offset_text, offset_graduation;
@@ -253,124 +253,131 @@ void Figure::draw_axis_numbers()
         draw_axis_number(y, ipe::Vector(m_offset_drawing_x, s_t_y(y)), AXIS_VERTICAL);
 }
 
-void Figure::draw_arrow(const double x0, const double y0, const double x1, const double y1, const std::string &color_stroke, const std::string &layer_name)
+void Figure::draw_arrow(const double &x0, const double &y0, const double &x1, const double &y1)
 {
     ipe::Segment seg(ipe::Vector(s_t_x(x0), s_t_y(y0)), ipe::Vector(s_t_x(x1), s_t_y(y1)));
-    ipe::AllAttributes attr;
-    if(color_stroke!="")
-        attr.iStroke = m_steel_sheet->find(ipe::EColor,ipe::Attribute(true, color_stroke.c_str()));
-    else
-        attr.iStroke = ipe::Attribute::BLACK();
+    ipe::AllAttributes attr(m_current_attr);
     attr.iFArrow = true;
     attr.iFArrowSize = ipe::Attribute::NORMAL();
     attr.iFArrowShape = ipe::Attribute::ARROW_NORMAL();
 
     ipe::Shape shape(seg);
     ipe::Path *path = new ipe::Path(attr, shape, true);
-    m_page->append(ipe::TSelect::ENotSelected, m_page->findLayer(layer_name.c_str()), path);
+    m_page->append(ipe::TSelect::ENotSelected, m_current_layer, path);
 }
 
-void Figure::draw_text(const std::string& text, const double x, const double y, const std::string &color, const std::string& layer_name)
+void Figure::draw_text(const std::string& text, const double &x, const double &y, const bool &math_mode)
 {
-    ipe::AllAttributes attr_h;
     double width;
-    if(color!="")
-        attr_h.iStroke = m_steel_sheet->find(ipe::EColor,ipe::Attribute(true, color.c_str()));
-    else
-        attr_h.iStroke = ipe::Attribute::BLACK();
-    ipe::Text *obj = new ipe::Text(attr_h, text.c_str(), ipe::Vector(s_t_x(x), s_t_y(y)), ipe::Text::ELabel, width);
+    ipe::Text *obj = new ipe::Text(m_current_attr, text.c_str(), ipe::Vector(s_t_x(x), s_t_y(y)), ipe::Text::ELabel, width);
     obj->setHorizontalAlignment(ipe::EAlignLeft);
     obj->setVerticalAlignment(ipe::EAlignBaseline);
     obj->setSize(ipe::Attribute::NORMAL());
-    //    obj->setStyle(ipe::Attribute(true, "math"));
-    m_page->append(ipe::TSelect::ENotSelected, m_page->findLayer(layer_name.c_str()), obj);
+    if(math_mode)
+        obj->setStyle(ipe::Attribute(true, "math"));
+    m_page->append(ipe::TSelect::ENotSelected, m_current_layer, obj);
 
 }
 
-void Figure::draw_box(const ibex::IntervalVector& box, const std::string &color_stroke, const std::string &color_fill, const ipe::TPathMode fill_rule, const std::string& layer_name)
+void Figure::draw_box(const ibex::IntervalVector& box)
 {
     ipe::Rect rec(ipe::Vector(s_t_x(box[0].lb()), s_t_y(box[1].lb())), ipe::Vector(s_t_x(box[0].ub()), s_t_y(box[1].ub())));
-    ipe::AllAttributes attr;
-
-    if(color_stroke!="")
-        attr.iStroke = m_steel_sheet->find(ipe::EColor,ipe::Attribute(true, color_stroke.c_str()));
-    else
-        attr.iStroke = ipe::Attribute::BLACK();
-
-    if(color_fill!="")
-        attr.iFill = m_steel_sheet->find(ipe::EColor,ipe::Attribute(true, color_fill.c_str()));
-    else
-        attr.iFill = ipe::Attribute::WHITE();
-    attr.iPathMode = fill_rule;
 
     ipe::Shape shape(rec);
-    ipe::Path *path = new ipe::Path(attr, shape);
-    m_page->append(ipe::TSelect::ENotSelected, m_page->findLayer(layer_name.c_str()), path);
+    ipe::Path *path = new ipe::Path(m_current_attr, shape);
+    m_page->append(ipe::TSelect::ENotSelected, m_current_layer, path);
 }
 
-void Figure::draw_curve(const std::vector<double>& x, const std::vector<double>& y, const std::string& color_stroke, const std::string& layer_name)
+void Figure::draw_curve(const std::vector<double>& x, const std::vector<double>& y)
 {
-    draw_polygon(x, y, color_stroke, "", ipe::EStrokedOnly, layer_name, false);
+    draw_polygon(x, y, false);
 }
 
-void Figure::draw_polygon(const std::vector<double>& x, const std::vector<double>& y, const std::string& color_stroke, const std::string &color_fill, const ipe::TPathMode fill_rule,const std::string& layer_name, const bool closed){
+void Figure::draw_polygon(const std::vector<double>& x, const std::vector<double>& y,const bool &closed){
     ipe::Curve *curve=new ipe::Curve();
     for(size_t i=0; i<x.size()-1; ++i)
         curve->appendSegment(ipe::Vector(s_t_x(x[i]), s_t_y(y[i])),ipe::Vector(s_t_x(x[i+1]), s_t_y(y[i+1])));
-    ipe::AllAttributes attr;
-    if(color_stroke!="")
-        attr.iStroke = m_steel_sheet->find(ipe::EColor,ipe::Attribute(true, color_stroke.c_str()));
-    else
-        attr.iStroke = ipe::Attribute::BLACK();
 
-    if(color_fill!="")
-        attr.iFill = m_steel_sheet->find(ipe::EColor,ipe::Attribute(true, color_fill.c_str()));
-    else
-        attr.iFill = ipe::Attribute::WHITE();
-    attr.iPathMode = fill_rule;
     curve->setClosed(closed);
     ipe::Shape shape;
     shape.appendSubPath(curve);
-    ipe::Path *path = new ipe::Path(attr, shape);
-    m_page->append(ipe::TSelect::ENotSelected, m_page->findLayer(layer_name.c_str()), path);
+    ipe::Path *path = new ipe::Path(m_current_attr, shape);
+    m_page->append(ipe::TSelect::ENotSelected,m_current_layer, path);
 }
 
-void Figure::draw_ellipse(const double x, const double y, const double r1, const double r2,  const std::string &color_stroke, const std::string &color_fill, const ipe::TPathMode fill_rule, const int opacity, const std::string& layer_name)
+void Figure::draw_ellipse(const double &x, const double &y, const double &r1, const double &r2)
 {
     ipe::Matrix m(ipe::Linear(m_scale_y*r1, 0, 0, m_scale_y*r2), ipe::Vector(s_t_x(x), s_t_y(y)));
     ipe::Ellipse *ellipse = new ipe::Ellipse(m);
-    ipe::AllAttributes attr;
-
-    if(color_stroke!="")
-        attr.iStroke = m_steel_sheet->find(ipe::EColor,ipe::Attribute(true, color_stroke.c_str()));
-    else
-        attr.iStroke = ipe::Attribute::BLACK();
-
-    if(color_fill!="")
-        attr.iFill = m_steel_sheet->find(ipe::EColor,ipe::Attribute(true, color_fill.c_str()));
-    else
-        attr.iFill = ipe::Attribute::WHITE();
-    attr.iPathMode = fill_rule;
-    if(opacity != 100)
-    {
-        std::string opacity_value = std::to_string(opacity)+"\%";
-        attr.iOpacity = m_steel_sheet->find(ipe::EOpacity,ipe::Attribute(true, opacity_value.c_str()));
-    }
 
     ipe::Shape shape;
     shape.appendSubPath(ellipse);
-    ipe::Path *path = new ipe::Path(attr, shape);
-    m_page->append(ipe::TSelect::ENotSelected, m_page->findLayer(layer_name.c_str()), path);
+    ipe::Path *path = new ipe::Path(m_current_attr, shape);
+    m_page->append(ipe::TSelect::ENotSelected, m_current_layer, path);
 }
 
-void Figure::draw_circle(const double x, const double y, const double r,  const std::string &color_stroke, const std::string &color_fill, const ipe::TPathMode fill_rule, const int opacity, const std::string& layer_name)
+void Figure::draw_circle(const double &x, const double &y, const double &r)
 {
-    draw_ellipse(x, y, r, r,  color_stroke, color_fill, fill_rule, opacity, layer_name);
+    draw_ellipse(x, y, r, r);
 }
 
-void Figure::draw_circle_radius_final(const double x, const double y, const double r,  const std::string &color_stroke, const std::string &color_fill, const ipe::TPathMode fill_rule, const int opacity, const std::string& layer_name)
+void Figure::draw_circle_radius_final(const double &x, const double &y, const double &r)
 {
-    draw_ellipse(x, y, s_t_x_inv(r), s_t_y_inv(r),  color_stroke, color_fill, fill_rule, opacity, layer_name);
+    draw_ellipse(x, y, s_t_x_inv(r), s_t_y_inv(r));
+}
+
+void Figure::draw_sector(const double& x, const double& y, const double& r1, const double& r2, const double& alpha_start, const double& alpha_end){
+    ipe::Curve *curve=new ipe::Curve();
+
+    ipe::Matrix m(ipe::Linear(m_scale_y*r1, 0, 0, m_scale_y*r2), ipe::Vector(s_t_x(x), s_t_y(y)));
+    ipe::Arc arc(m, ipe::Angle(alpha_start), ipe::Angle(alpha_end));
+    curve->appendSegment(m.translation(), arc.beginp());
+    curve->appendArc(m, arc.beginp(), arc.endp());
+    curve->setClosed(true);
+
+    ipe::Shape shape;
+    shape.appendSubPath(curve);
+    ipe::Path *path = new ipe::Path(m_current_attr, shape);
+    m_page->append(ipe::TSelect::ENotSelected, m_current_layer, path);
+}
+
+void Figure::set_stroke(const std::string &color_stroke)
+{
+    if(color_stroke!="")
+        m_current_attr.iStroke = m_steel_sheet->find(ipe::EColor,ipe::Attribute(true, color_stroke.c_str()));
+    else
+        m_current_attr.iStroke = ipe::Attribute::BLACK();
+}
+
+void Figure::set_fill(const std::string &color_fill)
+{
+    m_current_attr.iFill = m_steel_sheet->find(ipe::EColor,ipe::Attribute(true, color_fill.c_str()));
+}
+
+void Figure::set_path_type(const PATH_TYPE& type)
+{
+    m_current_attr.iPathMode = (ipe::TPathMode)type; // To be checked
+}
+
+void Figure::set_opacity(const int &opacity){
+    if(opacity != 100)
+    {
+        std::string opacity_value = std::to_string(opacity)+"\%";
+        m_current_attr.iOpacity = m_steel_sheet->find(ipe::EOpacity,ipe::Attribute(true, opacity_value.c_str()));
+    }
+    else
+    {
+        m_current_attr.iOpacity = ipe::Attribute::OPAQUE();
+    }
+}
+
+void Figure::set_current_layer(const std::string &layer_name)
+{
+    m_current_layer = m_page->findLayer(layer_name.c_str());
+}
+
+void Figure::set_dashed(const std::string &dashed){
+    m_current_attr.iDashStyle = m_steel_sheet->find(ipe::EDashStyle, ipe::Attribute(true, dashed.c_str()));
 }
 
 }
