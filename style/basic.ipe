@@ -251,6 +251,7 @@ h
 <opacity name="30%" value="0.3"/>
 <opacity name="50%" value="0.5"/>
 <opacity name="75%" value="0.75"/>
+<opacity name="100%" value="1.0"/>
 <tiling name="falling" angle="-60" step="4" width="1"/>
 <tiling name="rising" angle="30" step="4" width="1"/>
 <preamble>
