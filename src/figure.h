@@ -7,6 +7,8 @@
 namespace ipegenerator {
 
 #define MM_TO_BP 2.83467
+enum FLOAT_PISTON_MVT{FLOAT_PISTON_EQUAL,FLOAT_PISTON_DOWN,FLOAT_PISTON_UP};
+enum PATH_TYPE{STROKE_ONLY,STROKE_AND_FILL,FILL_ONLY};
 
 class Figure
 {
@@ -41,6 +43,7 @@ public:
     // Drawing functions
     void draw_axis(const std::string &name_x, const std::string &name_y);
     void draw_arrow(const double &x0, const double &y0, const double &x1, const double &y1);
+    void draw_arrow(const ipe::Vector &v1, const ipe::Vector &v2);
     void draw_text(const std::string &text, const double &x, const double &y, const bool& math_mode=false);
     void draw_box(const ibex::IntervalVector &box);
     void draw_curve(const std::vector<double> &x, const std::vector<double> &y);
@@ -51,7 +54,7 @@ public:
 
     void draw_sector(const double &x, const double &y, const double &r1, const double &r2, const double &alpha_start, const double& alpha_end);
 
-    void draw_float(const double &x, const double &y, const double &piston, const double &compressibility, const double &zoom=1.0);
+    void draw_float(const double &x, const double &y, const double &piston, const double &compressibility, const FLOAT_PISTON_MVT &mvt=FLOAT_PISTON_EQUAL, const double &zoom=1.0);
 
     // Style functions
     void set_thickness_pen_factor(const double &val=1e-3);
@@ -65,7 +68,6 @@ public:
 
     void reset_scale(const double &width, const double &height, const bool &keep_ratio);
 
-    enum PATH_TYPE{STROKE_ONLY,STROKE_AND_FILL,FILL_ONLY};
     void set_color_stroke(const std::string &color_stroke="");
     void set_color_fill(const std::string &color_fill="");
     void set_color_type(const PATH_TYPE &type);
@@ -102,6 +104,7 @@ private:
     double m_scale_x=1.0, m_scale_y=1.0; // Scale factor
     double m_offset_x, m_offset_y; // Adding offset to (0,0)
     double m_offset_drawing_x, m_offset_drawing_y;
+    ipe::Matrix m_transform_global; // transformation offset + zoom
 
     // Ipe objects
     ipe::Document   * m_document;

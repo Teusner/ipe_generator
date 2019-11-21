@@ -86,6 +86,8 @@ void Figure::init_scale(const double &width, const double &height, const bool &k
 
     m_offset_drawing_x = m_distance_axis_text+m_size_axis_graduation+5*m_arrow_size;
     m_offset_drawing_y = m_distance_axis_text+m_size_axis_graduation+5*m_arrow_size;
+
+    m_transform_global = ipe::Matrix(ipe::Linear(m_scale_x, 0.0, 0.0, m_scale_y), ipe::Vector(m_offset_x+m_offset_drawing_x, m_offset_y+m_offset_drawing_y));
 }
 
 void Figure::style_size()
@@ -259,9 +261,9 @@ void Figure::draw_axis_numbers()
         draw_axis_number(y, ipe::Vector(m_offset_drawing_x, s_t_y(y)), AXIS_VERTICAL);
 }
 
-void Figure::draw_arrow(const double &x0, const double &y0, const double &x1, const double &y1)
+void Figure::draw_arrow(const ipe::Vector& v1, const ipe::Vector& v2)
 {
-    ipe::Segment seg(ipe::Vector(s_t_x(x0), s_t_y(y0)), ipe::Vector(s_t_x(x1), s_t_y(y1)));
+    ipe::Segment seg(m_transform_global*v1, m_transform_global*v2);
     ipe::AllAttributes attr(m_current_attr);
     attr.iFArrow = true;
     attr.iFArrowSize = ipe::Attribute::NORMAL();
@@ -272,10 +274,15 @@ void Figure::draw_arrow(const double &x0, const double &y0, const double &x1, co
     m_page->append(ipe::TSelect::ENotSelected, m_current_layer, path);
 }
 
+void Figure::draw_arrow(const double &x0, const double &y0, const double &x1, const double &y1)
+{
+    draw_arrow(ipe::Vector(x0, y0), ipe::Vector(x1, y1));
+}
+
 void Figure::draw_text(const std::string& text, const double &x, const double &y, const bool &math_mode)
 {
     double width;
-    ipe::Text *obj = new ipe::Text(m_current_attr, text.c_str(), ipe::Vector(s_t_x(x), s_t_y(y)), ipe::Text::ELabel, width);
+    ipe::Text *obj = new ipe::Text(m_current_attr, text.c_str(), m_transform_global*ipe::Vector(x, y), ipe::Text::ELabel, width);
     obj->setHorizontalAlignment(ipe::EAlignLeft);
     obj->setVerticalAlignment(ipe::EAlignBaseline);
     obj->setSize(ipe::Attribute::NORMAL());
@@ -287,7 +294,7 @@ void Figure::draw_text(const std::string& text, const double &x, const double &y
 
 void Figure::draw_box(const ibex::IntervalVector& box)
 {
-    ipe::Rect rec(ipe::Vector(s_t_x(box[0].lb()), s_t_y(box[1].lb())), ipe::Vector(s_t_x(box[0].ub()), s_t_y(box[1].ub())));
+    ipe::Rect rec(m_transform_global*ipe::Vector(box[0].lb(), box[1].lb()), m_transform_global*ipe::Vector(box[0].ub(), box[1].ub()));
 
     ipe::Shape shape(rec);
     ipe::Path *path = new ipe::Path(m_current_attr, shape);
@@ -302,7 +309,7 @@ void Figure::draw_curve(const std::vector<double>& x, const std::vector<double>&
 void Figure::draw_polygon(const std::vector<double>& x, const std::vector<double>& y,const bool &closed){
     ipe::Curve *curve=new ipe::Curve();
     for(size_t i=0; i<x.size()-1; ++i)
-        curve->appendSegment(ipe::Vector(s_t_x(x[i]), s_t_y(y[i])),ipe::Vector(s_t_x(x[i+1]), s_t_y(y[i+1])));
+        curve->appendSegment(m_transform_global*ipe::Vector(x[i], y[i]),ipe::Vector(x[i+1], y[i+1]));
 
     curve->setClosed(closed);
     ipe::Shape shape;
@@ -313,7 +320,7 @@ void Figure::draw_polygon(const std::vector<double>& x, const std::vector<double
 
 void Figure::draw_ellipse(const double &x, const double &y, const double &r1, const double &r2)
 {
-    ipe::Matrix m(ipe::Linear(m_scale_y*r1, 0, 0, m_scale_y*r2), ipe::Vector(s_t_x(x), s_t_y(y)));
+    ipe::Matrix m(m_transform_global.linear()*ipe::Linear(r1, 0, 0, r2), m_transform_global*ipe::Vector(x, y));
     ipe::Ellipse *ellipse = new ipe::Ellipse(m);
 
     ipe::Shape shape;
@@ -329,13 +336,14 @@ void Figure::draw_circle(const double &x, const double &y, const double &r)
 
 void Figure::draw_circle_radius_final(const double &x, const double &y, const double &r)
 {
-    draw_ellipse(x, y, s_t_x_inv(r), s_t_y_inv(r));
+    ipe::Vector r_inv = m_transform_global.linear().inverse()*ipe::Vector(r,r);
+    draw_ellipse(x, y, r_inv.x, r_inv.y);
 }
 
 void Figure::draw_sector(const double& x, const double& y, const double& r1, const double& r2, const double& alpha_start, const double& alpha_end){
     ipe::Curve *curve=new ipe::Curve();
 
-    ipe::Matrix m(ipe::Linear(m_scale_y*r1, 0, 0, m_scale_y*r2), ipe::Vector(s_t_x(x), s_t_y(y)));
+    ipe::Matrix m(m_transform_global.linear()*ipe::Linear(r1, 0, 0, r2), m_transform_global*ipe::Vector(x, y));
     ipe::Arc arc(m, ipe::Angle(alpha_start), ipe::Angle(alpha_end));
     curve->appendSegment(m.translation(), arc.beginp());
     curve->appendArc(m, arc.beginp(), arc.endp());

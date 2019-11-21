@@ -42,7 +42,7 @@ void test1()
 
     fig.set_color_fill("black");
     fig.set_color_stroke("red");
-    fig.set_color_type(ipegenerator::Figure::STROKE_AND_FILL);
+    fig.set_color_type(ipegenerator::STROKE_AND_FILL);
     fig.set_opacity(30);
     fig.draw_circle(10, 1.0, 2.0);
 
@@ -70,9 +70,9 @@ void test2()
 
     fig.draw_float(0.0, 0, 0.0, 0.0);
     fig.draw_float(1.0, 0, 1.0, 0.0);
-    fig.draw_float(2.0, 0, 0.0, 1.0);
+    fig.draw_float(2.0, 0, 0.0, 1.0, ipegenerator::FLOAT_PISTON_DOWN);
     fig.draw_float(3.0, 0, 1.0, 1.0);
-    fig.draw_float(5.0, 0, 1.0, 1.0, 2.0);
+    fig.draw_float(5.0, 0, 1.0, 1.0, ipegenerator::FLOAT_PISTON_UP, 2.0);
     fig.save_ipe("test.ipe");
     fig.save_pdf("test.pdf");
 }

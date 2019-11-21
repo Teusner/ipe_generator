@@ -5,25 +5,27 @@
 
 namespace ipegenerator{
 
-void Figure::draw_float(const double &x, const double &y, const double &piston, const double &compressibility, const double &zoom)
+
+
+void Figure::draw_float(const double &x, const double &y, const double &piston, const double &compressibility, const FLOAT_PISTON_MVT &mvt,const double &zoom)
 {
     ipe::Group *group = new ipe::Group();
+    ipe::Matrix zoom_translate_operator(ipe::Linear(zoom, 0.0, 0.0, zoom), ipe::Vector(x,y));
+    ipe::Matrix final_operator=m_transform_global*zoom_translate_operator;
 
     // ********************** Pipe **********************
     ipe::Curve *curve_pipe=new ipe::Curve();
     const double pipe_compressibility = 0.1-(0.05*compressibility);
 
-    ipe::Vector zero(s_t_x(x), s_t_y(y));
+    ipe::Vector pipe00 = final_operator * ipe::Vector(-0.1, 0);
+    ipe::Vector pipe01 = final_operator * ipe::Vector(-0.1, 1);
+    ipe::Vector pipe11 = final_operator * ipe::Vector(0.1, 1);
+    ipe::Vector pipe10 = final_operator * ipe::Vector(0.1, 0);
 
-    ipe::Vector pipe00(s_t_x(-0.1*zoom), s_t_y(0)); pipe00 += zero;
-    ipe::Vector pipe01(s_t_x(-0.1*zoom), s_t_y(1*zoom)); pipe01 += zero;
-    ipe::Vector pipe11(s_t_x(0.1*zoom), s_t_y(1*zoom)); pipe11 += zero;
-    ipe::Vector pipe10(s_t_x(0.1*zoom), s_t_y(0)); pipe10 += zero;
-
-    std::vector<ipe::Vector> spline1{pipe00, ipe::Vector(s_t_x(-pipe_compressibility*zoom), s_t_y(0.5*zoom))+zero,pipe01};
+    std::vector<ipe::Vector> spline1{pipe00, final_operator * ipe::Vector(-pipe_compressibility, 0.5),pipe01};
     curve_pipe->appendSpline(spline1);
     curve_pipe->appendSegment(pipe01, pipe11);
-    std::vector<ipe::Vector> spline2{pipe11, ipe::Vector(s_t_x(pipe_compressibility*zoom), s_t_y(0.5*zoom))+zero,pipe10};
+    std::vector<ipe::Vector> spline2{pipe11, final_operator * ipe::Vector(pipe_compressibility,0.5),pipe10};
     curve_pipe->appendSpline(spline2);
     curve_pipe->setClosed(true);
     ipe::Shape shape_pipe;
@@ -39,10 +41,10 @@ void Figure::draw_float(const double &x, const double &y, const double &piston, 
     // ********************** Piston **********************
     const double size_piston = 0.2;
     const double piston_position = -size_piston*abs(piston);
-    ipe::Vector piston00(s_t_x(-0.05*zoom), s_t_y(piston_position*zoom)); piston00 += zero;
-    ipe::Vector piston01(s_t_x(-0.05*zoom), s_t_y((piston_position+size_piston)*zoom)); piston01 += zero;
-    ipe::Vector piston11(s_t_x(0.05*zoom),  s_t_y((piston_position+size_piston)*zoom)); piston11 += zero;
-    ipe::Vector piston10(s_t_x(0.05*zoom), s_t_y(piston_position*zoom)); piston10 += zero;
+    ipe::Vector piston00 = final_operator * ipe::Vector(-0.05, piston_position);
+    ipe::Vector piston01 = final_operator * ipe::Vector(-0.05, piston_position+size_piston);
+    ipe::Vector piston11 = final_operator * ipe::Vector(0.05, piston_position+size_piston);
+    ipe::Vector piston10 = final_operator * ipe::Vector(0.05, piston_position);
     ipe::Curve *curve_piston=new ipe::Curve();
     curve_piston->appendSegment(piston01, piston00);
     curve_piston->appendSegment(piston00, piston10);
@@ -56,6 +58,36 @@ void Figure::draw_float(const double &x, const double &y, const double &piston, 
     attr_piston.iPathMode  = ipe::EStrokedAndFilled;
     ipe::Path *path_piston = new ipe::Path(attr_piston, shape_piston);
     group->push_back(path_piston);
+
+    // ********************** Piston Movement **********************
+
+    set_color_fill("black");
+    set_color_stroke("black");
+    set_color_type(STROKE_AND_FILL);
+    if(mvt != FLOAT_PISTON_EQUAL)
+    {
+        ipe::Segment seg;
+        if(mvt == FLOAT_PISTON_UP)
+        {
+            ipe::Vector arrow0 = final_operator * ipe::Vector(0.0, piston_position);
+            ipe::Vector arrow1 = final_operator * ipe::Vector(0.0, 0.0);
+            seg = ipe::Segment(arrow0, arrow1);
+        }
+        else
+        {
+            ipe::Vector arrow0 = final_operator * ipe::Vector(0.0, piston_position);
+            ipe::Vector arrow1 = final_operator * ipe::Vector(0.0, -size_piston);
+            seg = ipe::Segment(arrow0, arrow1);
+        }
+        ipe::AllAttributes attr(m_current_attr);
+        attr.iFArrow = true;
+        attr.iFArrowSize = ipe::Attribute::NORMAL();
+        attr.iFArrowShape = ipe::Attribute::ARROW_NORMAL();
+
+        ipe::Shape shape(seg);
+        ipe::Path *path = new ipe::Path(attr, shape, true);
+        group->push_back(path);
+    }
 
     m_page->append(ipe::TSelect::ENotSelected, m_current_layer, group);
 }
