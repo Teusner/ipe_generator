@@ -51,6 +51,8 @@ public:
 
     void draw_sector(const double &x, const double &y, const double &r1, const double &r2, const double &alpha_start, const double& alpha_end);
 
+    void draw_float(const double &x, const double &y, const double &piston, const double &compressibility, const double &zoom=1.0);
+
     // Style functions
     void set_thickness_pen_factor(const double &val=1e-3);
     void set_thickness_axis(const double &val=1e-3);

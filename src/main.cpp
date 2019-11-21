@@ -13,7 +13,9 @@
 
 using namespace std;
 
-int main(int argc, char *argv[]){
+
+void test1()
+{
     ibex::IntervalVector frame_data(2);
     frame_data[0] = ibex::Interval(0.0, 1000);
     frame_data[1] = ibex::Interval(-0.3, 2.0);
@@ -52,7 +54,32 @@ int main(int argc, char *argv[]){
     fig.add_layer("test");
     fig.set_visible("test");
 
+
+
     fig.save_ipe("test.ipe");
     fig.save_pdf("test.pdf");
+}
+
+void test2()
+{
+    ibex::IntervalVector frame_data(2);
+    frame_data[0] = ibex::Interval(0.0, 10.0);
+    frame_data[1] = ibex::Interval(0.0, 10.0);
+
+    ipegenerator::Figure fig(frame_data, 200, 200);
+
+    fig.draw_float(0.0, 0, 0.0, 0.0);
+    fig.draw_float(1.0, 0, 1.0, 0.0);
+    fig.draw_float(2.0, 0, 0.0, 1.0);
+    fig.draw_float(3.0, 0, 1.0, 1.0);
+    fig.draw_float(5.0, 0, 1.0, 1.0, 2.0);
+    fig.save_ipe("test.ipe");
+    fig.save_pdf("test.pdf");
+}
+
+int main(int argc, char *argv[])
+{
+//    test1();
+    test2();
 }
 

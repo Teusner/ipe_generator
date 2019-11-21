@@ -76,6 +76,7 @@ include_directories(include/ipe)
 ############## Generate Library
 add_library(ipegenerator SHARED
  src/figure.cpp
+ src/model.cpp
  )
 target_link_libraries(ipegenerator
  ${IPE_LIBRARY}
@@ -143,6 +144,7 @@ install(EXPORT ipegeneratorTargets DESTINATION "${INSTALL_CMAKE_DIR}" COMPONENT 
 set(SRC
  src/main.cpp
  src/figure.cpp
+ src/model.cpp
  )
 
 set(HEADERS
