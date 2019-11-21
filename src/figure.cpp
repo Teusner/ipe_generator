@@ -317,7 +317,7 @@ void Figure::draw_polygon(const std::vector<double>& x, const std::vector<double
     if(x.size()==0)
         return;
     else if(x.size()==1)
-        curve->appendSegment(ipe::Vector(x[0], y[0]), ipe::Vector(x[0], y[0]));
+        curve->appendSegment(m_transform_global*ipe::Vector(x[0], y[0]), m_transform_global*ipe::Vector(x[0], y[0]));
     else
     {
         for(size_t i=0; i<x.size()-1; ++i)

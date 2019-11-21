@@ -11,7 +11,7 @@ void Figure::draw_float(const double &x, const double &y, const double &piston, 
 {
     ipe::Group *group = new ipe::Group();
     const double min_size_frame = std::min(m_frame_data[0].diam(), m_frame_data[1].diam());
-    ipe::Matrix zoom_operator(ipe::Linear(zoom*min_size_frame, 0.0, 0.0, zoom*min_size_frame)*m_transform_global_keep_dimension.linear(), ipe::Vector());
+    ipe::Matrix zoom_operator(ipe::Linear(zoom*min_size_frame, 0.0, 0.0, zoom*min_size_frame)*m_transform_global_keep_dimension.linear(), ipe::Vector(0.0, 0.0));
     ipe::Matrix translate_operator(ipe::Linear(), m_transform_global*ipe::Vector(x, y));
     ipe::Matrix offset_operator(ipe::Linear(), ipe::Vector(0, -0.5));
     ipe::Matrix final_operator=translate_operator*(zoom_operator*offset_operator);
