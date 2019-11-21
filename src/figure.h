@@ -41,12 +41,13 @@ public:
     void set_visible(const std::string &layer_name, bool visible=true);
 
     // Drawing functions
-    void draw_axis(const std::string &name_x, const std::string &name_y);
+    void draw_axis(const std::string &name_x, const std::string &name_y, const bool& enable_numbers=true);
     void draw_arrow(const double &x0, const double &y0, const double &x1, const double &y1);
     void draw_arrow(const ipe::Vector &v1, const ipe::Vector &v2);
     void draw_text(const std::string &text, const double &x, const double &y, const bool& math_mode=false);
     void draw_box(const ibex::IntervalVector &box);
     void draw_curve(const std::vector<double> &x, const std::vector<double> &y);
+    void draw_segment(const double &x0, const double &y0, const double &x1, const double &y1);
     void draw_polygon(const std::vector<double>& x, const std::vector<double>& y, const bool& closed=true);
     void draw_ellipse(const double& x, const double& y, const double& r1, const double& r2);
     void draw_circle(const double &x, const double &y, const double &r);
@@ -66,7 +67,7 @@ public:
     void set_size_axis_graduation(const double &size_axis_graduation);
     void set_graduation_parameters(const double &start_x, const double &inter_x, const double &start_y, const double &inter_y);
 
-    void reset_scale(const double &width, const double &height, const bool &keep_ratio);
+    void reset_scale(const double &width, const double &height, const bool &keep_ratio=false);
 
     void set_color_stroke(const std::string &color_stroke="");
     void set_color_fill(const std::string &color_fill="");
@@ -105,6 +106,7 @@ private:
     double m_offset_x, m_offset_y; // Adding offset to (0,0)
     double m_offset_drawing_x, m_offset_drawing_y;
     ipe::Matrix m_transform_global; // transformation offset + zoom
+    ipe::Matrix m_transform_global_keep_dimension; // transformation offset without zoom
 
     // Ipe objects
     ipe::Document   * m_document;

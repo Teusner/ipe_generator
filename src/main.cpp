@@ -44,17 +44,15 @@ void test1()
     fig.set_color_stroke("red");
     fig.set_color_type(ipegenerator::STROKE_AND_FILL);
     fig.set_opacity(30);
-    fig.draw_circle(10, 1.0, 2.0);
+    fig.draw_circle(10, 1.0, 0.5);
 
-    fig.draw_circle_radius_final(100.0, 1.0, 10.0);
+    fig.draw_circle_radius_final(100.0, 0.5, 10.0);
 
     fig.set_dashed("dotted");
-    fig.draw_sector(500.0, 1.0, 1.0, 1.0, 0.0, M_PI_2);
+    fig.draw_sector(500.0, 1.0, 100.0, 1.0, 0.0, M_PI_2);
 
     fig.add_layer("test");
     fig.set_visible("test");
-
-
 
     fig.save_ipe("test.ipe");
     fig.save_pdf("test.pdf");

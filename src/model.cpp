@@ -10,8 +10,11 @@ namespace ipegenerator{
 void Figure::draw_float(const double &x, const double &y, const double &piston, const double &compressibility, const FLOAT_PISTON_MVT &mvt,const double &zoom)
 {
     ipe::Group *group = new ipe::Group();
-    ipe::Matrix zoom_translate_operator(ipe::Linear(zoom, 0.0, 0.0, zoom), ipe::Vector(x,y));
-    ipe::Matrix final_operator=m_transform_global*zoom_translate_operator;
+    const double min_size_frame = std::min(m_frame_data[0].diam(), m_frame_data[1].diam());
+    ipe::Matrix zoom_operator(ipe::Linear(zoom*min_size_frame, 0.0, 0.0, zoom*min_size_frame)*m_transform_global_keep_dimension.linear(), ipe::Vector());
+    ipe::Matrix translate_operator(ipe::Linear(), m_transform_global*ipe::Vector(x, y));
+    ipe::Matrix offset_operator(ipe::Linear(), ipe::Vector(0, -0.5));
+    ipe::Matrix final_operator=translate_operator*(zoom_operator*offset_operator);
 
     // ********************** Pipe **********************
     ipe::Curve *curve_pipe=new ipe::Curve();
@@ -40,7 +43,7 @@ void Figure::draw_float(const double &x, const double &y, const double &piston, 
 
     // ********************** Piston **********************
     const double size_piston = 0.2;
-    const double piston_position = -size_piston*abs(piston);
+    const double piston_position = -size_piston*(1.+piston)/2.;
     ipe::Vector piston00 = final_operator * ipe::Vector(-0.05, piston_position);
     ipe::Vector piston01 = final_operator * ipe::Vector(-0.05, piston_position+size_piston);
     ipe::Vector piston11 = final_operator * ipe::Vector(0.05, piston_position+size_piston);

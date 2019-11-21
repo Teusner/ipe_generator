@@ -88,6 +88,7 @@ void Figure::init_scale(const double &width, const double &height, const bool &k
     m_offset_drawing_y = m_distance_axis_text+m_size_axis_graduation+5*m_arrow_size;
 
     m_transform_global = ipe::Matrix(ipe::Linear(m_scale_x, 0.0, 0.0, m_scale_y), ipe::Vector(m_offset_x+m_offset_drawing_x, m_offset_y+m_offset_drawing_y));
+    m_transform_global_keep_dimension = ipe::Matrix(ipe::Linear(std::max(m_scale_x,m_scale_y), 0.0, 0.0, std::max(m_scale_x,m_scale_y)),m_transform_global.translation());
 }
 
 void Figure::style_size()
@@ -152,11 +153,11 @@ void Figure::save_pdf(const std::string &file_name)
 }
 void Figure::save_ipe(const std::string &file_name)
 {
-//    m_document->runLatex("~/.main.tex");
+    //    m_document->runLatex("~/.main.tex");
     m_document->save(file_name.c_str(),ipe::FileFormat::Xml,ipe::SaveFlag::SaveNormal);
 }
 
-void Figure::draw_axis(const std::string &name_x, const std::string &name_y)
+void Figure::draw_axis(const std::string &name_x, const std::string &name_y, const bool &enable_numbers)
 {
     ipe::Vector pt_x(s_t_x(m_frame_data[0].ub())+3*m_arrow_size, m_offset_drawing_y);
     ipe::Vector pt_y(m_offset_drawing_x, s_t_y(m_frame_data[1].ub())+3*m_arrow_size);
@@ -187,7 +188,8 @@ void Figure::draw_axis(const std::string &name_x, const std::string &name_y)
     m_page->append(ipe::TSelect::ENotSelected, 0, text_v);
 
     // Draw numbers
-    draw_axis_numbers();
+    if(enable_numbers)
+        draw_axis_numbers();
 }
 
 void Figure::draw_arrow_axis(const ipe::Vector &pt1, const ipe::Vector &pt2)
@@ -306,10 +308,21 @@ void Figure::draw_curve(const std::vector<double>& x, const std::vector<double>&
     draw_polygon(x, y, false);
 }
 
+void Figure::draw_segment(const double &x0, const double &y0, const double &x1, const double &y1){
+    draw_curve(std::vector<double>{x0, x1}, std::vector<double>{y0, y1});
+}
+
 void Figure::draw_polygon(const std::vector<double>& x, const std::vector<double>& y,const bool &closed){
     ipe::Curve *curve=new ipe::Curve();
-    for(size_t i=0; i<x.size()-1; ++i)
-        curve->appendSegment(m_transform_global*ipe::Vector(x[i], y[i]),ipe::Vector(x[i+1], y[i+1]));
+    if(x.size()==0)
+        return;
+    else if(x.size()==1)
+        curve->appendSegment(ipe::Vector(x[0], y[0]), ipe::Vector(x[0], y[0]));
+    else
+    {
+        for(size_t i=0; i<x.size()-1; ++i)
+            curve->appendSegment(m_transform_global*ipe::Vector(x[i], y[i]),m_transform_global*ipe::Vector(x[i+1], y[i+1]));
+    }
 
     curve->setClosed(closed);
     ipe::Shape shape;
@@ -320,7 +333,7 @@ void Figure::draw_polygon(const std::vector<double>& x, const std::vector<double
 
 void Figure::draw_ellipse(const double &x, const double &y, const double &r1, const double &r2)
 {
-    ipe::Matrix m(m_transform_global.linear()*ipe::Linear(r1, 0, 0, r2), m_transform_global*ipe::Vector(x, y));
+    ipe::Matrix m = m_transform_global*ipe::Matrix(ipe::Linear(r1, 0, 0, r2), ipe::Vector(x, y));
     ipe::Ellipse *ellipse = new ipe::Ellipse(m);
 
     ipe::Shape shape;
@@ -343,7 +356,7 @@ void Figure::draw_circle_radius_final(const double &x, const double &y, const do
 void Figure::draw_sector(const double& x, const double& y, const double& r1, const double& r2, const double& alpha_start, const double& alpha_end){
     ipe::Curve *curve=new ipe::Curve();
 
-    ipe::Matrix m(m_transform_global.linear()*ipe::Linear(r1, 0, 0, r2), m_transform_global*ipe::Vector(x, y));
+    ipe::Matrix m = m_transform_global*ipe::Matrix(ipe::Linear(r1, 0, 0, r2), ipe::Vector(x, y));
     ipe::Arc arc(m, ipe::Angle(alpha_start), ipe::Angle(alpha_end));
     curve->appendSegment(m.translation(), arc.beginp());
     curve->appendArc(m, arc.beginp(), arc.endp());
@@ -377,7 +390,7 @@ void Figure::set_opacity(const int &opacity){
     if(opacity != 100)
     {
         std::string opacity_value = std::to_string(opacity)+"\%";
-        m_current_attr.iOpacity = m_steel_sheet->find(ipe::EOpacity,ipe::Attribute(true, opacity_value.c_str()));
+        m_current_attr.iOpacity = ipe::Attribute(true, opacity_value.c_str());
     }
     else
     {
