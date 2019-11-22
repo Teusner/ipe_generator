@@ -281,23 +281,46 @@ void Figure::draw_arrow(const double &x0, const double &y0, const double &x1, co
     draw_arrow(ipe::Vector(x0, y0), ipe::Vector(x1, y1));
 }
 
-void Figure::draw_text(const std::string& text, const double &x, const double &y, const bool &math_mode)
+void Figure::draw_text(const std::string& text, const double &x, const double &y, const bool &math_mode, const ipe::THorizontalAlignment &horizontal_align)
 {
     double width;
     ipe::Text *obj = new ipe::Text(m_current_attr, text.c_str(), m_transform_global*ipe::Vector(x, y), ipe::Text::ELabel, width);
-    obj->setHorizontalAlignment(ipe::EAlignLeft);
+    obj->setHorizontalAlignment(horizontal_align);
     obj->setVerticalAlignment(ipe::EAlignBaseline);
     obj->setSize(ipe::Attribute::NORMAL());
     if(math_mode)
         obj->setStyle(ipe::Attribute(true, "math"));
     m_page->append(ipe::TSelect::ENotSelected, m_current_layer, obj);
-
 }
 
 void Figure::draw_box(const ibex::IntervalVector& box)
 {
     ipe::Rect rec(m_transform_global*ipe::Vector(box[0].lb(), box[1].lb()), m_transform_global*ipe::Vector(box[0].ub(), box[1].ub()));
 
+    ipe::Shape shape(rec);
+    ipe::Path *path = new ipe::Path(m_current_attr, shape);
+    m_page->append(ipe::TSelect::ENotSelected, m_current_layer, path);
+}
+
+void Figure::draw_box(const ipe::Rect& box)
+{
+    ipe::Rect rec(m_transform_global*box.bottomLeft(), m_transform_global*box.topRight());
+    ipe::Shape shape(rec);
+    ipe::Path *path = new ipe::Path(m_current_attr, shape);
+    m_page->append(ipe::TSelect::ENotSelected, m_current_layer, path);
+}
+
+void Figure::draw_box(const ipe::Vector &center, const double &width, const bool &keep_ratio)
+{
+    ipe::Vector offset(width/2.0, width/2.0);
+    ipe::Rect rec;
+    if(keep_ratio)
+    {
+        ipe::Matrix zoom(m_transform_global_keep_dimension.linear(), ipe::Vector(0.0, 0.0));
+        rec = ipe::Rect(m_transform_global*center-zoom*offset, m_transform_global*center+zoom*offset);
+    }
+    else
+        rec = ipe::Rect(m_transform_global*(center-offset), m_transform_global*(center+offset));
     ipe::Shape shape(rec);
     ipe::Path *path = new ipe::Path(m_current_attr, shape);
     m_page->append(ipe::TSelect::ENotSelected, m_current_layer, path);

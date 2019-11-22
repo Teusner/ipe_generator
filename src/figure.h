@@ -44,8 +44,10 @@ public:
     void draw_axis(const std::string &name_x, const std::string &name_y, const bool& enable_numbers=true);
     void draw_arrow(const double &x0, const double &y0, const double &x1, const double &y1);
     void draw_arrow(const ipe::Vector &v1, const ipe::Vector &v2);
-    void draw_text(const std::string &text, const double &x, const double &y, const bool& math_mode=false);
+    void draw_text(const std::string &text, const double &x, const double &y, const bool& math_mode=false, const ipe::THorizontalAlignment& horizontal_align=ipe::EAlignHCenter);
     void draw_box(const ibex::IntervalVector &box);
+    void draw_box(const ipe::Rect& box);
+    void draw_box(const ipe::Vector &center, const double &width, const bool& keep_ratio=false);
     void draw_curve(const std::vector<double> &x, const std::vector<double> &y);
     void draw_segment(const double &x0, const double &y0, const double &x1, const double &y1);
     void draw_polygon(const std::vector<double>& x, const std::vector<double>& y, const bool& closed=true);
