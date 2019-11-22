@@ -70,6 +70,7 @@ public:
     void set_graduation_parameters(const double &start_x, const double &inter_x, const double &start_y, const double &inter_y);
 
     void reset_scale(const double &width, const double &height, const bool &keep_ratio=false);
+    void set_scale_offset(const bool &enable);
 
     void set_color_stroke(const std::string &color_stroke="");
     void set_color_fill(const std::string &color_fill="");
@@ -105,8 +106,8 @@ private:
     ibex::IntervalVector m_frame_data;
     double m_output_width, m_output_height; // in bp
     double m_scale_x=1.0, m_scale_y=1.0; // Scale factor
-    double m_offset_x, m_offset_y; // Adding offset to (0,0)
-    double m_offset_drawing_x, m_offset_drawing_y;
+    double m_offset_x=0.0, m_offset_y=0.0; // Adding offset to (0,0)
+    double m_offset_drawing_x=0.0, m_offset_drawing_y=0.0;
     ipe::Matrix m_transform_global; // transformation offset + zoom
     ipe::Matrix m_transform_global_keep_dimension; // transformation offset without zoom
 
@@ -128,6 +129,7 @@ private:
     double m_distance_number_graduation = 2.0;
     double m_size_axis_graduation = 3.0;
     double m_general_offset = 0.0;
+    bool   m_scale_offset = true;
 
     double m_start_number_graduation_x = 0.0;
     double m_start_number_graduation_y = 0.0;
@@ -195,6 +197,11 @@ inline void Figure::set_graduation_parameters(const double &start_x, const doubl
     m_inter_graduation_x = inter_x;
     m_start_number_graduation_y = start_y;
     m_inter_graduation_y = inter_y;
+}
+
+inline void Figure::set_scale_offset(const bool &enable)
+{
+	m_scale_offset = enable;
 }
 
 }

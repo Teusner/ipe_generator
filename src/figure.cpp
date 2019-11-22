@@ -84,8 +84,16 @@ void Figure::init_scale(const double &width, const double &height, const bool &k
     m_offset_x = -m_frame_data[0].lb()*m_scale_x;
     m_offset_y = -m_frame_data[1].lb()*m_scale_y;
 
-    m_offset_drawing_x = m_distance_axis_text+m_size_axis_graduation+5*m_arrow_size;
-    m_offset_drawing_y = m_distance_axis_text+m_size_axis_graduation+5*m_arrow_size;
+    if(m_scale_offset)
+    {
+        m_offset_drawing_x = m_distance_axis_text+m_size_axis_graduation+5*m_arrow_size;
+        m_offset_drawing_y = m_distance_axis_text+m_size_axis_graduation+5*m_arrow_size;
+    }
+    else
+    {
+        m_offset_drawing_x = 0.0;
+        m_offset_drawing_y = 0.0; 
+    }
 
     m_transform_global = ipe::Matrix(ipe::Linear(m_scale_x, 0.0, 0.0, m_scale_y), ipe::Vector(m_offset_x+m_offset_drawing_x, m_offset_y+m_offset_drawing_y));
     m_transform_global_keep_dimension = ipe::Matrix(ipe::Linear(std::max(m_scale_x,m_scale_y), 0.0, 0.0, std::max(m_scale_x,m_scale_y)),m_transform_global.translation());
@@ -427,7 +435,14 @@ void Figure::set_current_layer(const std::string &layer_name)
 }
 
 void Figure::set_dashed(const std::string &dashed){
-    m_current_attr.iDashStyle = m_steel_sheet->find(ipe::EDashStyle, ipe::Attribute(true, dashed.c_str()));
+    if(dashed=="")
+    {
+        m_current_attr.iDashStyle = ipe::Attribute::NORMAL();
+    }
+    else
+    {
+        m_current_attr.iDashStyle = m_steel_sheet->find(ipe::EDashStyle, ipe::Attribute(true, dashed.c_str()));
+    }
 }
 
 }
