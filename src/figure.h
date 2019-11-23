@@ -29,7 +29,7 @@ public:
      * @param height
      * @param keep_ratio
      */
-    Figure(const std::string &filename, const ibex::IntervalVector &frame_data, const double &width, const double &height, const bool &keep_ratio);
+    Figure(const std::string &filename, const ibex::IntervalVector &frame_data, const double &width=210, const double &height=297, const bool &keep_ratio=false);
 
     ~Figure();
 
@@ -54,10 +54,11 @@ public:
     void draw_ellipse(const double& x, const double& y, const double& r1, const double& r2);
     void draw_circle(const double &x, const double &y, const double &r);
     void draw_circle_radius_final(const double &x, const double &y, const double &r);
+    void draw_symbol(const double& x, const double& y, const std::string &name, const double& size=1.0);
 
     void draw_sector(const double &x, const double &y, const double &r1, const double &r2, const double &alpha_start, const double& alpha_end);
 
-    void draw_float(const double &x, const double &y, const double &piston, const double &compressibility, const FLOAT_PISTON_MVT &mvt=FLOAT_PISTON_EQUAL, const double &zoom=1.0);
+    void draw_float(const double &x, const double &y, const double &piston, const double &compressibility, const FLOAT_PISTON_MVT &mvt=FLOAT_PISTON_EQUAL, const double &zoom=0.1);
 
     // Style functions
     void set_thickness_pen_factor(const double &val=1e-3);

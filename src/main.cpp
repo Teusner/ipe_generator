@@ -70,7 +70,10 @@ void test2()
     fig.draw_float(1.0, 0, 1.0, 0.0);
     fig.draw_float(2.0, 0, 0.0, 1.0, ipegenerator::FLOAT_PISTON_DOWN);
     fig.draw_float(3.0, 0, 1.0, 1.0);
-    fig.draw_float(5.0, 0, 1.0, 1.0, ipegenerator::FLOAT_PISTON_UP, 2.0);
+    fig.draw_float(5.0, 0, 1.0, 1.0, ipegenerator::FLOAT_PISTON_UP, 0.2);
+
+    fig.draw_symbol(2.0, 2.0, "disk(sx)", 5.0);
+
     fig.save_ipe("test.ipe");
     fig.save_pdf("test.pdf");
 }

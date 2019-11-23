@@ -409,6 +409,12 @@ void Figure::draw_sector(const double& x, const double& y, const double& r1, con
     m_page->append(ipe::TSelect::ENotSelected, m_current_layer, path);
 }
 
+void Figure::draw_symbol(const double& x, const double& y, const std::string &name, const double& size){
+    ipe::Reference *ref = new ipe::Reference(m_current_attr,ipe::Attribute(true, ("mark/"+ name).c_str()),m_transform_global*ipe::Vector(x, y));
+    ref->setSize(ipe::Attribute(ipe::Fixed::fromDouble(size)));
+    m_page->append(ipe::TSelect::ENotSelected, m_current_layer, ref);
+}
+
 void Figure::set_color_stroke(const std::string &color_stroke)
 {
     if(color_stroke!="")
