@@ -1,6 +1,7 @@
 #include "figure.h"
 #include <math.h>
 #include <sstream>
+#include <iomanip>
 
 namespace ipegenerator{
 
@@ -235,7 +236,8 @@ void Figure::draw_axis_number(const double &number, const ipe::Vector& pos, cons
     ipe::AllAttributes attr;
     attr.iStroke = ipe::Attribute::BLACK();
     std::stringstream number_string;
-    number_string << number;
+    std::fesetround(FE_TONEAREST);
+    number_string << std::fixed << std::setprecision((sens==AXIS_HORIZONTAL)?m_number_digits_axis_x:m_number_digits_axis_y) << number;
     double width;
     ipe::Text *text = new ipe::Text(attr, number_string.str().c_str(), pos+offset_text, ipe::Text::ELabel, width);
     if(sens==AXIS_VERTICAL)
@@ -266,9 +268,17 @@ void Figure::draw_axis_number(const double &number, const ipe::Vector& pos, cons
 void Figure::draw_axis_numbers()
 {
     for(double x=std::max(m_start_number_graduation_x,m_frame_data[0].lb()); x<=m_frame_data[0].ub(); x+=m_inter_graduation_x)
-        draw_axis_number(x, ipe::Vector(s_t_x(x), m_offset_drawing_y), AXIS_HORIZONTAL);
+    {
+        ipe::Vector pt = m_transform_global*ipe::Vector(x,0.0);
+        pt.y = m_offset_drawing_y;
+        draw_axis_number(x, pt, AXIS_HORIZONTAL);
+    }
     for(double y=std::max(m_start_number_graduation_y,m_frame_data[1].lb()); y<=m_frame_data[1].ub(); y+=m_inter_graduation_y)
-        draw_axis_number(y, ipe::Vector(m_offset_drawing_x, s_t_y(y)), AXIS_VERTICAL);
+    {
+        ipe::Vector pt = m_transform_global*ipe::Vector(0.0,y);
+        pt.x = m_offset_drawing_x;
+        draw_axis_number(y, pt, AXIS_VERTICAL);
+    }
 }
 
 void Figure::draw_arrow(const ipe::Vector& v1, const ipe::Vector& v2)

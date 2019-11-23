@@ -71,6 +71,8 @@ public:
 
     void reset_scale(const double &width, const double &height, const bool &keep_ratio=false);
     void set_scale_offset(const bool &enable);
+    void set_number_digits_axis_x(const size_t &val);
+    void set_number_digits_axis_y(const size_t &val);
 
     void set_color_stroke(const std::string &color_stroke="");
     void set_color_fill(const std::string &color_fill="");
@@ -130,6 +132,8 @@ private:
     double m_size_axis_graduation = 3.0;
     double m_general_offset = 0.0;
     bool   m_scale_offset = true;
+    size_t m_number_digits_axis_x = 3;
+    size_t m_number_digits_axis_y = 3;
 
     double m_start_number_graduation_x = 0.0;
     double m_start_number_graduation_y = 0.0;
@@ -202,6 +206,16 @@ inline void Figure::set_graduation_parameters(const double &start_x, const doubl
 inline void Figure::set_scale_offset(const bool &enable)
 {
 	m_scale_offset = enable;
+}
+
+inline void Figure::set_number_digits_axis_x(const size_t &val)
+{
+    m_number_digits_axis_x = val;
+}
+
+inline void Figure::set_number_digits_axis_y(const size_t &val)
+{
+    m_number_digits_axis_y = val;
 }
 
 }
