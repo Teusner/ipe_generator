@@ -42,23 +42,23 @@ public:
 
     // Drawing functions
     void draw_axis(const std::string &name_x, const std::string &name_y, const bool& enable_numbers=true);
-    void draw_arrow(const double &x0, const double &y0, const double &x1, const double &y1);
-    void draw_arrow(const ipe::Vector &v1, const ipe::Vector &v2);
-    void draw_text(const std::string &text, const double &x, const double &y, const bool& math_mode=false, const ipe::THorizontalAlignment& horizontal_align=ipe::EAlignHCenter);
-    void draw_box(const ibex::IntervalVector &box);
-    void draw_box(const ipe::Rect& box);
-    void draw_box(const ipe::Vector &center, const double &width, const bool& keep_ratio=false);
-    void draw_curve(const std::vector<double> &x, const std::vector<double> &y);
-    void draw_segment(const double &x0, const double &y0, const double &x1, const double &y1);
-    void draw_polygon(const std::vector<double>& x, const std::vector<double>& y, const bool& closed=true);
-    void draw_ellipse(const double& x, const double& y, const double& r1, const double& r2);
-    void draw_circle(const double &x, const double &y, const double &r);
-    void draw_circle_radius_final(const double &x, const double &y, const double &r);
-    void draw_symbol(const double& x, const double& y, const std::string &name, const double& size=1.0);
+    size_t draw_arrow(const double &x0, const double &y0, const double &x1, const double &y1);
+    size_t draw_arrow(const ipe::Vector &v1, const ipe::Vector &v2);
+    size_t draw_text(const std::string &text, const double &x, const double &y, const bool& math_mode=false, const ipe::THorizontalAlignment& horizontal_align=ipe::EAlignHCenter);
+    size_t draw_box(const ibex::IntervalVector &box);
+    size_t draw_box(const ipe::Rect& box);
+    size_t draw_box(const ipe::Vector &center, const double &width, const bool& keep_ratio=false);
+    size_t draw_curve(const std::vector<double> &x, const std::vector<double> &y);
+    size_t draw_segment(const double &x0, const double &y0, const double &x1, const double &y1);
+    size_t draw_polygon(const std::vector<double>& x, const std::vector<double>& y, const bool& closed=true);
+    size_t draw_ellipse(const double& x, const double& y, const double& r1, const double& r2);
+    size_t draw_circle(const double &x, const double &y, const double &r);
+    size_t draw_circle_radius_final(const double &x, const double &y, const double &r);
+    size_t draw_symbol(const double& x, const double& y, const std::string &name, const double& size=1.0);
 
-    void draw_sector(const double &x, const double &y, const double &r1, const double &r2, const double &alpha_start, const double& alpha_end);
+    size_t draw_sector(const double &x, const double &y, const double &r1, const double &r2, const double &alpha_start, const double& alpha_end);
 
-    void draw_float(const double &x, const double &y, const double &piston, const double &compressibility, const FLOAT_PISTON_MVT &mvt=FLOAT_PISTON_EQUAL, const double &zoom=0.1);
+    size_t draw_float(const double &x, const double &y, const double &piston, const double &compressibility, const FLOAT_PISTON_MVT &mvt=FLOAT_PISTON_EQUAL, const double &zoom=0.1);
 
     // Style functions
     void set_thickness_pen_factor(const double &val=1e-3);
@@ -81,6 +81,9 @@ public:
     void set_opacity(const int &opacity);
     void set_current_layer(const std::string &layer_name);
     void set_dashed(const std::string &dashed);
+    void set_line_width(const double &val);
+
+    void remove_object(const int &id);
 
 private:
     void load_style();

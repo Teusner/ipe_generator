@@ -58,6 +58,7 @@ Figure::Figure(const std::string &filename, const ibex::IntervalVector &frame_da
     int reason;
     m_document = ipe::Document::load(filename.c_str(),reason);
     m_page = m_document->page(0);
+    m_steel_sheet = m_document->cascade()->sheet(0);
 }
 
 Figure::~Figure(){
@@ -281,7 +282,7 @@ void Figure::draw_axis_numbers()
     }
 }
 
-void Figure::draw_arrow(const ipe::Vector& v1, const ipe::Vector& v2)
+size_t Figure::draw_arrow(const ipe::Vector& v1, const ipe::Vector& v2)
 {
     ipe::Segment seg(m_transform_global*v1, m_transform_global*v2);
     ipe::AllAttributes attr(m_current_attr);
@@ -292,14 +293,15 @@ void Figure::draw_arrow(const ipe::Vector& v1, const ipe::Vector& v2)
     ipe::Shape shape(seg);
     ipe::Path *path = new ipe::Path(attr, shape, true);
     m_page->append(ipe::TSelect::ENotSelected, m_current_layer, path);
+    return m_page->count()-1;
 }
 
-void Figure::draw_arrow(const double &x0, const double &y0, const double &x1, const double &y1)
+size_t Figure::draw_arrow(const double &x0, const double &y0, const double &x1, const double &y1)
 {
-    draw_arrow(ipe::Vector(x0, y0), ipe::Vector(x1, y1));
+    return draw_arrow(ipe::Vector(x0, y0), ipe::Vector(x1, y1));
 }
 
-void Figure::draw_text(const std::string& text, const double &x, const double &y, const bool &math_mode, const ipe::THorizontalAlignment &horizontal_align)
+size_t Figure::draw_text(const std::string& text, const double &x, const double &y, const bool &math_mode, const ipe::THorizontalAlignment &horizontal_align)
 {
     double width;
     ipe::Text *obj = new ipe::Text(m_current_attr, text.c_str(), m_transform_global*ipe::Vector(x, y), ipe::Text::ELabel, width);
@@ -309,26 +311,29 @@ void Figure::draw_text(const std::string& text, const double &x, const double &y
     if(math_mode)
         obj->setStyle(ipe::Attribute(true, "math"));
     m_page->append(ipe::TSelect::ENotSelected, m_current_layer, obj);
+    return m_page->count()-1;
 }
 
-void Figure::draw_box(const ibex::IntervalVector& box)
+size_t Figure::draw_box(const ibex::IntervalVector& box)
 {
     ipe::Rect rec(m_transform_global*ipe::Vector(box[0].lb(), box[1].lb()), m_transform_global*ipe::Vector(box[0].ub(), box[1].ub()));
 
     ipe::Shape shape(rec);
     ipe::Path *path = new ipe::Path(m_current_attr, shape);
     m_page->append(ipe::TSelect::ENotSelected, m_current_layer, path);
+    return m_page->count()-1;
 }
 
-void Figure::draw_box(const ipe::Rect& box)
+size_t Figure::draw_box(const ipe::Rect& box)
 {
     ipe::Rect rec(m_transform_global*box.bottomLeft(), m_transform_global*box.topRight());
     ipe::Shape shape(rec);
     ipe::Path *path = new ipe::Path(m_current_attr, shape);
     m_page->append(ipe::TSelect::ENotSelected, m_current_layer, path);
+    return m_page->count()-1;
 }
 
-void Figure::draw_box(const ipe::Vector &center, const double &width, const bool &keep_ratio)
+size_t Figure::draw_box(const ipe::Vector &center, const double &width, const bool &keep_ratio)
 {
     ipe::Vector offset(width/2.0, width/2.0);
     ipe::Rect rec;
@@ -342,21 +347,22 @@ void Figure::draw_box(const ipe::Vector &center, const double &width, const bool
     ipe::Shape shape(rec);
     ipe::Path *path = new ipe::Path(m_current_attr, shape);
     m_page->append(ipe::TSelect::ENotSelected, m_current_layer, path);
+    return m_page->count()-1;
 }
 
-void Figure::draw_curve(const std::vector<double>& x, const std::vector<double>& y)
+size_t Figure::draw_curve(const std::vector<double>& x, const std::vector<double>& y)
 {
-    draw_polygon(x, y, false);
+    return draw_polygon(x, y, false);
 }
 
-void Figure::draw_segment(const double &x0, const double &y0, const double &x1, const double &y1){
-    draw_curve(std::vector<double>{x0, x1}, std::vector<double>{y0, y1});
+size_t Figure::draw_segment(const double &x0, const double &y0, const double &x1, const double &y1){
+    return draw_curve(std::vector<double>{x0, x1}, std::vector<double>{y0, y1});
 }
 
-void Figure::draw_polygon(const std::vector<double>& x, const std::vector<double>& y,const bool &closed){
+size_t Figure::draw_polygon(const std::vector<double>& x, const std::vector<double>& y,const bool &closed){
     ipe::Curve *curve=new ipe::Curve();
     if(x.size()==0)
-        return;
+        return 0;
     else if(x.size()==1)
         curve->appendSegment(m_transform_global*ipe::Vector(x[0], y[0]), m_transform_global*ipe::Vector(x[0], y[0]));
     else
@@ -370,9 +376,10 @@ void Figure::draw_polygon(const std::vector<double>& x, const std::vector<double
     shape.appendSubPath(curve);
     ipe::Path *path = new ipe::Path(m_current_attr, shape);
     m_page->append(ipe::TSelect::ENotSelected,m_current_layer, path);
+    return m_page->count()-1;
 }
 
-void Figure::draw_ellipse(const double &x, const double &y, const double &r1, const double &r2)
+size_t Figure::draw_ellipse(const double &x, const double &y, const double &r1, const double &r2)
 {
     ipe::Matrix m = m_transform_global*ipe::Matrix(ipe::Linear(r1, 0, 0, r2), ipe::Vector(x, y));
     ipe::Ellipse *ellipse = new ipe::Ellipse(m);
@@ -381,20 +388,21 @@ void Figure::draw_ellipse(const double &x, const double &y, const double &r1, co
     shape.appendSubPath(ellipse);
     ipe::Path *path = new ipe::Path(m_current_attr, shape);
     m_page->append(ipe::TSelect::ENotSelected, m_current_layer, path);
+    return m_page->count()-1;
 }
 
-void Figure::draw_circle(const double &x, const double &y, const double &r)
+size_t Figure::draw_circle(const double &x, const double &y, const double &r)
 {
-    draw_ellipse(x, y, r, r);
+    return draw_ellipse(x, y, r, r);
 }
 
-void Figure::draw_circle_radius_final(const double &x, const double &y, const double &r)
+size_t Figure::draw_circle_radius_final(const double &x, const double &y, const double &r)
 {
     ipe::Vector r_inv = m_transform_global.linear().inverse()*ipe::Vector(r,r);
-    draw_ellipse(x, y, r_inv.x, r_inv.y);
+    return draw_ellipse(x, y, r_inv.x, r_inv.y);
 }
 
-void Figure::draw_sector(const double& x, const double& y, const double& r1, const double& r2, const double& alpha_start, const double& alpha_end){
+size_t Figure::draw_sector(const double& x, const double& y, const double& r1, const double& r2, const double& alpha_start, const double& alpha_end){
     ipe::Curve *curve=new ipe::Curve();
 
     ipe::Matrix m = m_transform_global*ipe::Matrix(ipe::Linear(r1, 0, 0, r2), ipe::Vector(x, y));
@@ -407,12 +415,14 @@ void Figure::draw_sector(const double& x, const double& y, const double& r1, con
     shape.appendSubPath(curve);
     ipe::Path *path = new ipe::Path(m_current_attr, shape);
     m_page->append(ipe::TSelect::ENotSelected, m_current_layer, path);
+    return m_page->count()-1;
 }
 
-void Figure::draw_symbol(const double& x, const double& y, const std::string &name, const double& size){
+size_t Figure::draw_symbol(const double& x, const double& y, const std::string &name, const double& size){
     ipe::Reference *ref = new ipe::Reference(m_current_attr,ipe::Attribute(true, ("mark/"+ name).c_str()),m_transform_global*ipe::Vector(x, y));
     ref->setSize(ipe::Attribute(ipe::Fixed::fromDouble(size)));
     m_page->append(ipe::TSelect::ENotSelected, m_current_layer, ref);
+    return m_page->count()-1;
 }
 
 void Figure::set_color_stroke(const std::string &color_stroke)
@@ -459,6 +469,16 @@ void Figure::set_dashed(const std::string &dashed){
     {
         m_current_attr.iDashStyle = m_steel_sheet->find(ipe::EDashStyle, ipe::Attribute(true, dashed.c_str()));
     }
+}
+
+void Figure::remove_object(const int &id)
+{
+    m_page->remove(id);
+}
+
+void Figure::set_line_width(const double &val)
+{
+    m_current_attr.iPen = ipe::Attribute(ipe::Fixed::fromDouble(val));
 }
 
 }

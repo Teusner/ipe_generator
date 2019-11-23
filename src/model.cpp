@@ -7,7 +7,7 @@ namespace ipegenerator{
 
 
 
-void Figure::draw_float(const double &x, const double &y, const double &piston, const double &compressibility, const FLOAT_PISTON_MVT &mvt,const double &zoom)
+size_t Figure::draw_float(const double &x, const double &y, const double &piston, const double &compressibility, const FLOAT_PISTON_MVT &mvt,const double &zoom)
 {
     ipe::Group *group = new ipe::Group();
     const double min_size_frame = std::min(m_frame_data[0].diam(), m_frame_data[1].diam());
@@ -93,6 +93,7 @@ void Figure::draw_float(const double &x, const double &y, const double &piston, 
     }
 
     m_page->append(ipe::TSelect::ENotSelected, m_current_layer, group);
+    return m_page->count()-1;
 }
 
 }
