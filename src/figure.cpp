@@ -88,8 +88,8 @@ void Figure::init_scale(const double &width, const double &height, const bool &k
 
     if(m_scale_offset)
     {
-        m_offset_drawing_x = m_distance_axis_text+m_size_axis_graduation+5*m_arrow_size;
-        m_offset_drawing_y = m_distance_axis_text+m_size_axis_graduation+5*m_arrow_size;
+        m_offset_drawing_x = m_distance_axis_text+m_size_axis_graduation+5*m_arrow_axis_size;
+        m_offset_drawing_y = m_distance_axis_text+m_size_axis_graduation+5*m_arrow_axis_size;
     }
     else
     {
@@ -108,7 +108,7 @@ void Figure::style_size()
     m_steel_sheet->add(ipe::EPen, ipe::Attribute(true, "normal"), ipe::Attribute(ipe::Fixed::fromDouble(size_normal)));
     m_steel_sheet->add(ipe::EPen, ipe::Attribute(true, "axis"), ipe::Attribute(ipe::Fixed::fromDouble(size_normal*1.5)));
     m_steel_sheet->add(ipe::EPen, ipe::Attribute(true, "axis_segment"), ipe::Attribute(ipe::Fixed::fromDouble(size_normal)));
-    m_steel_sheet->add(ipe::EArrowSize, ipe::Attribute(true, "normal"), ipe::Attribute(ipe::Fixed::fromDouble(m_arrow_size)));
+    m_steel_sheet->add(ipe::EArrowSize, ipe::Attribute(true, "normal"), ipe::Attribute(ipe::Fixed::fromDouble(m_arrow_axis_size)));
     m_steel_sheet->add(ipe::ETextSize, ipe::Attribute(true, "normal"), ipe::Attribute(true, "\\normalsize"));
 }
 
@@ -169,8 +169,8 @@ void Figure::save_ipe(const std::string &file_name)
 
 void Figure::draw_axis(const std::string &name_x, const std::string &name_y, const bool &enable_numbers)
 {
-    ipe::Vector pt_x(s_t_x(m_frame_data[0].ub())+3*m_arrow_size, m_offset_drawing_y);
-    ipe::Vector pt_y(m_offset_drawing_x, s_t_y(m_frame_data[1].ub())+3*m_arrow_size);
+    ipe::Vector pt_x(s_t_x(m_frame_data[0].ub())+3*m_arrow_axis_size, m_offset_drawing_y);
+    ipe::Vector pt_y(m_offset_drawing_x, s_t_y(m_frame_data[1].ub())+3*m_arrow_axis_size);
     draw_arrow_axis(ipe::Vector(m_offset_drawing_x, m_offset_drawing_y), pt_x);
     draw_arrow_axis(ipe::Vector(m_offset_drawing_x, m_offset_drawing_y), pt_y);
 
@@ -287,7 +287,7 @@ size_t Figure::draw_arrow(const ipe::Vector& v1, const ipe::Vector& v2)
     ipe::Segment seg(m_transform_global*v1, m_transform_global*v2);
     ipe::AllAttributes attr(m_current_attr);
     attr.iFArrow = true;
-    attr.iFArrowSize = ipe::Attribute::NORMAL();
+//    attr.iFArrowSize = ipe::Attribute::NORMAL();
     attr.iFArrowShape = ipe::Attribute::ARROW_NORMAL();
 
     ipe::Shape shape(seg);

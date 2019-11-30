@@ -64,7 +64,7 @@ public:
     void set_thickness_pen_factor(const double &val=1e-3);
     void set_thickness_axis(const double &val=1e-3);
     void set_distance_axis_text(const double &val);
-    void set_arrow_size(const double &val);
+    void set_arrow_axis_size(const double &val);
 
     void set_distance_number_graduation(const double &distance_number_graduation);
     void set_size_axis_graduation(const double &size_axis_graduation);
@@ -82,6 +82,7 @@ public:
     void set_current_layer(const std::string &layer_name);
     void set_dashed(const std::string &dashed);
     void set_line_width(const double &val);
+    void set_arrow_size(const double &val);
 
     void remove_object(const int &id);
 
@@ -130,7 +131,7 @@ private:
     // Ipe parameters
     std::string m_ref_document = "/usr/local/etc/ipegenerator/basic.ipe";
     double m_thickness_pen_factor = 1e-3; // thickness of pen
-    double m_arrow_size = 4.294; // Corresponds to /normalsize in latex
+    double m_arrow_axis_size = 4.294; // Corresponds to /normalsize in latex
     double m_distance_axis_text = 3.0;
     double m_distance_number_graduation = 2.0;
     double m_size_axis_graduation = 3.0;
@@ -184,9 +185,9 @@ inline void Figure::set_distance_axis_text(const double &val)
     m_distance_axis_text = val;
 }
 
-inline void Figure::set_arrow_size(const double &val)
+inline void Figure::set_arrow_axis_size(const double &val)
 {
-    m_arrow_size = val;
+    m_arrow_axis_size = val;
 }
 
 inline void Figure::set_distance_number_graduation(const double &distance_number_graduation)
@@ -220,6 +221,10 @@ inline void Figure::set_number_digits_axis_x(const size_t &val)
 inline void Figure::set_number_digits_axis_y(const size_t &val)
 {
     m_number_digits_axis_y = val;
+}
+
+inline void Figure::set_arrow_size(const double &val){
+    m_current_attr.iFArrowSize = ipe::Attribute(ipe::Fixed::fromDouble(val));
 }
 
 }
