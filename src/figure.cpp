@@ -67,6 +67,9 @@ Figure::~Figure(){
 
 void Figure::init_scale(const double &width, const double &height, const bool &keep_ratio)
 {
+    m_width = width;
+    m_height = height;
+    m_keep_ratio = keep_ratio;
 
     m_output_width = width*MM_TO_BP;
     m_output_height = height*MM_TO_BP;
@@ -97,8 +100,16 @@ void Figure::init_scale(const double &width, const double &height, const bool &k
         m_offset_drawing_y = 0.0; 
     }
 
-    m_transform_global = ipe::Matrix(ipe::Linear(m_scale_x, 0.0, 0.0, m_scale_y), ipe::Vector(m_offset_x+m_offset_drawing_x, m_offset_y+m_offset_drawing_y));
-    m_transform_global_keep_dimension = ipe::Matrix(ipe::Linear(std::max(m_scale_x,m_scale_y), 0.0, 0.0, std::max(m_scale_x,m_scale_y)),m_transform_global.translation());
+    if(!m_inversion_y)
+    {
+        m_transform_global = ipe::Matrix(ipe::Linear(m_scale_x, 0.0, 0.0, m_scale_y), ipe::Vector(m_offset_x+m_offset_drawing_x, m_offset_y+m_offset_drawing_y));
+        m_transform_global_keep_dimension = ipe::Matrix(ipe::Linear(std::max(m_scale_x,m_scale_y), 0.0, 0.0, std::max(m_scale_x,m_scale_y)),m_transform_global.translation());
+    }
+    else
+    {
+        m_transform_global = ipe::Matrix(ipe::Linear(m_scale_x, 0.0, 0.0, -m_scale_y), ipe::Vector(m_offset_x+m_offset_drawing_x, m_output_height-m_offset_y+m_offset_drawing_y));
+        m_transform_global_keep_dimension = ipe::Matrix(ipe::Linear(std::max(m_scale_x,m_scale_y), 0.0, 0.0, std::max(m_scale_x,m_scale_y)),m_transform_global.translation());
+    }
 }
 
 void Figure::style_size()
@@ -169,10 +180,12 @@ void Figure::save_ipe(const std::string &file_name)
 
 void Figure::draw_axis(const std::string &name_x, const std::string &name_y, const bool &enable_numbers)
 {
-    ipe::Vector pt_x(s_t_x(m_frame_data[0].ub())+3*m_arrow_axis_size, m_offset_drawing_y);
-    ipe::Vector pt_y(m_offset_drawing_x, s_t_y(m_frame_data[1].ub())+3*m_arrow_axis_size);
-    draw_arrow_axis(ipe::Vector(m_offset_drawing_x, m_offset_drawing_y), pt_x);
-    draw_arrow_axis(ipe::Vector(m_offset_drawing_x, m_offset_drawing_y), pt_y);
+    ipe::Vector pt_origin = m_transform_global*ipe::Vector(m_frame_data[0].lb(), m_frame_data[1].lb());
+    ipe::Vector pt_x = m_transform_global*ipe::Vector(m_frame_data[0].ub(), m_frame_data[1].lb())+ipe::Vector(3*m_arrow_axis_size,0.);
+    ipe::Vector pt_y = m_transform_global*ipe::Vector(m_frame_data[0].lb(), m_frame_data[1].ub())+ipe::Vector(0.,3*m_arrow_axis_size*(m_inversion_y?-1.:1.));
+
+    draw_arrow_axis(pt_origin, pt_x); // X
+    draw_arrow_axis(pt_origin, pt_y); // Y
 
     double width;
     // Horizontal
@@ -187,12 +200,12 @@ void Figure::draw_axis(const std::string &name_x, const std::string &name_y, con
     m_page->append(ipe::TSelect::ENotSelected, 0, text_h);
 
     // Vertical
-    ipe::Vector offset_v(0.0, m_distance_axis_text);
+    ipe::Vector offset_v(0.0, m_distance_axis_text*(m_inversion_y)?-1.:1.);
     ipe::AllAttributes attr_v;
     attr_v.iStroke = ipe::Attribute::BLACK();
     ipe::Text *text_v = new ipe::Text(attr_v, name_y.c_str(), pt_y+offset_v, ipe::Text::ELabel, width);
     text_v->setHorizontalAlignment(ipe::EAlignHCenter); // for scale_number ?
-    text_v->setVerticalAlignment(ipe::EAlignBottom); // EAlignBaseline
+    text_v->setVerticalAlignment((m_inversion_y)?(ipe::EAlignTop):(ipe::EAlignBottom)); // EAlignBaseline
     text_v->setSize(ipe::Attribute::NORMAL());
     text_v->setStyle(ipe::Attribute(true, "math"));
     m_page->append(ipe::TSelect::ENotSelected, 0, text_v);
@@ -229,8 +242,8 @@ void Figure::draw_axis_number(const double &number, const ipe::Vector& pos, cons
     }
     else
     {
-        offset_text = ipe::Vector(0.0, -(m_distance_number_graduation+m_distance_axis_text));
-        offset_graduation = ipe::Vector(0.0, -(m_distance_number_graduation));
+        offset_text = ipe::Vector(0.0, -(m_distance_number_graduation+m_distance_axis_text)*(m_inversion_y?-1.:1.));
+        offset_graduation = ipe::Vector(0.0, -(m_distance_number_graduation)*(m_inversion_y?-1.:1.));
     }
 
     // Text
@@ -249,7 +262,7 @@ void Figure::draw_axis_number(const double &number, const ipe::Vector& pos, cons
     else
     {
         text->setHorizontalAlignment(ipe::EAlignHCenter);
-        text->setVerticalAlignment(ipe::EAlignTop);
+        text->setVerticalAlignment((m_inversion_y)?(ipe::EAlignBottom):(ipe::EAlignTop));
     }
     text->setStyle(ipe::Attribute(true, "math"));
 
@@ -270,14 +283,12 @@ void Figure::draw_axis_numbers()
 {
     for(double x=std::max(m_start_number_graduation_x,m_frame_data[0].lb()); x<=m_frame_data[0].ub(); x+=m_inter_graduation_x)
     {
-        ipe::Vector pt = m_transform_global*ipe::Vector(x,0.0);
-        pt.y = m_offset_drawing_y;
+        ipe::Vector pt = m_transform_global*ipe::Vector(x,m_frame_data[1].lb());
         draw_axis_number(x, pt, AXIS_HORIZONTAL);
     }
     for(double y=std::max(m_start_number_graduation_y,m_frame_data[1].lb()); y<=m_frame_data[1].ub(); y+=m_inter_graduation_y)
     {
-        ipe::Vector pt = m_transform_global*ipe::Vector(0.0,y);
-        pt.x = m_offset_drawing_x;
+        ipe::Vector pt = m_transform_global*ipe::Vector(m_frame_data[0].lb(),y);
         draw_axis_number(y, pt, AXIS_VERTICAL);
     }
 }
@@ -479,6 +490,21 @@ void Figure::remove_object(const int &id)
 void Figure::set_line_width(const double &val)
 {
     m_current_attr.iPen = ipe::Attribute(ipe::Fixed::fromDouble(val));
+}
+
+void Figure::set_arrow_size(const double &val){
+    m_current_attr.iFArrowSize = ipe::Attribute(ipe::Fixed::fromDouble(val));
+}
+
+void Figure::reset_attribute()
+{
+    m_current_attr = ipe::AllAttributes();
+}
+
+void Figure::set_inverted_y()
+{
+    m_inversion_y = true;
+    init_scale(m_width, m_height, m_keep_ratio);
 }
 
 }

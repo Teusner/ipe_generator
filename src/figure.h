@@ -74,6 +74,7 @@ public:
     void set_scale_offset(const bool &enable);
     void set_number_digits_axis_x(const size_t &val);
     void set_number_digits_axis_y(const size_t &val);
+    void set_inverted_y();
 
     void set_color_stroke(const std::string &color_stroke="");
     void set_color_fill(const std::string &color_fill="");
@@ -83,6 +84,7 @@ public:
     void set_dashed(const std::string &dashed);
     void set_line_width(const double &val);
     void set_arrow_size(const double &val);
+    void reset_attribute();
 
     void remove_object(const int &id);
 
@@ -117,6 +119,9 @@ private:
     double m_offset_drawing_x=0.0, m_offset_drawing_y=0.0;
     ipe::Matrix m_transform_global; // transformation offset + zoom
     ipe::Matrix m_transform_global_keep_dimension; // transformation offset without zoom
+    bool m_inversion_y = false;
+    double m_width, m_height;
+    bool m_keep_ratio;
 
     // Ipe objects
     ipe::Document   * m_document;
@@ -221,10 +226,6 @@ inline void Figure::set_number_digits_axis_x(const size_t &val)
 inline void Figure::set_number_digits_axis_y(const size_t &val)
 {
     m_number_digits_axis_y = val;
-}
-
-inline void Figure::set_arrow_size(const double &val){
-    m_current_attr.iFArrowSize = ipe::Attribute(ipe::Fixed::fromDouble(val));
 }
 
 }
