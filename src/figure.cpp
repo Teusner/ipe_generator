@@ -97,15 +97,16 @@ void Figure::init_scale(const double &width, const double &height, const bool &k
     else
     {
         m_offset_drawing_x = 0.0;
-        m_offset_drawing_y = 0.0; 
+        m_offset_drawing_y = 0.0;
     }
 
-    if(!m_inversion_y)
-    {
-        m_transform_global = ipe::Matrix(ipe::Linear(m_scale_x, 0.0, 0.0, m_scale_y), ipe::Vector(m_offset_x+m_offset_drawing_x, m_offset_y+m_offset_drawing_y));
-        m_transform_global_keep_dimension = ipe::Matrix(ipe::Linear(std::max(m_scale_x,m_scale_y), 0.0, 0.0, std::max(m_scale_x,m_scale_y)),m_transform_global.translation());
-    }
-    else
+
+    m_transform_global = ipe::Matrix(ipe::Linear(m_scale_x, 0.0, 0.0, m_scale_y), ipe::Vector(m_offset_x+m_offset_drawing_x, m_offset_y+m_offset_drawing_y));
+    m_transform_global_keep_dimension = ipe::Matrix(ipe::Linear(std::max(m_scale_x,m_scale_y), 0.0, 0.0, std::max(m_scale_x,m_scale_y)),m_transform_global.translation());
+    m_transform_global_keep_y = m_transform_global;
+    m_transform_global_keep_dimension_keep_y = m_transform_global_keep_dimension;
+
+    if(m_inversion_y)
     {
         m_transform_global = ipe::Matrix(ipe::Linear(m_scale_x, 0.0, 0.0, -m_scale_y), ipe::Vector(m_offset_x+m_offset_drawing_x, m_output_height-m_offset_y+m_offset_drawing_y));
         m_transform_global_keep_dimension = ipe::Matrix(ipe::Linear(std::max(m_scale_x,m_scale_y), 0.0, 0.0, std::max(m_scale_x,m_scale_y)),m_transform_global.translation());
@@ -298,7 +299,7 @@ size_t Figure::draw_arrow(const ipe::Vector& v1, const ipe::Vector& v2)
     ipe::Segment seg(m_transform_global*v1, m_transform_global*v2);
     ipe::AllAttributes attr(m_current_attr);
     attr.iFArrow = true;
-//    attr.iFArrowSize = ipe::Attribute::NORMAL();
+    //    attr.iFArrowSize = ipe::Attribute::NORMAL();
     attr.iFArrowShape = ipe::Attribute::ARROW_NORMAL();
 
     ipe::Shape shape(seg);

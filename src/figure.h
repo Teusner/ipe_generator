@@ -119,6 +119,8 @@ private:
     double m_offset_drawing_x=0.0, m_offset_drawing_y=0.0;
     ipe::Matrix m_transform_global; // transformation offset + zoom
     ipe::Matrix m_transform_global_keep_dimension; // transformation offset without zoom
+    ipe::Matrix m_transform_global_keep_y; // transformation offset + zoom
+    ipe::Matrix m_transform_global_keep_dimension_keep_y; // transformation offset without zoom
     bool m_inversion_y = false;
     double m_width, m_height;
     bool m_keep_ratio;
