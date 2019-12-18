@@ -159,10 +159,18 @@ void Figure::load_style()
 {
     int reason;
     ipe::Document *doc_ref = ipe::Document::load(m_ref_document.c_str(),reason);
-    m_cascade_ref = new ipe::Cascade(*doc_ref->cascade());
-    ipe::Cascade *old_cascade = m_document->cascade();
-    m_document->replaceCascade(m_cascade_ref);
-    delete(old_cascade);
+
+    if(doc_ref!=nullptr)
+    {
+        m_cascade_ref = new ipe::Cascade(*doc_ref->cascade());
+        ipe::Cascade *old_cascade = m_document->cascade();
+        m_document->replaceCascade(m_cascade_ref);
+        delete(old_cascade);
+    }
+    else
+    {
+        std::cout << "Error while opening the style sheet " << reason << " " << m_ref_document << std::endl;
+    }
     m_steel_sheet = m_document->cascade()->sheet(0);
     delete(doc_ref);
 }
