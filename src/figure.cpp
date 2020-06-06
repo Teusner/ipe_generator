@@ -196,7 +196,7 @@ void Figure::draw_axis(const std::string &name_x, const std::string &name_y, con
     draw_arrow_axis(pt_origin, pt_x); // X
     draw_arrow_axis(pt_origin, pt_y); // Y
 
-    double width;
+    double width = 0.0;
     // Horizontal
     ipe::Vector offset_h(m_distance_axis_text, 0.0);
     ipe::AllAttributes attr_h;
@@ -209,7 +209,7 @@ void Figure::draw_axis(const std::string &name_x, const std::string &name_y, con
     m_page->append(ipe::TSelect::ENotSelected, 0, text_h);
 
     // Vertical
-    ipe::Vector offset_v(0.0, m_distance_axis_text*(m_inversion_y)?-1.:1.);
+    ipe::Vector offset_v(0.0, m_distance_axis_text*(m_inversion_y?-1.:1.));
     ipe::AllAttributes attr_v;
     attr_v.iStroke = ipe::Attribute::BLACK();
     ipe::Text *text_v = new ipe::Text(attr_v, name_y.c_str(), pt_y+offset_v, ipe::Text::ELabel, width);
@@ -261,7 +261,7 @@ void Figure::draw_axis_number(const double &number, const ipe::Vector& pos, cons
     std::stringstream number_string;
     std::fesetround(FE_TONEAREST);
     number_string << std::fixed << std::setprecision((sens==AXIS_HORIZONTAL)?m_number_digits_axis_x:m_number_digits_axis_y) << number;
-    double width;
+    double width = 0.0;
     ipe::Text *text = new ipe::Text(attr, number_string.str().c_str(), pos+offset_text, ipe::Text::ELabel, width);
     if(sens==AXIS_VERTICAL)
     {
@@ -323,7 +323,7 @@ size_t Figure::draw_arrow(const double &x0, const double &y0, const double &x1, 
 
 size_t Figure::draw_text(const std::string& text, const double &x, const double &y, const bool &math_mode, const ipe::THorizontalAlignment &horizontal_align)
 {
-    double width;
+    double width = 0.0;
     ipe::Text *obj = new ipe::Text(m_current_attr, text.c_str(), m_transform_global*ipe::Vector(x, y), ipe::Text::ELabel, width);
     obj->setHorizontalAlignment(horizontal_align);
     obj->setVerticalAlignment(ipe::EAlignBaseline);

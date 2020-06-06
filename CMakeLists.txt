@@ -47,23 +47,13 @@ else()
 	message(FATAL_ERROR "[OPENMP] NO")
 endif()
 
-set(IbexLib_USE_STATIC 1)
-FIND_PACKAGE(IbexLib REQUIRED)
-if(IBEX_FOUND)
- set(LIBS ${LIBS} ${IBEX_LIBRARIES})
- include_directories(${IBEX_INCLUDE_DIRS})
-
- message(STATUS "[IBEX] IBEX_LIBRARIES = ${IBEX_LIBRARIES}")
- message(STATUS "[IBEX] IBEX_INCLUDE_DIRS = ${IBEX_INCLUDE_DIRS}")
- message(STATUS "[IBEX] IBEX_DEFINITIONS = ${IBEX_DEFINITIONS}")
- message(STATUS "[IBEX] CMAKE_CXX_FLAGS = ${CMAKE_CXX_FLAGS}")
-else()
- message(FATAL_ERROR "Unable to find IBEX-lib. You may need to set IBEX_ROOT ${IBEX_ROOT}")
-endif()
+set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}:${IBEX_ROOT}/share/ibex/")
+find_package (IBEX REQUIRED)
+message (STATUS "Found Ibex version ${IBEX_VERSION}")
+ibex_init_common() # Ibex should have installed this function
 
 FIND_PACKAGE(Ipe REQUIRED)
 if(IPE_FOUND)
- set(LIBS ${LIBS} ${IPE_LIBRARY})
 
  message(STATUS "[IPE] IPE_LIBRARIES = ${IPE_LIBRARY}")
 else()
@@ -80,6 +70,7 @@ add_library(ipegenerator SHARED
  )
 target_link_libraries(ipegenerator
  ${IPE_LIBRARY}
+ Ibex::ibex
  )
 
 set_target_properties(${PACKAGE_NAME} PROPERTIES VERSION 1.0)
@@ -154,5 +145,6 @@ set(HEADERS
 add_executable(ipe_test ${SRC})
 
 target_link_libraries(ipe_test
- ${LIBS}
+ ${IPE_LIBRARY}
+ Ibex::ibex
  )
