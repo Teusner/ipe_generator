@@ -5,7 +5,7 @@
 /*
 
     This file is part of the extensible drawing editor Ipe.
-    Copyright (c) 1993-2019 Otfried Cheong
+    Copyright (c) 1993-2020 Otfried Cheong
 
     Ipe is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -46,11 +46,11 @@ namespace ipe {
 
     static Path *create(const XmlAttributes &attr, String data);
 
-    virtual Object *clone() const;
+    virtual Object *clone() const override;
 
-    virtual Path *asPath();
+    virtual Path *asPath() override;
 
-    virtual Type type() const;
+    virtual Type type() const override;
 
     void setPathMode(TPathMode pm);
     void setStroke(Attribute stroke);
@@ -82,27 +82,29 @@ namespace ipe {
     inline TLineJoin lineJoin() const;
     inline TFillRule fillRule() const;
 
-    virtual void saveAsXml(Stream &stream, String layer) const;
-    virtual void draw(Painter &painter) const;
-    virtual void drawSimple(Painter &painter) const;
+    virtual void saveAsXml(Stream &stream, String layer) const override;
+    virtual void draw(Painter &painter) const override;
+    virtual void drawSimple(Painter &painter) const override;
 
-    virtual void accept(Visitor &visitor) const;
+    virtual void accept(Visitor &visitor) const override;
 
-    virtual void addToBBox(Rect &box, const Matrix &m, bool cp) const;
+    virtual void addToBBox(Rect &box, const Matrix &m, bool cp) const override;
     virtual double distance(const Vector &v, const Matrix &m,
-			    double bound) const;
+			    double bound) const override;
     virtual void snapVtx(const Vector &mouse, const Matrix &m,
-			 Vector &pos, double &bound) const;
+			 Vector &pos, double &bound) const override;
     virtual void snapCtl(const Vector &mouse, const Matrix &m,
-			 Vector &pos, double &bound) const;
+			 Vector &pos, double &bound) const override;
     virtual void snapBnd(const Vector &mouse, const Matrix &m,
-			 Vector &pos, double &bound) const;
+			 Vector &pos, double &bound) const override;
 
     virtual void checkStyle(const Cascade *sheet,
-			    AttributeSeq &seq) const;
+			    AttributeSeq &seq) const override;
 
-    virtual bool setAttribute(Property prop, Attribute value);
-    virtual Attribute getAttribute(Property prop) const noexcept;
+    virtual void setMatrix(const Matrix &matrix) override;
+
+    virtual bool setAttribute(Property prop, Attribute value) override;
+    virtual Attribute getAttribute(Property prop) const noexcept override;
 
     inline bool arrow() const;
     inline bool rArrow() const;
@@ -137,6 +139,9 @@ namespace ipe {
     int iRArrowOk : 1;
     int iFArrowArc : 1;
     int iRArrowArc : 1;
+    int iMArrowOk : 1;
+    int iFArrowIsM : 1;
+    int iRArrowIsM : 1;
 
     Attribute iStroke;
     Attribute iFill;
@@ -156,6 +161,8 @@ namespace ipe {
     Angle  iFArrowDir;
     Vector iRArrowPos;
     Angle  iRArrowDir;
+    Vector iMArrowPos;
+    Angle  iMArrowDir;
 
     Shape iShape;
   };

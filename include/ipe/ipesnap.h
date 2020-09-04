@@ -5,7 +5,7 @@
 /*
 
     This file is part of the extensible drawing editor Ipe.
-    Copyright (c) 1993-2019 Otfried Cheong
+    Copyright (c) 1993-2020 Otfried Cheong
 
     Ipe is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ namespace ipe {
 		      ESnapVtx = 1, ESnapCtl = 2,
 		      ESnapBd = 4, ESnapInt = 8,
 		      ESnapGrid = 0x10, ESnapAngle = 0x20,
-		      ESnapAuto = 0x40 };
+		      ESnapAuto = 0x40, ESnapCustom = 0x80 };
 
     int iSnap;           //!< Activated snapping modes (TSnapModes)
     bool iGridVisible;   //!< Is the grid visible?

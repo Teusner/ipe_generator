@@ -3,7 +3,7 @@
 /*
 
     This file is part of the extensible drawing editor Ipe.
-    Copyright (c) 1993-2019 Otfried Cheong
+    Copyright (c) 1993-2020 Otfried Cheong
 
     Ipe is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -56,6 +56,7 @@
 #define IPE_AVAILABLE_10_13 __attribute__((weak_import,deprecated("API in 10.13")))
 #define IPE_AVAILABLE_10_13_4 __attribute__((weak_import,deprecated("API in 10.13.4")))
 #define IPE_AVAILABLE_10_14 __attribute__((weak_import,deprecated("API in 10.14")))
+#define IPE_AVAILABLE_10_15 __attribute__((weak_import,deprecated("API in 10.15")))
 #define IPE_AVAILABLE_NA __attribute__((weak_import,deprecated("API not available")))
 #endif
 

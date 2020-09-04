@@ -5,7 +5,7 @@
 /*
 
     This file is part of the extensible drawing editor Ipe.
-    Copyright (c) 1993-2019 Otfried Cheong
+    Copyright (c) 1993-2020 Otfried Cheong
 
     Ipe is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -246,6 +246,9 @@ namespace ipe {
 			  std::vector<Bezier> &result);
     static void spline(int n,  const Vector *v,
 		       std::vector<Bezier> &result);
+    static void cardinalSpline(int n,  const Vector *v, double tension,
+			       std::vector<Bezier> &result);
+    static void spiroSpline(int n,  const Vector *v, std::vector<Bezier> &result);
     static void closedSpline(int n,  const Vector *v,
 			     std::vector<Bezier> &result);
 

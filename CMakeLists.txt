@@ -47,7 +47,8 @@ else()
 	message(FATAL_ERROR "[OPENMP] NO")
 endif()
 
-set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}:${IBEX_ROOT}/share/ibex/")
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${IBEX_ROOT})
+message(STATUS ${CMAKE_PREFIX_PATH})
 find_package (IBEX REQUIRED)
 message (STATUS "Found Ibex version ${IBEX_VERSION}")
 ibex_init_common() # Ibex should have installed this function

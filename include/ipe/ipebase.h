@@ -5,7 +5,7 @@
 /*
 
     This file is part of the extensible drawing editor Ipe.
-    Copyright (c) 1993-2019 Otfried Cheong
+    Copyright (c) 1993-2020 Otfried Cheong
 
     Ipe is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -67,14 +67,14 @@ namespace ipe {
 
   //! Ipelib version.
   /*! \ingroup base */
-  const int IPELIB_VERSION = 70213;
+  const int IPELIB_VERSION = 70220;
 
   //! Oldest readable file format version.
   /*! \ingroup base */
   const int OLDEST_FILE_FORMAT = 70000;
   //! Current file format version.
   /*! \ingroup base */
-  const int FILE_FORMAT = 70212;
+  const int FILE_FORMAT = 70218;
 
   enum class LatexType { Default, Pdftex, Xetex, Luatex };
 
@@ -131,6 +131,7 @@ namespace ipe {
     void append(const String &rhs) noexcept;
     void append(const char *rhs) noexcept;
     void append(char ch) noexcept;
+    void appendUtf8(uint16_t ch) noexcept;
     bool hasPrefix(const char *rhs) const noexcept;
     bool operator==(const String &rhs) const noexcept;
     bool operator==(const char *rhs) const noexcept;
@@ -243,6 +244,8 @@ namespace ipe {
     std::shared_ptr<std::vector<char>> iData;
   };
 
+  extern void ipeDebugBuffer(Buffer data, int maxsize);
+
   // --------------------------------------------------------------------
 
   class Stream {
@@ -312,12 +315,18 @@ namespace ipe {
     virtual ~DataSource() = 0;
     //! Get one more character, or EOF.
     virtual int getChar() = 0;
+    virtual int length() const;
+    virtual void setPosition(int pos);
+    virtual int position() const;
   };
 
   class FileSource : public DataSource {
   public:
     FileSource(std::FILE *file);
-    virtual int getChar();
+    virtual int getChar() override;
+    virtual int length() const override;
+    virtual void setPosition(int pos) override;
+    virtual int position() const override;
   private:
     std::FILE *iFile;
   };
@@ -325,8 +334,10 @@ namespace ipe {
   class BufferSource : public DataSource {
   public:
     BufferSource(const Buffer &buffer);
-    virtual int getChar();
-    void setPosition(int pos);
+    virtual int getChar() override;
+    virtual int length() const override;
+    virtual void setPosition(int pos) override;
+    virtual int position() const override;
   private:
     const Buffer &iBuffer;
     int iPos;

@@ -5,7 +5,7 @@
 /*
 
     This file is part of the extensible drawing editor Ipe.
-    Copyright (c) 1993-2019 Otfried Cheong
+    Copyright (c) 1993-2020 Otfried Cheong
 
     Ipe is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -36,6 +36,8 @@
 #include "ipegeo.h"
 #include "ipepdfparser.h"
 #include "ipetext.h"
+
+#include <unordered_set>
 
 // --------------------------------------------------------------------
 
@@ -86,6 +88,8 @@ namespace ipe {
     inline const std::vector<int> &embedSequence() const noexcept {
       return iEmbedSequence; }
     void show() const noexcept;
+    bool isIpeXForm(int num) const;
+    void setIpeXForm(int num);
   private:
     void add(int num, PdfFile *file);
     void addIndirect(const PdfObj *q, PdfFile *file);
@@ -94,6 +98,8 @@ namespace ipe {
   private:
     std::unordered_map<int, std::unique_ptr<const PdfObj>> iObjects;
     std::vector<int> iEmbedSequence;
+    // which of the objects in the PDF file are XForms corresponding to Ipe text objects
+    std::unordered_set<int> ipeXForms;
     //! Page number objects.
     std::vector<SPageNumber> iPageNumbers;
   };

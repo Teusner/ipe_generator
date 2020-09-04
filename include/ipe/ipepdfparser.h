@@ -5,7 +5,7 @@
 /*
 
     This file is part of the extensible drawing editor Ipe.
-    Copyright (c) 1993-2019 Otfried Cheong
+    Copyright (c) 1993-2020 Otfried Cheong
 
     Ipe is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -152,7 +152,7 @@ namespace ipe {
 
   class PdfDict : public PdfObj {
   public:
-    explicit PdfDict() { /* nothing */ }
+    explicit PdfDict(): iLateStreamPosition{0} { /* nothing */ }
     ~PdfDict();
     virtual const PdfDict *dict() const noexcept;
     String dictRepr() const noexcept;
@@ -162,8 +162,12 @@ namespace ipe {
 		       bool inflate) const noexcept;
     void setStream(const Buffer &stream);
     void add(String key, const PdfObj *obj);
-    const PdfObj *get(String key, const PdfFile *file) const noexcept;
-    bool getNumber(String key, double &val, const PdfFile *file) const noexcept;
+    const PdfObj *get(String key, const PdfFile *file = nullptr) const noexcept;
+    const PdfDict *getDict(String key, const PdfFile *file = nullptr) const noexcept;
+    const PdfArray *getArray(String key, const PdfFile *file = nullptr) const noexcept;
+    String getName(String key, const PdfFile *file = nullptr) const noexcept;
+    bool getNumber(String key, double &val, const PdfFile *file = nullptr) const noexcept;
+    int getInteger(String key, const PdfFile *file = nullptr) const noexcept;
     bool getNumberArray(String key, const PdfFile *file,
 			std::vector<double> &vals) const noexcept;
     inline int count() const noexcept { return iItems.size(); }
@@ -173,12 +177,15 @@ namespace ipe {
     inline Buffer stream() const noexcept { return iStream; }
     bool deflated() const noexcept;
     Buffer inflate() const noexcept;
+    void setLateStream(int pos) noexcept { iLateStreamPosition = pos; }
+    int lateStream() const noexcept { return iLateStreamPosition; }
   private:
     struct Item {
       String iKey;
       const PdfObj *iVal;
     };
     std::vector<Item> iItems;
+    int iLateStreamPosition;
     Buffer iStream;
   };
 
@@ -200,24 +207,24 @@ namespace ipe {
   public:
     PdfParser(DataSource &source);
 
-    inline void getChar() { iCh = iSource.getChar(); ++iPos; }
+    inline void getChar() { iCh = iSource.getChar(); }
     inline bool eos() const noexcept { return (iCh == EOF); }
     inline PdfToken token() const noexcept { return iTok; }
 
     void getToken();
-    PdfObj *getObject();
-    PdfObj *getObjectDef();
+    PdfObj *getObject(bool lateStream = false);
+    PdfObj *getObjectDef(bool lateStream);
     PdfDict *getTrailer();
     void skipXRef();
+    std::vector<int> readXRef();
 
   private:
     void skipWhiteSpace();
     PdfArray *makeArray();
-    PdfDict *makeDict();
+    PdfDict *makeDict(bool lateStream);
 
   private:
     DataSource &iSource;
-    int iPos;
     int iCh;
     PdfToken iTok;
   };
@@ -225,7 +232,6 @@ namespace ipe {
   class PdfFile {
   public:
     bool parse(DataSource &source);
-    bool parseObjectStream(const PdfDict *d);
     const PdfObj *object(int num) const noexcept;
     const PdfDict *catalog() const noexcept;
     const PdfDict *page(int pno = 0) const noexcept;
@@ -233,12 +239,18 @@ namespace ipe {
     //! Return number of pages.
     int countPages() const { return static_cast<int>(iPages.size()); }
     Rect mediaBox(const PdfDict *page) const;
+    int findPageFromPageObjectNumber(int objNum) const;
   private:
     bool readPageTree(const PdfObj *ptn = nullptr);
+    bool parseFromXRefObj(PdfParser &parser, DataSource &source);
+    bool parseSequentially(DataSource &source);
+    bool parseObjectStream(const PdfDict *d);
+    bool readDelayedStreams(std::vector<int> &delayed, DataSource &source);
   private:
     std::unordered_map<int, std::unique_ptr<const PdfObj>> iObjects;
     std::unique_ptr<const PdfDict> iTrailer;
     std::vector<const PdfDict *> iPages;
+    std::vector<int> iPageObjectNumbers;
   };
 
 } // namespace

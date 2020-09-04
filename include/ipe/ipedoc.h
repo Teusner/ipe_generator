@@ -5,7 +5,7 @@
 /*
 
     This file is part of the extensible drawing editor Ipe.
-    Copyright (c) 1993-2019 Otfried Cheong
+    Copyright (c) 1993-2020 Otfried Cheong
 
     Ipe is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -60,8 +60,6 @@ namespace ipe {
   enum class FileFormat {
     Xml,  //!< Save as XML
     Pdf,  //!< Save as PDF
-    Eps,  //!< Encapsulated Postscript (loading only)
-    Ipe5,  //!< Ancient Ipe format
     Unknown //!< Unknown file format
   };
 
@@ -151,7 +149,7 @@ namespace ipe {
 
     //! Error codes returned by RunLatex.
     enum { ErrNone, ErrNoText, ErrNoDir, ErrWritingSource,
-	   ErrOldPdfLatex, ErrRunLatex, ErrLatex, ErrLatexOutput };
+	   ErrRunLatex, ErrLatex, ErrLatexOutput };
     int runLatex(String docname, String &logFile);
     int runLatex(String docname);
 
