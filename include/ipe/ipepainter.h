@@ -5,7 +5,7 @@
 /*
 
     This file is part of the extensible drawing editor Ipe.
-    Copyright (c) 1993-2019 Otfried Cheong
+    Copyright (c) 1993-2020 Otfried Cheong
 
     Ipe is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -64,6 +64,9 @@ namespace ipe {
   public:
     Painter(const Cascade *style);
     virtual ~Painter();
+
+    void setAttributeMap(const AttributeMap *map);
+    Attribute lookup(Kind kind, Attribute sym) const;
 
     void transform(const Matrix &m);
     void untransform(TTransformations trans);
@@ -163,6 +166,7 @@ namespace ipe {
     std::list<State> iState;
     std::list<Matrix> iMatrix;
     const Cascade *iCascade;
+    const AttributeMap *iAttributeMap;
     int iInPath;
   };
 

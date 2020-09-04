@@ -5,7 +5,7 @@
 /*
 
     This file is part of the extensible drawing editor Ipe.
-    Copyright (c) 1993-2019 Otfried Cheong
+    Copyright (c) 1993-2020 Otfried Cheong
 
     Ipe is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -44,6 +44,8 @@ namespace ipe {
 
   class Page {
   public:
+    enum class SnapMode { Never, Visible, Always };
+
     explicit Page();
 
     static Page *basic();
@@ -59,15 +61,13 @@ namespace ipe {
       return iLayers[index].iName; }
 
     //! Is layer \a i locked?
-    inline bool isLocked(int i) const noexcept {
-      return !!(iLayers[i].iFlags & ELocked); }
-    //! Does layer \a i have active snapping?
-    inline bool hasSnapping(int i) const noexcept {
-      return !(iLayers[i].iFlags & ENoSnapping); }
+    inline bool isLocked(int i) const noexcept { return iLayers[i].locked; }
+    //! Does layer \a i have snapping?
+    inline SnapMode snapping(int i) const noexcept { return iLayers[i].snapMode; }
     bool objSnapsInView(int objNo, int view) const noexcept;
 
     void setLocked(int i, bool flag);
-    void setSnapping(int i, bool flag);
+    void setSnapping(int i, SnapMode mode);
 
     void moveLayer(int index, int newIndex);
     int findLayer(String name) const;
@@ -75,6 +75,9 @@ namespace ipe {
     void addLayer();
     void removeLayer(String name);
     void renameLayer(String oldName, String newName);
+    void setLayerData(int index, String data);
+    //! Return layer data.
+    inline String layerData(int index) const { return iLayers[index].iData; }
 
     //! Return number of views.
     inline int countViews() const { return iViews.size(); }
@@ -101,12 +104,19 @@ namespace ipe {
 
     int findView(String viewNumberOrName) const;
 
+    const AttributeMap &viewMap(int index) const { return iViews[index].iAttributeMap; }
+    void setViewMap(int index, const AttributeMap &map);
+
     //! Is \a layer visible in \a view?
     inline bool visible(int view, int layer) const {
       return iLayers[layer].iVisible[view]; }
     //! Is object at index \a objno visible in \a view?
     inline bool objectVisible(int view, int objno) const {
       return iLayers[layerOf(objno)].iVisible[view]; }
+
+    std::vector<Matrix> layerMatrices(int view) const;
+    void clearLayerMatrices(int view) { iViews[view].iLayerMatrices.clear(); }
+    void setLayerMatrix(int view, int layer, const Matrix &m);
 
     void setVisible(int view, String layer, bool vis);
 
@@ -171,18 +181,23 @@ namespace ipe {
     void ensurePrimarySelection();
 
   private:
-    enum { ELocked = 0x01, ENoSnapping = 0x02 };
-
     struct SLayer {
     public:
       SLayer(String name);
     public:
       String iName;
-      int iFlags;
+      String iData;
+      bool locked;
+      SnapMode snapMode;
       // Invariant: iVisible.size() == iViews.size()
       std::vector<bool> iVisible;
     };
     typedef std::vector<SLayer> LayerSeq;
+
+    struct SLayerMatrix {
+      String iLayer;
+      Matrix iMatrix;
+    };
 
     struct SView {
     public:
@@ -192,6 +207,8 @@ namespace ipe {
       String iActive;
       bool iMarked;
       String iName;
+      AttributeMap iAttributeMap;
+      std::vector<SLayerMatrix> iLayerMatrices;
     };
     typedef std::vector<SView> ViewSeq;
 

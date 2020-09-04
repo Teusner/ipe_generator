@@ -5,7 +5,7 @@
 /*
 
     This file is part of the extensible drawing editor Ipe.
-    Copyright (c) 1993-2019 Otfried Cheong
+    Copyright (c) 1993-2020 Otfried Cheong
 
     Ipe is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -100,7 +100,7 @@ namespace ipe {
 
   private:
     int startObject(int objnum = -1);
-    int pageObjectNumber(int page, int view);
+    int pageObjectNumber(int page);
     void createStream(const char *data, int size, bool preCompressed);
     void writeString(String text);
     void embedBitmap(Bitmap bitmap);

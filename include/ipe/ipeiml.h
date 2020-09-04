@@ -5,7 +5,7 @@
 /*
 
     This file is part of the extensible drawing editor Ipe.
-    Copyright (c) 1993-2019 Otfried Cheong
+    Copyright (c) 1993-2020 Otfried Cheong
 
     Ipe is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -48,8 +48,10 @@ namespace ipe {
     explicit ImlParser(DataSource &source);
     int parseDocument(Document &doc);
     bool parsePage(Page &page);
+    bool parseView(Page &page, AttributeMap &map);
     Object *parseObject(String tag, Page *page = nullptr,
 			int *currentLayer = nullptr);
+    Object *parseObject(String tag, String &layer);
     StyleSheet *parseStyleSheet();
     bool parseStyle(StyleSheet &sheet);
     // bool parseSelection(PageObjectSeq &seq);

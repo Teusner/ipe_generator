@@ -5,7 +5,7 @@
 /*
 
     This file is part of the extensible drawing editor Ipe.
-    Copyright (c) 1993-2019 Otfried Cheong
+    Copyright (c) 1993-2020 Otfried Cheong
 
     Ipe is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ namespace ipe {
 		  EPropHorizontalAlignment, EPropVerticalAlignment,
 		  EPropLineJoin, EPropLineCap, EPropFillRule,
 		  EPropPinned, EPropTransformations,
-		  EPropTransformableText,
+		  EPropTransformableText, EPropSplineType,
 		  EPropMinipage, EPropWidth,
 		  EPropDecoration,
   };
@@ -98,6 +98,10 @@ namespace ipe {
   /*! \ingroup attr */
   enum TVerticalAlignment { EAlignBottom, EAlignBaseline,
       EAlignTop, EAlignVCenter };
+
+  //! Spline type.
+  /*! \ingroup attr */
+  enum TSplineType { EBSpline, ECardinalSpline, ESpiroSpline };
 
   //! Line join style.
   /*! \ingroup attr */
@@ -268,6 +272,7 @@ namespace ipe {
     explicit Attribute(TPinned pin) { iName = EEnum + pin + 20; }
     explicit Attribute(TTransformations trans) { iName = EEnum + trans + 24; }
     explicit Attribute(TPathMode pm) { iName = EEnum + pm + 27; }
+    explicit Attribute(TSplineType st) { iName = EEnum + st + 30; }
 
     //! Is it symbolic?
     inline bool isSymbolic() const {
@@ -313,6 +318,7 @@ namespace ipe {
     TTransformations transformations() const {
       return TTransformations(index() - 24); }
     TPathMode pathMode() const { return TPathMode(index() - 27); }
+    TSplineType splineType() const { return TSplineType(index() - 30); }
 
     //! Are two values equal (only compares index!)
     inline bool operator==(const Attribute &rhs) const {
@@ -359,6 +365,8 @@ namespace ipe {
       return ESymbolic + 8 <= iName && iName <= ESymbolic + 11;
     }
 
+    bool isMidArrow() const;
+
     static Attribute makeColor(String str, Attribute deflt);
     static Attribute makeScalar(String str, Attribute deflt);
     static Attribute makeDashStyle(String str);
@@ -380,6 +388,28 @@ namespace ipe {
     \brief A sequence of attribute values.
   */
   typedef std::vector<Attribute> AttributeSeq;
+
+  // --------------------------------------------------------------------
+
+  /*! \var AttributeMapping
+    \ingroup attr
+    \brief Mapping one symbolic attribute to another one
+  */
+  struct AttributeMapping {
+    Kind kind;
+    Attribute from;
+    Attribute to;
+  };
+
+  class AttributeMap {
+  public:
+    int count() const noexcept { return iMap.size(); }
+    Attribute map(Kind kind, Attribute sym) const;
+    void saveAsXml(Stream &stream) const;
+    void add(const AttributeMapping &map);
+  public:
+    std::vector<AttributeMapping> iMap;
+  };
 
   // --------------------------------------------------------------------
 
@@ -411,6 +441,8 @@ namespace ipe {
       translations.  Otherwise, the value of iTranslations is used (as
       for other objects). */
     bool iTransformableText;
+    /*! What kind of splines should be created? */
+    TSplineType iSplineType;
     //! Allowed transformations.
     TTransformations iTransformations;
     TLineJoin iLineJoin;        //!< Line join style.

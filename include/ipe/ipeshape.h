@@ -5,7 +5,7 @@
 /*
 
     This file is part of the extensible drawing editor Ipe.
-    Copyright (c) 1993-2019 Otfried Cheong
+    Copyright (c) 1993-2020 Otfried Cheong
 
     Ipe is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -46,19 +46,20 @@ namespace ipe {
 
   class CurveSegment {
   public:
-    enum Type { EArc, ESegment, ESpline, EOldSpline };
+    enum Type { EArc, ESegment, ESpline, EOldSpline, ECardinalSpline, ESpiroSpline };
 
     //! Type of segment.
-    inline Type type() const { return iType; }
+    Type type() const;
     //! Number of control points.
     inline int countCP() const { return iNumCP; }
     //! Return control point.
-    inline Vector cp(int i) const { return iCP[i]; }
+    inline Vector cp(int i) const { return cps()[i]; }
     //! Return last control point.
-    inline Vector last() const { return iCP[iNumCP - 1]; }
+    Vector last() const;
     //! Matrix (if Type() == EArc).
-    inline Matrix matrix() const { return *iM; }
+    Matrix matrix() const;
 
+    float tension() const;
     Arc arc() const;
     void beziers(std::vector<Bezier> &bez) const;
 
@@ -70,13 +71,14 @@ namespace ipe {
     void snapBnd(const Vector &mouse, const Matrix &m,
 		 Vector &pos, double &bound) const;
   private:
-    CurveSegment(Type type, int num, const Vector *cp,
-		 const Matrix *m = nullptr);
+    CurveSegment(const Curve *curve, int index);
+
+    const Vector *cps() const;
+
   private:
-    Type iType;
-    const Vector *iCP;
+    const Curve *iCurve;
+    int index; // index of the segment in the curve
     int iNumCP;
-    const Matrix *iM;
 
     friend class Curve;
   };
@@ -91,11 +93,8 @@ namespace ipe {
     virtual bool closed() const;
 
     virtual const Ellipse *asEllipse() const;
-    // virtual Ellipse *asEllipse();
     virtual const ClosedSpline *asClosedSpline() const;
-    // virtual ClosedSpline *asClosedSpline();
     virtual const Curve *asCurve() const;
-    // virtual Curve *asCurve();
 
     //! Save subpath to XML stream.
     virtual void save(Stream &stream) const = 0;
@@ -172,9 +171,12 @@ namespace ipe {
 
     /*! \brief Return number of segments.
       This does not include the closing segment for a closed path. */
-    int countSegments() const { return iSeg.size(); }
+    int countSegments() const { return iClosed ? iSeg.size() - 1 : iSeg.size(); }
+    //! Return number of segments including the closing segment.
+    int countSegmentsClosing() const { return iSeg.size(); }
+
     CurveSegment segment(int i) const;
-    CurveSegment closingSegment(Vector u[2]) const;
+    CurveSegment closingSegment() const;
 
     void appendSegment(const Vector &v0, const Vector &v1);
     void appendArc(const Matrix &m, const Vector &v0, const Vector &v1);
@@ -182,6 +184,9 @@ namespace ipe {
       appendSpline(v, CurveSegment::ESpline); }
     void appendOldSpline(const std::vector<Vector> &v) {
       appendSpline(v, CurveSegment::EOldSpline); }
+    void appendCardinalSpline(const std::vector<Vector> &v, float tension);
+    void appendSpiroSpline(const std::vector<Vector> &v);
+    void appendSpiroSplinePrecomputed(const std::vector<Vector> &v, int sep);
     void setClosed(bool closed);
 
   private:
@@ -190,14 +195,33 @@ namespace ipe {
   private:
     struct Seg {
       CurveSegment::Type iType;
-      int iLastCP;
-      int iMatrix;
+      int32_t iLastCP;
+      union {
+	int32_t iMatrix;
+	float iTension;
+	// index into iCP separating precomputed Bezier control points
+	// from the spiro control points: the last precomputed cp
+	int32_t iBezier;
+      };
     };
     bool iClosed;
     std::vector<Seg> iSeg;
     std::vector<Vector> iCP; // control points
     std::vector<Matrix> iM;  // for arcs
+
+    friend class CurveSegment;
   };
+
+  inline CurveSegment::Type CurveSegment::type() const { return iCurve->iSeg[index].iType; }
+
+  inline const Vector *CurveSegment::cps() const {
+    return iCurve->iCP.data() + (iCurve->iSeg[index].iLastCP - iNumCP + 1); }
+
+  inline Vector CurveSegment::last() const {
+    return iCurve->iCP[iCurve->iSeg[index].iLastCP]; }
+
+  inline Matrix CurveSegment::matrix() const {
+    return iCurve->iM[iCurve->iSeg[index].iMatrix]; }
 
   class Shape {
   public:
