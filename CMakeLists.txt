@@ -21,14 +21,12 @@ set(PROJECT_DESCRIPTION "Lib to generate ipe file using ibex-lib")
 
 project(${PACKAGE_NAME})
 
-if(NOT IBEX_ROOT)
-	set(IBEX_ROOT "$ENV{HOME}/ibex")
-endif()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/)
 
 ### Find package ###
 FIND_PACKAGE(PkgConfig)
+
 
 find_package(Boost REQUIRED COMPONENTS system thread filesystem)
 if(Boost_FOUND)
@@ -47,7 +45,7 @@ else()
 	message(FATAL_ERROR "[OPENMP] NO")
 endif()
 
-set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}:${IBEX_ROOT}/share/ibex/")
+#set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}:${IBEX_ROOT}/share/ibex/")
 find_package (IBEX REQUIRED)
 message (STATUS "Found Ibex version ${IBEX_VERSION}")
 ibex_init_common() # Ibex should have installed this function
