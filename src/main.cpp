@@ -54,8 +54,8 @@ void test1()
     fig.add_layer("test");
     fig.set_visible("test");
 
-    fig.save_ipe("test.ipe");
-    fig.save_pdf("test.pdf");
+    fig.save_ipe("test1.ipe");
+    fig.save_pdf("test1.pdf");
 }
 
 void test2()
@@ -74,8 +74,8 @@ void test2()
 
     fig.draw_symbol(2.0, 2.0, "disk(sx)", 5.0);
 
-    fig.save_ipe("test.ipe");
-    fig.save_pdf("test.pdf");
+    fig.save_ipe("test2.ipe");
+    fig.save_pdf("test2.pdf");
 }
 
 void test3(){
@@ -96,13 +96,13 @@ void test3(){
     box[1] = ibex::Interval(1.0, 1.5);
     fig.draw_box(box);
 
-    fig.save_ipe("test.ipe");
+    fig.save_ipe("test3.ipe");
 }
 
 int main(int argc, char *argv[])
 {
-//    test1();
-//    test2();
+    test1();
+    test2();
     test3();
 }
 
