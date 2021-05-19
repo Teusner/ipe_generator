@@ -3,6 +3,8 @@
 
 #include "ipelib.h"
 #include "ibex_IntervalVector.h"
+#include "codac_TubeVector.h"
+#include "codac_Figure.h"
 
 namespace ipegenerator {
 
@@ -45,7 +47,7 @@ public:
     size_t draw_arrow(const double &x0, const double &y0, const double &x1, const double &y1);
     size_t draw_arrow(const ipe::Vector &v1, const ipe::Vector &v2);
     size_t draw_text(const std::string &text, const double &x, const double &y, const bool& math_mode=false, const ipe::THorizontalAlignment& horizontal_align=ipe::EAlignHCenter);
-    size_t draw_box(const ibex::IntervalVector &box);
+    size_t draw_box(const ibex::IntervalVector &box, const std::string& color_stroke="black", const std::string& color_fill="");
     size_t draw_box(const ipe::Rect& box);
     size_t draw_box(const ipe::Vector &center, const double &width, const bool& keep_ratio=false);
     size_t draw_curve(const std::vector<double> &x, const std::vector<double> &y);
@@ -59,6 +61,11 @@ public:
     size_t draw_sector(const double &x, const double &y, const double &r1, const double &r2, const double &alpha_start, const double& alpha_end);
 
     size_t draw_float(const double &x, const double &y, const double &piston, const double &compressibility, const FLOAT_PISTON_MVT &mvt=FLOAT_PISTON_EQUAL, const double &zoom=0.1);
+
+    // Tube drawings
+    void draw_slice(const codac::Slice& slice, const std::string& color_stroke="black", const std::string& color_fill=""); // box version
+    void draw_gate(const ibex::Interval& gate, double t,const string& color_stroke="black", const string& color_fill="");
+    void draw_tube(const codac::Tube *tube);
 
     // Style functions
     void set_thickness_pen_factor(const double &val=1e-3);

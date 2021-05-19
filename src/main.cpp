@@ -8,6 +8,7 @@
 
 #include "ipelib.h"
 #include "ibex_IntervalVector.h"
+#include "codac.h"
 
 #include "figure.h"
 
@@ -29,6 +30,7 @@ void test1()
     box[0] = ibex::Interval(100.0, 300.0);
     box[1] = ibex::Interval(1.0, 1.5);
     fig.draw_box(box);
+
 
     fig.draw_text("test", 100, 1.0);
 
@@ -92,17 +94,54 @@ void test3(){
     fig.draw_axis("x_1", "x_2");
 
     ibex::IntervalVector box(2);
-    box[0] = ibex::Interval(100.0, 300.0);
+    box[0] = ibex::Interval(100.0, 150.0);
     box[1] = ibex::Interval(1.0, 1.5);
-    fig.draw_box(box);
+    fig.draw_box(box,"red","black");
+
+    ibex::IntervalVector box2(2);
+    box2[0] = ibex::Interval(200, 250.0);
+    box2[1] = ibex::Interval(1.0, 1.5);
+    fig.draw_box(box2,"","blue");
+
+    ibex::IntervalVector box3(2);
+    box3[0] = ibex::Interval(300.0, 350.0);
+    box3[1] = ibex::Interval(1.0, 1.5);
+    fig.draw_box(box3,"green","");
 
     fig.save_ipe("test3.ipe");
+    fig.save_pdf("test3.pdf");
 }
+
+
+void test4(){
+    ibex::IntervalVector frame_data(2);
+    frame_data[0] = ibex::Interval(0.0, 10);
+    frame_data[1] = ibex::Interval(-10.0, 2.0);
+
+    ipegenerator::Figure fig(frame_data, 120, 50);
+
+    fig.set_number_digits_axis_x(0);
+    fig.set_number_digits_axis_y(1);
+    fig.set_graduation_parameters(0.0, 1.0, -10.0, 1.0);
+    fig.draw_axis("x_1", "x_2");
+
+    ibex::Interval domain(0,20);
+    codac::Tube tube(domain,0.01,codac::TFunction("sin(t)"));
+    tube.inflate(0.5);
+
+    fig.draw_tube(&tube);
+
+
+    fig.save_ipe("test4.ipe");
+    fig.save_pdf("test4.pdf");
+}
+
 
 int main(int argc, char *argv[])
 {
     test1();
     test2();
     test3();
+    test4();
 }
 

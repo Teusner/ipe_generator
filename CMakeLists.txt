@@ -50,6 +50,15 @@ find_package (IBEX REQUIRED)
 message (STATUS "Found Ibex version ${IBEX_VERSION}")
 ibex_init_common() # Ibex should have installed this function
 
+find_package(CODAC REQUIRED)
+message(STATUS "Found Codac version ${CODAC_VERSION}")
+include_directories(${CODAC_INCLUDE_DIRS})
+
+# Eigen
+find_package(Eigen3 REQUIRED NO_MODULE)
+include_directories(${EIGEN3_INCLUDE_DIRS})
+
+
 FIND_PACKAGE(Ipe REQUIRED)
 if(IPE_FOUND)
 
@@ -68,7 +77,9 @@ add_library(ipegenerator SHARED
  )
 target_link_libraries(ipegenerator
  ${IPE_LIBRARY}
+ ${CODAC_LIBRARIES}
  Ibex::ibex
+ ${CODAC_LIBRARIES}
  )
 
 set_target_properties(${PACKAGE_NAME} PROPERTIES VERSION 1.0)
@@ -144,5 +155,7 @@ add_executable(ipe_test ${SRC})
 
 target_link_libraries(ipe_test
  ${IPE_LIBRARY}
+ ${CODAC_LIBRARIES}
  Ibex::ibex
+ ${CODAC_LIBRARIES}
  )

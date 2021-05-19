@@ -3,6 +3,8 @@
 #include <sstream>
 #include <iomanip>
 
+#define BOUNDED_INFINITY 99999.
+
 namespace ipegenerator{
 
 Figure::Figure(const ibex::IntervalVector &frame_data, const double &width, const double &height, const bool &keep_ratio):
@@ -334,15 +336,33 @@ size_t Figure::draw_text(const std::string& text, const double &x, const double 
     return m_page->count()-1;
 }
 
-size_t Figure::draw_box(const ibex::IntervalVector& box)
+size_t Figure::draw_box(const ibex::IntervalVector& box, const string& color_stroke, const string& color_fill)
 {
-    ipe::Rect rec(m_transform_global*ipe::Vector(box[0].lb(), box[1].lb()), m_transform_global*ipe::Vector(box[0].ub(), box[1].ub()));
+    if (color_stroke !="" && color_fill!="")
+    {
+        this->set_color_stroke(color_stroke);
+        this->set_color_fill(color_fill);
+        this->set_color_type(STROKE_AND_FILL);
+    }
+    else if(color_stroke =="")
+    {
+        this->set_color_fill(color_fill);
+        this->set_color_type(FILL_ONLY);
+    }
+    else if(color_fill == "")
+    {
+        this->set_color_stroke(color_stroke);
+        this->set_color_type(STROKE_ONLY);
+    }
 
+    ipe::Rect rec(m_transform_global*ipe::Vector(box[0].lb(), box[1].lb()), m_transform_global*ipe::Vector(box[0].ub(), box[1].ub()));
     ipe::Shape shape(rec);
     ipe::Path *path = new ipe::Path(m_current_attr, shape);
     m_page->append(ipe::TSelect::ENotSelected, m_current_layer, path);
     return m_page->count()-1;
 }
+
+
 
 size_t Figure::draw_box(const ipe::Rect& box)
 {
@@ -444,6 +464,107 @@ size_t Figure::draw_symbol(const double& x, const double& y, const std::string &
     m_page->append(ipe::TSelect::ENotSelected, m_current_layer, ref);
     return m_page->count()-1;
 }
+
+
+
+// Drawing Tubes
+
+void Figure::draw_slice(const codac::Slice& slice, const string& color_stroke, const string& color_fill)
+{
+    if(slice.codomain().is_empty())
+        return;
+    else
+    {
+        draw_box(slice.box(),color_stroke,color_fill);
+    }
+}
+
+void Figure::draw_tube(const codac::Tube *tube)
+{
+    assert(tube != NULL);
+    std::cout << "drawing tube"<< std::endl;
+
+    // TO DO code to modify the page dimension
+    /*
+    ibex::IntervalVector viewbox(2,ibex::Interval::EMPTY_SET);
+    double image_lb, image_ub;
+
+    if(!tube->codomain().is_unbounded())
+    {
+        image_lb = tube->codomain().lb();
+        image_ub = tube->codomain().ub();
+    }
+
+    else // some slices can be [-oo,+oo], maybe not all of them
+    {
+        image_lb = NAN;
+        image_ub = NAN;
+
+        for(const codac::Slice *s = tube->first_slice() ; s != NULL ; s = s->next_slice())
+        {
+            ibex::Interval codomain = s->codomain();
+            if(!codomain.is_unbounded())
+            {
+                image_lb = std::isnan(image_lb) || image_lb > codomain.lb() ? codomain.lb() : image_lb;
+                image_ub = std::isnan(image_ub) || image_ub < codomain.ub() ? codomain.ub() : image_ub;
+            }
+        }
+    }
+
+    viewbox[0] = tube->tdomain();
+    viewbox[1] = ibex::Interval(image_lb, image_ub);
+
+    this->m_frame_data = this->m_frame_data | viewbox;
+    */
+
+    std::cout << "modified frame data"<< std::endl;
+
+    const codac::Slice* slice = tube->first_slice();
+
+    string color_stroke = "black";
+    string color_fill = "";
+    //std::cout << "color set"<< std::endl;
+    draw_gate(slice->input_gate(), tube->tdomain().lb(),color_stroke, color_fill);
+    //std::cout << "in gate drawn" << std::endl;
+    while(slice != NULL)
+    {
+        draw_slice(*slice, color_stroke, color_fill);
+        //std::cout << "slice drawn" << std::endl;
+        draw_gate(slice->output_gate(), slice->tdomain().ub(), color_stroke, color_fill);
+        //std::cout << "out slice drawn" << std::endl;
+        slice = slice->next_slice();
+
+    }
+
+
+
+
+
+
+}
+
+void Figure::draw_gate(const ibex::Interval& gate, double t,const string& color_stroke, const string& color_fill)
+{
+    if(gate.is_empty())
+        return; // no display
+
+    else if(gate.is_degenerated())
+    {
+        //draw_point(Point(t, gate.lb()), params);
+    }
+    else
+    {
+        ibex::IntervalVector gate_box(2);
+        gate_box[0] = t; gate_box[0].inflate(ibex::next_float(0.));
+        gate_box[1] = gate & ibex::Interval(-BOUNDED_INFINITY,BOUNDED_INFINITY);
+        //std::cout << "gate box defined" << std::endl;
+        //std::cout << gate_box << std::endl;
+        draw_box(gate_box, color_stroke, color_fill);
+    }
+}
+
+
+
 
 void Figure::set_color_stroke(const std::string &color_stroke)
 {
