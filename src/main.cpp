@@ -128,23 +128,78 @@ void test4(){
     fig.draw_axis("x_1", "x_2");
 
     ibex::Interval domain(0,10);
-    codac::Tube tube_sin(domain,0.01,codac::TFunction("sin(t)"));
-    codac::Tube tube_cos(domain,0.01,codac::TFunction("cos(t)"));
+    codac::Tube tube_sin(domain,0.1,codac::TFunction("sin(t)"));
+    codac::Tube tube_cos(domain,0.1,codac::TFunction("cos(t)"));
     tube_sin.inflate(0.5);
     tube_cos.inflate(0.5);
 
+    codac::TubeVector tubeVector(domain,0.1,codac::TFunction("(cos(t);sin(t))"));
+    codac::TubeVector tubeVectorBig(tubeVector);
+    tubeVectorBig.inflate(0.5);
+
+
 
     codac::ColorMap colorMap(codac::InterpolMode::RGB);
-    codac::rgb red= codac::make_rgb(1,0,0);
-    codac::rgb green= codac::make_rgb(0,1,0);
+    codac::rgb red= codac::make_rgb((float)1.,(float)0.,(float)0.);
+    codac::rgb green= codac::make_rgb((float)0.,(float)1.,(float)0.);
     colorMap.add_color_point(red,0);
     colorMap.add_color_point(green,1);
-    fig.draw_tube(&tube_sin);
-    fig.draw_tube(&tube_cos,&colorMap);
+    fig.draw_tube(&tube_sin,&colorMap);
+
+
+    fig.set_color_fill("red");
+    fig.set_color_stroke(0,1000,0);
+    fig.set_dashed("dotted");
+    fig.set_color_type(ipegenerator::STROKE_AND_FILL);
+    fig.set_opacity(30);
+    fig.draw_tube(&tube_cos);
+
 
 
     fig.save_ipe("test4.ipe");
     fig.save_pdf("test4.pdf");
+}
+
+void test5()
+{
+    ibex::IntervalVector frame_data(2);
+    frame_data[0] = ibex::Interval(-2., 2.);
+    frame_data[1] = ibex::Interval(-2., 2.);
+    ipegenerator::Figure fig(frame_data, 120, 50);
+
+    fig.set_number_digits_axis_x(0);
+    fig.set_number_digits_axis_y(1);
+    fig.set_graduation_parameters(-2, 0.5, -2., 0.5);
+    fig.draw_axis("x_1", "x_2");
+
+    ibex::Interval domain(0,6);
+    codac::TubeVector tubeVector(domain,0.1,codac::TFunction("(cos(t);sin(t))"));
+    codac::TubeVector tubeVectorBig(tubeVector);
+    tubeVectorBig.inflate(0.5);
+
+
+
+    fig.set_color_fill("red");
+    fig.set_color_stroke(0,1000,0);
+    fig.set_dashed("dotted");
+    fig.set_color_type(ipegenerator::STROKE_AND_FILL);
+    fig.set_opacity(30);
+    fig.draw_tubeVector(&tubeVectorBig,0,1);
+
+    fig.set_opacity(100);
+
+    codac::ColorMap colorMap(codac::InterpolMode::RGB);
+    codac::rgb red= codac::make_rgb((float)1.,(float)0.,(float)0.);
+    codac::rgb green= codac::make_rgb((float)0.,(float)1.,(float)0.);
+    colorMap.add_color_point(red,0);
+    colorMap.add_color_point(green,1);
+
+    fig.draw_tubeVector(&tubeVector,0,1,&colorMap);
+
+
+
+    fig.save_ipe("test5.ipe");
+    fig.save_pdf("test5.pdf");
 }
 
 
@@ -154,5 +209,6 @@ int main(int argc, char *argv[])
     test2();
     test3();
     test4();
+    test5();
 }
 

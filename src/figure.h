@@ -50,9 +50,36 @@ public:
     size_t draw_arrow(const double &x0, const double &y0, const double &x1, const double &y1);
     size_t draw_arrow(const ipe::Vector &v1, const ipe::Vector &v2);
     size_t draw_text(const std::string &text, const double &x, const double &y, const bool& math_mode=false, const ipe::THorizontalAlignment& horizontal_align=ipe::EAlignHCenter);
-    size_t draw_box(const ibex::IntervalVector &box);
+
+    /**
+    * \brief Draws a box on the figure. The drawing style (color, dashing, opacity...) should be set
+    * before calling this function
+    *
+    * \param box the box to be drawn
+    * \return the index of the figure on the page
+    */
+    size_t draw_box(const ibex::IntervalVector &box); // Painting style has to be defined before drawing
+    /**
+    * \brief Draws a box on the figure. The drawing style (color, dashing, opacity...) should be set
+    * before calling this function
+    *
+    * \param box the box to be drawn
+    * \param color_stroke color the edges of the box
+    * \param color_fill color of the  inside of the box
+    * \return the index of the figure on the page
+    */
     size_t draw_box(const ibex::IntervalVector &box, const std::string& color_stroke, const std::string& color_fill);
+    /**
+    * \brief Draws a box on the figure. The drawing style (color, dashing, opacity...) should be set
+    * before calling this function
+    *
+    * \param box the box to be drawn
+    * \param color_stroke color the edges of the box
+    * \param color_fill color of the  inside of the box
+    * \return the index of the figure on the page
+    */
     size_t draw_box(const ibex::IntervalVector &box, const ipe::Color& color_stroke, const ipe::Color& color_fill);
+
     size_t draw_box(const ipe::Rect& box);
     size_t draw_box(const ipe::Vector &center, const double &width, const bool& keep_ratio=false);
     size_t draw_curve(const std::vector<double> &x, const std::vector<double> &y);
@@ -68,14 +95,158 @@ public:
     size_t draw_float(const double &x, const double &y, const double &piston, const double &compressibility, const FLOAT_PISTON_MVT &mvt=FLOAT_PISTON_EQUAL, const double &zoom=0.1);
 
     // Tube drawings
-    void draw_slice(const codac::Slice& slice, const std::string& color_stroke="black", const std::string& color_fill="");
-    void draw_slice(const codac::Slice& slice, const ipe::Color& color_stroke, const ipe::Color& color_fill); // box version
-    void draw_gate(const ibex::Interval& gate, double t,const string& color_stroke="black", const string& color_fill="");
+    /**
+    * \brief Draws a single slice of a tube on the figure. The drawing style (color, dashing, opacity...) should be set
+    * before calling this function
+    *
+    * \param slice the slice to be drawn
+    */
+    void draw_slice(const codac::Slice& slice);
+
+    /**
+    * \brief Draws a single slice of a tube on the figure. The drawing style (dashing, opacity...) should be set
+    * before calling this function
+    *
+    * \param slice the slice to be drawn
+    * \param color_stroke color the envelope of slices
+    * \param color_fill color of the  inside of slices
+    */
+    void draw_slice(const codac::Slice& slice, const std::string& color_stroke, const std::string& color_fill);
+
+    /**
+    * \brief Draws a single slice of a tube on the figure. The drawing style (dashing, opacity...) should be set
+    * before calling this function
+    *
+    * \param slice the slice to be drawn
+    * \param color_stroke color the envelope of slices
+    * \param color_fill color of the  inside of slices
+    */
+    void draw_slice(const codac::Slice& slice, const ipe::Color& color_stroke, const ipe::Color& color_fill);
+
+    /**
+    * \brief Draws a single gate of a tube on the figure. The drawing style (color, dashing, opacity...) should be set
+    * before calling this function
+    *
+    * \param slice the slice to be drawn
+    */
+    void draw_gate(const ibex::Interval& gate, double t);
+
+    /**
+    * \brief Draws a single gate of a tube on the figure. The drawing style (dashing, opacity...) should be set
+    * before calling this function
+    *
+    * \param slice the slice to be drawn
+    * \param color_stroke color the envelope of slices
+    * \param color_fill color of the  inside of slices
+    */
+    void draw_gate(const ibex::Interval& gate, double t,const string& color_stroke, const string& color_fill);
+
+    /**
+    * \brief Draws a single gate of a tube on the figure. The drawing style (dashing, opacity...) should be set
+    * before calling this function
+    *
+    * \param slice the slice to be drawn
+    * \param color_stroke color the envelope of slices
+    * \param color_fill color of the  inside of slices
+    */
     void draw_gate(const ibex::Interval& gate, double t,const ipe::Color& color_stroke, const ipe::Color& color_fill);
-    void draw_tube(const codac::Tube *tube, const string& color_stroke="black", const string& color_fill="");
+
+    /**
+    * \brief Draws a tube on the figure. The drawing style (color, dashing, opacity...) should be set
+    * before calling this function
+    *
+    * \param tube the tube to be drawn
+    */
+    void draw_tube(const codac::Tube *tube);
+
+    /**
+    * \brief Draws a tube on the figure. The drawing style (dashing, opacity...) should be set
+    * before calling this function
+    *
+    * \param tube the tube to be drawn
+    * \param color_stroke color the envelope of slices
+    * \param color_fill color of the  inside of slices
+    */
+    void draw_tube(const codac::Tube *tube, const string& color_stroke, const string& color_fill);
+
+    /**
+    * \brief Draws a tube on the figure. The drawing style (dashing, opacity...) should be set
+    * before calling this function
+    *
+    * \param tube the tube to be drawn
+    * \param color_stroke color the envelope of slices
+    * \param color_fill color of the  inside of slices
+    */
+    void draw_tube(const codac::Tube *tube, const ipe::Color& color_stroke, const ipe::Color& color_fill);
+
+    /**
+    * \brief Draws a tube on the figure. The drawing style (dashing, opacity...) should be set
+    * before calling this function
+    *
+    * http://codac.io/manual/07-graphics/04-colormaps.html?highlight=color%20map#color-maps
+    *
+    * \param tube the tube to be drawn
+    * \param color_map custom color map for tube drawing
+    * \param traj_colorMap custom color trajectory (see codac library documentation for more info http://codac.io/manual/07-graphics/04-colormaps.html?highlight=color%20map#color-maps)
+    */
     void draw_tube(const codac::Tube *tube, const codac::ColorMap* color_map, const codac::Trajectory* traj_colorMap=NULL);
-    void draw_tubeVector(const codac::TubeVector *tube_v, const int index_x, const int index_y, const string& color_stroke="black", const string& color_fill="",const bool from_first_to_last=false);
-    void draw_tubeVector(const codac::TubeVector *tube_v, const int index_x, const int index_y, const codac::ColorMap* color_map, const codac::Trajectory* traj_coloMap=NULL, const bool from_first_to_last=false);
+
+    /**
+     * \brief Draws a 2D projection of a TubeVector. The drawing style (color, dashing, opacity...) should be set
+     * before calling this function
+     *
+     * \param tube_v the tubeVector to be drawn
+     * \param index_x the vector dimension to be put as abscissa
+     * \param index_y the vector dimension to be put as ordinate
+     * \param from_first_to_last boolean to say in which order the slices are drawn
+     * \param smooth_drawing use polygons for drawing (TO DO)
+     */
+    void draw_tubeVector(const codac::TubeVector *tube_v, const int index_x, const int index_y,
+                         const bool from_first_to_last=false, const bool smooth_drawing=false);
+
+    /**
+    * \brief Draws a 2D projection of a TubeVector. The drawing style (dashing, opacity...) should be set
+    * before calling this function
+    *
+    * \param tube_v the tubeVector to be drawn
+    * \param index_x the vector dimension to be put as abscissa
+    * \param index_y the vector dimension to be put as ordinate
+    * \param color_stroke color the envelope of slices
+    * \param color_fill color of the  inside of slices
+    * \param from_first_to_last boolean to say in which order the slices are drawn
+    * \param smooth_drawing use polygons for drawing (TO DO)
+     */
+    void draw_tubeVector(const codac::TubeVector *tube_v, const int index_x, const int index_y, const string& color_stroke,
+                         const string& color_fill,const bool from_first_to_last, const bool smooth_drawing);
+
+    /**
+    * \brief Draws a 2D projection of a TubeVector. The drawing style (dashing, opacity...) should be set
+    * before calling this function
+    *
+    * \param tube_v the tubeVector to be drawn
+    * \param index_x the vector dimension to be put as abscissa
+    * \param index_y the vector dimension to be put as ordinate
+    * \param color_stroke color the envelope of slices
+    * \param color_fill color of the  inside of slices
+    * \param from_first_to_last boolean to say in which order the slices are drawn
+    * \param smooth_drawing use polygons for drawing (TO DO)
+    */
+    void draw_tubeVector(const codac::TubeVector *tube_v, const int index_x, const int index_y, const ipe::Color& color_stroke,
+                         ipe::Color& color_fill,const bool from_first_to_last, const bool smooth_drawing);
+
+    /**
+    * \brief Draws a 2D projection of a TubeVector. The drawing style (dashing, opacity...) should be set
+    * before calling this function
+    *
+    * \param tube_v the tubeVector to be drawn
+    * \param index_x the vector dimension to be put as abscissa
+    * \param index_y the vector dimension to be put as ordinate
+    * \param color_map custom color map
+    * \param from_first_to_last boolean to say in which order the slices are drawn
+    * \param smooth_drawing use polygons for drawing (TO DO)
+    */
+    void draw_tubeVector(const codac::TubeVector *tube_v, const int index_x, const int index_y, const codac::ColorMap* color_map,
+                         const codac::Trajectory* traj_coloMap=NULL, const bool from_first_to_last=false, const bool smooth_drawing=false);
 
     // Style functions
     void set_thickness_pen_factor(const double &val=1e-3);
