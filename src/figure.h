@@ -5,6 +5,9 @@
 #include "ibex_IntervalVector.h"
 #include "codac_TubeVector.h"
 #include "codac_Figure.h"
+#include "codac_ColorMap.h"
+
+#define TUBE_MAX_NB_DISPLAYED_SLICES 2000
 
 namespace ipegenerator {
 
@@ -47,7 +50,9 @@ public:
     size_t draw_arrow(const double &x0, const double &y0, const double &x1, const double &y1);
     size_t draw_arrow(const ipe::Vector &v1, const ipe::Vector &v2);
     size_t draw_text(const std::string &text, const double &x, const double &y, const bool& math_mode=false, const ipe::THorizontalAlignment& horizontal_align=ipe::EAlignHCenter);
-    size_t draw_box(const ibex::IntervalVector &box, const std::string& color_stroke="black", const std::string& color_fill="");
+    size_t draw_box(const ibex::IntervalVector &box);
+    size_t draw_box(const ibex::IntervalVector &box, const std::string& color_stroke, const std::string& color_fill);
+    size_t draw_box(const ibex::IntervalVector &box, const ipe::Color& color_stroke, const ipe::Color& color_fill);
     size_t draw_box(const ipe::Rect& box);
     size_t draw_box(const ipe::Vector &center, const double &width, const bool& keep_ratio=false);
     size_t draw_curve(const std::vector<double> &x, const std::vector<double> &y);
@@ -63,9 +68,14 @@ public:
     size_t draw_float(const double &x, const double &y, const double &piston, const double &compressibility, const FLOAT_PISTON_MVT &mvt=FLOAT_PISTON_EQUAL, const double &zoom=0.1);
 
     // Tube drawings
-    void draw_slice(const codac::Slice& slice, const std::string& color_stroke="black", const std::string& color_fill=""); // box version
+    void draw_slice(const codac::Slice& slice, const std::string& color_stroke="black", const std::string& color_fill="");
+    void draw_slice(const codac::Slice& slice, const ipe::Color& color_stroke, const ipe::Color& color_fill); // box version
     void draw_gate(const ibex::Interval& gate, double t,const string& color_stroke="black", const string& color_fill="");
-    void draw_tube(const codac::Tube *tube);
+    void draw_gate(const ibex::Interval& gate, double t,const ipe::Color& color_stroke, const ipe::Color& color_fill);
+    void draw_tube(const codac::Tube *tube, const string& color_stroke="black", const string& color_fill="");
+    void draw_tube(const codac::Tube *tube, const codac::ColorMap* color_map, const codac::Trajectory* traj_colorMap=NULL);
+    void draw_tubeVector(const codac::TubeVector *tube_v, const int index_x, const int index_y, const string& color_stroke="black", const string& color_fill="",const bool from_first_to_last=false);
+    void draw_tubeVector(const codac::TubeVector *tube_v, const int index_x, const int index_y, const codac::ColorMap* color_map, const codac::Trajectory* traj_coloMap=NULL, const bool from_first_to_last=false);
 
     // Style functions
     void set_thickness_pen_factor(const double &val=1e-3);
@@ -84,7 +94,12 @@ public:
     void set_inverted_y();
 
     void set_color_stroke(const std::string &color_stroke="");
+    void set_color_stroke(const int r=0, const int g=0, const int b=0);
+    void set_color_stroke(const ipe::Color& color);
     void set_color_fill(const std::string &color_fill="");
+    void set_color_fill(const int r=0, const int g=0, const int b=0);
+    void set_color_fill(const ipe::Color& color);
+
     void set_color_type(const PATH_TYPE &type);
     void set_opacity(const int &opacity);
     void set_current_layer(const std::string &layer_name);
@@ -161,6 +176,10 @@ private:
 
     // Latex
     bool m_contain_latex = false;
+
+    //tube display
+    codac::Interval m_restricted_tdomain = codac::Interval(codac::Interval::ALL_REALS);
+    unsigned int m_tube_max_nb_disp_slices = TUBE_MAX_NB_DISPLAYED_SLICES;
 };
 
 inline void Figure::add_layer(const std::string &layer_name)

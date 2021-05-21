@@ -336,6 +336,32 @@ size_t Figure::draw_text(const std::string& text, const double &x, const double 
     return m_page->count()-1;
 }
 
+size_t Figure::draw_box(const ibex::IntervalVector &box)
+{
+    ipe::Rect rec(m_transform_global*ipe::Vector(box[0].lb(), box[1].lb()), m_transform_global*ipe::Vector(box[0].ub(), box[1].ub()));
+    ipe::Shape shape(rec);
+    ipe::Path *path = new ipe::Path(m_current_attr, shape);
+    m_page->append(ipe::TSelect::ENotSelected, m_current_layer, path);
+    return m_page->count()-1;
+}
+
+
+size_t Figure::draw_box(const ibex::IntervalVector& box, const ipe::Color& color_stroke, const ipe::Color& color_fill)
+{
+
+    this->set_color_stroke(color_stroke);
+    this->set_color_fill(color_fill);
+    this->set_color_type(STROKE_AND_FILL);
+
+    ipe::Rect rec(m_transform_global*ipe::Vector(box[0].lb(), box[1].lb()), m_transform_global*ipe::Vector(box[0].ub(), box[1].ub()));
+    ipe::Shape shape(rec);
+    ipe::Path *path = new ipe::Path(m_current_attr, shape);
+    m_page->append(ipe::TSelect::ENotSelected, m_current_layer, path);
+    return m_page->count()-1;
+}
+
+
+
 size_t Figure::draw_box(const ibex::IntervalVector& box, const string& color_stroke, const string& color_fill)
 {
     if (color_stroke !="" && color_fill!="")
@@ -479,69 +505,16 @@ void Figure::draw_slice(const codac::Slice& slice, const string& color_stroke, c
     }
 }
 
-void Figure::draw_tube(const codac::Tube *tube)
+void Figure::draw_slice(const codac::Slice& slice, const ipe::Color& color_stroke, const ipe::Color& color_fill)
 {
-    assert(tube != NULL);
-    std::cout << "drawing tube"<< std::endl;
-
-    // TO DO code to modify the page dimension
-    /*
-    ibex::IntervalVector viewbox(2,ibex::Interval::EMPTY_SET);
-    double image_lb, image_ub;
-
-    if(!tube->codomain().is_unbounded())
+    if(slice.codomain().is_empty())
+        return;
+    else
     {
-        image_lb = tube->codomain().lb();
-        image_ub = tube->codomain().ub();
+        draw_box(slice.box(),color_stroke,color_fill);
     }
-
-    else // some slices can be [-oo,+oo], maybe not all of them
-    {
-        image_lb = NAN;
-        image_ub = NAN;
-
-        for(const codac::Slice *s = tube->first_slice() ; s != NULL ; s = s->next_slice())
-        {
-            ibex::Interval codomain = s->codomain();
-            if(!codomain.is_unbounded())
-            {
-                image_lb = std::isnan(image_lb) || image_lb > codomain.lb() ? codomain.lb() : image_lb;
-                image_ub = std::isnan(image_ub) || image_ub < codomain.ub() ? codomain.ub() : image_ub;
-            }
-        }
-    }
-
-    viewbox[0] = tube->tdomain();
-    viewbox[1] = ibex::Interval(image_lb, image_ub);
-
-    this->m_frame_data = this->m_frame_data | viewbox;
-    */
-
-    std::cout << "modified frame data"<< std::endl;
-
-    const codac::Slice* slice = tube->first_slice();
-
-    string color_stroke = "black";
-    string color_fill = "";
-    //std::cout << "color set"<< std::endl;
-    draw_gate(slice->input_gate(), tube->tdomain().lb(),color_stroke, color_fill);
-    //std::cout << "in gate drawn" << std::endl;
-    while(slice != NULL)
-    {
-        draw_slice(*slice, color_stroke, color_fill);
-        //std::cout << "slice drawn" << std::endl;
-        draw_gate(slice->output_gate(), slice->tdomain().ub(), color_stroke, color_fill);
-        //std::cout << "out slice drawn" << std::endl;
-        slice = slice->next_slice();
-
-    }
-
-
-
-
-
-
 }
+
 
 void Figure::draw_gate(const ibex::Interval& gate, double t,const string& color_stroke, const string& color_fill)
 {
@@ -563,6 +536,112 @@ void Figure::draw_gate(const ibex::Interval& gate, double t,const string& color_
     }
 }
 
+void Figure::draw_gate(const ibex::Interval& gate, double t,const ipe::Color& color_stroke, const ipe::Color& color_fill)
+{
+    if(gate.is_empty())
+        return; // no display
+
+    else if(gate.is_degenerated())
+    {
+        //draw_point(Point(t, gate.lb()), params);
+    }
+    else
+    {
+        ibex::IntervalVector gate_box(2);
+        gate_box[0] = t; gate_box[0].inflate(ibex::next_float(0.));
+        gate_box[1] = gate & ibex::Interval(-BOUNDED_INFINITY,BOUNDED_INFINITY);
+        //std::cout << "gate box defined" << std::endl;
+        //std::cout << gate_box << std::endl;
+        draw_box(gate_box, color_stroke, color_fill);
+    }
+}
+
+
+void Figure::draw_tube(const codac::Tube *tube, const string& color_stroke, const string& color_fill)
+{
+    assert(tube != NULL);
+    std::cout << "drawing tube" << std::endl;
+
+    std::cout << "modified frame data" << std::endl;
+
+    const codac::Slice *slice = tube->first_slice();
+
+    //std::cout << "color set"<< std::endl;
+
+    draw_gate(slice->input_gate(), tube->tdomain().lb(), color_stroke, color_fill);
+    //std::cout << "in gate drawn" << std::endl;
+    while ( slice != NULL )
+    {
+        draw_slice(*slice, color_stroke, color_fill);
+        //std::cout << "slice drawn" << std::endl;
+        draw_gate(slice->output_gate(), slice->tdomain().ub(), color_stroke, color_fill);
+        //std::cout << "out slice drawn" << std::endl;
+        slice = slice->next_slice();
+    }
+}
+
+
+
+
+
+void Figure::draw_tube(const codac::Tube *tube, const codac::ColorMap *color_map, const codac::Trajectory* traj_colorMap)
+{
+    assert(tube != NULL);
+    std::cout << "drawing tube" << std::endl;
+
+    std::cout << "modified frame data" << std::endl;
+
+
+    const codac::Slice *slice = tube->first_slice();
+
+
+    codac::Trajectory identity_traj;
+    identity_traj.set(tube->tdomain().lb(), tube->tdomain().lb());
+    identity_traj.set(tube->tdomain().ub(), tube->tdomain().ub());
+
+    const codac::Trajectory *traj_colormap = &identity_traj;
+    if (traj_colorMap != NULL)
+        traj_colormap = traj_colorMap;
+
+
+    codac::rgb color = color_map->color(slice->tdomain().mid(), *traj_colormap);
+
+    ipe::Color myColor = ipe::Color((int)(color.r*1000.),(int)(color.g*1000.),(int)(color.b*1000.));
+
+    draw_gate(slice->input_gate(), tube->tdomain().lb(), myColor, myColor);
+    while ( slice != NULL )
+    {
+        codac::rgb color = color_map->color(slice->tdomain().mid(), *traj_colormap);
+        std::cout << "red: " << color.r << std::endl;
+        std::cout << "green: " << color.g << std::endl;
+        std::cout << "blue: " << color.b << std::endl;
+        std::cout << "hex" << codac::rgb2hex(color) << std::endl;
+        ipe::Color myColor = ipe::Color((int)(color.r*1000.),(int)(color.g*1000.),(int)(color.b*1000.));
+        draw_slice(*slice, myColor, myColor);
+        draw_gate(slice->output_gate(), slice->tdomain().ub(), myColor, myColor);
+        slice = slice->next_slice();
+    }
+}
+
+
+void Figure::draw_tubeVector(const codac::TubeVector *tube_v, const int index_x, const int index_y, const string& color_stroke, const string& color_fill,const bool from_first_to_last)
+{
+
+}
+
+
+
+
+void Figure::draw_tubeVector(const codac::TubeVector *tube_v, const int index_x, const int index_y, const codac::ColorMap* color_map, const codac::Trajectory* traj_coloMap, const bool from_first_to_last)
+{
+
+}
+
+
+
+
+
+
 
 
 
@@ -574,10 +653,37 @@ void Figure::set_color_stroke(const std::string &color_stroke)
         m_current_attr.iStroke = ipe::Attribute::BLACK();
 }
 
+void Figure::set_color_stroke(const int r, const int g, const int b)
+{
+    ipe::Color myCol = ipe::Color(r,g,b);
+    ipe::Attribute myAttr = ipe::Attribute(myCol);
+    m_current_attr.iStroke = myAttr;
+}
+
+void Figure::set_color_stroke(const ipe::Color& color)
+{
+    ipe::Attribute myAttr = ipe::Attribute(color);
+    m_current_attr.iStroke = myAttr;
+}
+
 void Figure::set_color_fill(const std::string &color_fill)
 {
     m_current_attr.iFill = m_steel_sheet->find(ipe::EColor,ipe::Attribute(true, color_fill.c_str()));
 }
+
+void Figure::set_color_fill(const int r, const int g, const int b)
+{
+    ipe::Color myCol = ipe::Color(r,g,b);
+    ipe::Attribute myAttr = ipe::Attribute(myCol);
+    m_current_attr.iFill = myAttr;
+}
+
+void Figure::set_color_fill(const ipe::Color& color)
+{
+    ipe::Attribute myAttr = ipe::Attribute(color);
+    m_current_attr.iFill = myAttr;
+}
+
 
 void Figure::set_color_type(const PATH_TYPE& type)
 {
@@ -636,5 +742,7 @@ void Figure::set_inverted_y()
     m_inversion_y = true;
     init_scale(m_width, m_height, m_keep_ratio);
 }
+
+
 
 }

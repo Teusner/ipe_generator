@@ -21,6 +21,8 @@ void test1()
     frame_data[0] = ibex::Interval(0.0, 1000);
     frame_data[1] = ibex::Interval(-0.3, 2.0);
 
+
+
     ipegenerator::Figure fig(frame_data, 120, 50);
 
     fig.set_graduation_parameters(0.0, 100.0, 0.0, 0.5);
@@ -43,7 +45,7 @@ void test1()
     fig.draw_curve(x, y);
 
     fig.set_color_fill("black");
-    fig.set_color_stroke("red");
+    fig.set_color_stroke(0,1000,0);
     fig.set_color_type(ipegenerator::STROKE_AND_FILL);
     fig.set_opacity(30);
     fig.draw_circle(10, 1.0, 0.5);
@@ -125,11 +127,20 @@ void test4(){
     fig.set_graduation_parameters(0.0, 1.0, -10.0, 1.0);
     fig.draw_axis("x_1", "x_2");
 
-    ibex::Interval domain(0,20);
-    codac::Tube tube(domain,0.01,codac::TFunction("sin(t)"));
-    tube.inflate(0.5);
+    ibex::Interval domain(0,10);
+    codac::Tube tube_sin(domain,0.01,codac::TFunction("sin(t)"));
+    codac::Tube tube_cos(domain,0.01,codac::TFunction("cos(t)"));
+    tube_sin.inflate(0.5);
+    tube_cos.inflate(0.5);
 
-    fig.draw_tube(&tube);
+
+    codac::ColorMap colorMap(codac::InterpolMode::RGB);
+    codac::rgb red= codac::make_rgb(1,0,0);
+    codac::rgb green= codac::make_rgb(0,1,0);
+    colorMap.add_color_point(red,0);
+    colorMap.add_color_point(green,1);
+    fig.draw_tube(&tube_sin);
+    fig.draw_tube(&tube_cos,&colorMap);
 
 
     fig.save_ipe("test4.ipe");
