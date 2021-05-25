@@ -61,7 +61,7 @@ namespace ipe {
 
 #ifdef WIN32
   constexpr char IPESEP = '\\';
-#else
+c#else
   constexpr char IPESEP = '/';
 #endif
 

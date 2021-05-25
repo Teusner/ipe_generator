@@ -49,15 +49,11 @@ void test1()
     fig.set_color_type(ipegenerator::STROKE_AND_FILL);
     fig.set_opacity(30);
     fig.draw_circle(10, 1.0, 0.5);
-
     fig.draw_circle_radius_final(100.0, 0.5, 10.0);
-
     fig.set_dashed("dotted");
     fig.draw_sector(500.0, 1.0, 100.0, 1.0, 0.0, M_PI_2);
-
     fig.add_layer("test");
     fig.set_visible("test");
-
     fig.save_ipe("test1.ipe");
     fig.save_pdf("test1.pdf");
 }
@@ -114,8 +110,9 @@ void test3(){
     fig.save_pdf("test3.pdf");
 }
 
-
-void test4(){
+// Testing Tubes
+void test4()
+{
     ibex::IntervalVector frame_data(2);
     frame_data[0] = ibex::Interval(0.0, 10);
     frame_data[1] = ibex::Interval(-10.0, 2.0);
@@ -137,15 +134,12 @@ void test4(){
     codac::TubeVector tubeVectorBig(tubeVector);
     tubeVectorBig.inflate(0.5);
 
-
-
     codac::ColorMap colorMap(codac::InterpolMode::RGB);
     codac::rgb red= codac::make_rgb((float)1.,(float)0.,(float)0.);
     codac::rgb green= codac::make_rgb((float)0.,(float)1.,(float)0.);
     colorMap.add_color_point(red,0);
     colorMap.add_color_point(green,1);
     fig.draw_tube(&tube_sin,&colorMap);
-
 
     fig.set_color_fill("red");
     fig.set_color_stroke(0,1000,0);
@@ -154,12 +148,11 @@ void test4(){
     fig.set_opacity(30);
     fig.draw_tube(&tube_cos);
 
-
-
     fig.save_ipe("test4.ipe");
     fig.save_pdf("test4.pdf");
 }
 
+// Testing tubeVectors
 void test5()
 {
     ibex::IntervalVector frame_data(2);
@@ -176,15 +169,8 @@ void test5()
     codac::TubeVector tubeVector(domain,0.1,codac::TFunction("(cos(t);sin(t))"));
     codac::TubeVector tubeVectorBig(tubeVector);
     tubeVectorBig.inflate(0.5);
-
-
-
-    fig.set_color_fill("red");
-    fig.set_color_stroke(0,1000,0);
-    fig.set_dashed("dotted");
-    fig.set_color_type(ipegenerator::STROKE_AND_FILL);
-    fig.set_opacity(30);
-    fig.draw_tubeVector(&tubeVectorBig,0,1,false,true);
+    fig.draw_tubeVector(&tubeVectorBig,0,1,"black","red",ipegenerator::STROKE_AND_FILL,
+                        false,true);
     fig.set_opacity(100);
 
     codac::ColorMap colorMap(codac::InterpolMode::RGB);
@@ -194,8 +180,6 @@ void test5()
     colorMap.add_color_point(green,1);
 
     fig.draw_tubeVector(&tubeVector,0,1,&colorMap);
-
-
 
     fig.save_ipe("test5.ipe");
     fig.save_pdf("test5.pdf");

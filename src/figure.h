@@ -8,7 +8,7 @@
 #include "codac_ColorMap.h"
 
 #define TUBE_MAX_NB_DISPLAYED_SLICES 2000
-#define BOUNDED_INFINITY 99999.
+#define IPE_BOUNDED_INFINITY 99999.
 
 namespace ipegenerator {
 
@@ -69,7 +69,8 @@ public:
     * \param color_fill color of the  inside of the box
     * \return the index of the figure on the page
     */
-    size_t draw_box(const ibex::IntervalVector &box, const std::string& color_stroke, const std::string& color_fill);
+    size_t draw_box(const ibex::IntervalVector &box, const std::string& color_stroke, const std::string& color_fill,
+                    const PATH_TYPE &type=STROKE_AND_FILL);
     /**
     * \brief Draws a box on the figure. The drawing style (color, dashing, opacity...) should be set
     * before calling this function
@@ -79,7 +80,8 @@ public:
     * \param color_fill color of the  inside of the box
     * \return the index of the figure on the page
     */
-    size_t draw_box(const ibex::IntervalVector &box, const ipe::Color& color_stroke, const ipe::Color& color_fill);
+    size_t draw_box(const ibex::IntervalVector &box, const ipe::Color& color_stroke, const ipe::Color& color_fill,
+                    const PATH_TYPE &type=STROKE_AND_FILL);
 
     size_t draw_box(const ipe::Rect& box);
     size_t draw_box(const ipe::Vector &center, const double &width, const bool& keep_ratio=false);
@@ -87,10 +89,9 @@ public:
     size_t draw_segment(const double &x0, const double &y0, const double &x1, const double &y1);
     size_t draw_polygon(const std::vector<double>& x, const std::vector<double>& y, const bool& closed=true);
     size_t draw_polygon(const std::vector<double>& x, const std::vector<double>& y, const string& color_stroke, const string& color_fill,
-                        const bool &closed=true);
+                        const PATH_TYPE &type=STROKE_AND_FILL, const bool &closed=true);
     size_t draw_polygon(const std::vector<double>& x, const std::vector<double>& y, const ipe::Color& color_stroke, const ipe::Color& color_fill,
-                        const bool &closed=true);
-
+                        const PATH_TYPE &type=STROKE_AND_FILL, const bool &closed=true);
     size_t draw_ellipse(const double& x, const double& y, const double& r1, const double& r2);
     size_t draw_circle(const double &x, const double &y, const double &r);
     size_t draw_circle_radius_final(const double &x, const double &y, const double &r);
@@ -116,8 +117,10 @@ public:
     * \param slice the slice to be drawn
     * \param color_stroke color the envelope of slices
     * \param color_fill color of the  inside of slices
+    * \param type type of pen to use
     */
-    void draw_slice(const codac::Slice& slice, const std::string& color_stroke, const std::string& color_fill);
+    void draw_slice(const codac::Slice& slice, const std::string& color_stroke, const std::string& color_fill,
+                    const PATH_TYPE &type=STROKE_AND_FILL);
 
     /**
     * \brief Draws a single slice of a tube on the figure. The drawing style (dashing, opacity...) should be set
@@ -126,8 +129,10 @@ public:
     * \param slice the slice to be drawn
     * \param color_stroke color the envelope of slices
     * \param color_fill color of the  inside of slices
+    * \param type type of pen to use
     */
-    void draw_slice(const codac::Slice& slice, const ipe::Color& color_stroke, const ipe::Color& color_fill);
+    void draw_slice(const codac::Slice& slice, const ipe::Color& color_stroke, const ipe::Color& color_fill,
+                    const PATH_TYPE &type=STROKE_AND_FILL);
 
     /**
     * \brief Draws a single gate of a tube on the figure. The drawing style (color, dashing, opacity...) should be set
@@ -144,8 +149,10 @@ public:
     * \param slice the slice to be drawn
     * \param color_stroke color the envelope of slices
     * \param color_fill color of the  inside of slices
+    * \param type type of pen to use
     */
-    void draw_gate(const ibex::Interval& gate, double t,const string& color_stroke, const string& color_fill);
+    void draw_gate(const ibex::Interval& gate, double t,const string& color_stroke, const string& color_fill,
+                   const PATH_TYPE &type=STROKE_AND_FILL);
 
     /**
     * \brief Draws a single gate of a tube on the figure. The drawing style (dashing, opacity...) should be set
@@ -154,12 +161,14 @@ public:
     * \param slice the slice to be drawn
     * \param color_stroke color the envelope of slices
     * \param color_fill color of the  inside of slices
+    * \param type type of pen to use
     */
-    void draw_gate(const ibex::Interval& gate, double t,const ipe::Color& color_stroke, const ipe::Color& color_fill);
+    void draw_gate(const ibex::Interval& gate, double t,const ipe::Color& color_stroke, const ipe::Color& color_fill,
+                   const PATH_TYPE &type=STROKE_AND_FILL);
 
     void draw_codac_polygon(const codac::Polygon& p);
-    void draw_codac_polygon(const codac::Polygon& p,const string& color_stroke, const string& color_fill);
-    void draw_codac_polygon(const codac::Polygon& p,const ipe::Color& color_stroke, const ipe::Color& color_fill);
+    void draw_codac_polygon(const codac::Polygon& p,const string& color_stroke, const string& color_fill, const PATH_TYPE& type=STROKE_AND_FILL);
+    void draw_codac_polygon(const codac::Polygon& p,const ipe::Color& color_stroke, const ipe::Color& color_fill, const PATH_TYPE& type=STROKE_AND_FILL);
 
 
     /**
@@ -178,7 +187,8 @@ public:
     * \param color_stroke color the envelope of slices
     * \param color_fill color of the  inside of slices
     */
-    void draw_tube(const codac::Tube *tube, const string& color_stroke, const string& color_fill);
+    void draw_tube(const codac::Tube *tube, const string& color_stroke, const string& color_fill,
+                   const PATH_TYPE &type=STROKE_AND_FILL);
 
     /**
     * \brief Draws a tube on the figure. The drawing style (dashing, opacity...) should be set
@@ -187,8 +197,10 @@ public:
     * \param tube the tube to be drawn
     * \param color_stroke color the envelope of slices
     * \param color_fill color of the  inside of slices
+    * \param type type of pen to use
     */
-    void draw_tube(const codac::Tube *tube, const ipe::Color& color_stroke, const ipe::Color& color_fill);
+    void draw_tube(const codac::Tube *tube, const ipe::Color& color_stroke, const ipe::Color& color_fill,
+                   const PATH_TYPE &type=STROKE_AND_FILL);
 
     /**
     * \brief Draws a tube on the figure. The drawing style (dashing, opacity...) should be set
@@ -199,8 +211,10 @@ public:
     * \param tube the tube to be drawn
     * \param color_map custom color map for tube drawing
     * \param traj_colorMap custom color trajectory (see codac library documentation for more info http://codac.io/manual/07-graphics/04-colormaps.html?highlight=color%20map#color-maps)
+    * \param type type of pen to use
     */
-    void draw_tube(const codac::Tube *tube, const codac::ColorMap* color_map, const codac::Trajectory* traj_colorMap=NULL);
+    void draw_tube(const codac::Tube *tube, const codac::ColorMap* color_map, const codac::Trajectory* traj_colorMap=NULL,
+                   const PATH_TYPE &type=STROKE_AND_FILL);
 
     /**
      * \brief Draws a 2D projection of a TubeVector. The drawing style (color, dashing, opacity...) should be set
@@ -224,11 +238,13 @@ public:
     * \param index_y the vector dimension to be put as ordinate
     * \param color_stroke color the envelope of slices
     * \param color_fill color of the  inside of slices
+    * \param type type of pen to use
     * \param from_first_to_last boolean to say in which order the slices are drawn
     * \param smooth_drawing use polygons for drawing (TO DO)
      */
     void draw_tubeVector(const codac::TubeVector *tube_v, const int index_x, const int index_y, const string& color_stroke,
-                         const string& color_fill,const bool from_first_to_last, const bool smooth_drawing);
+                         const string& color_fill,const PATH_TYPE& type = STROKE_AND_FILL,
+                         const bool from_first_to_last= false, const bool smooth_drawing=false);
 
     /**
     * \brief Draws a 2D projection of a TubeVector. The drawing style (dashing, opacity...) should be set
@@ -239,11 +255,13 @@ public:
     * \param index_y the vector dimension to be put as ordinate
     * \param color_stroke color the envelope of slices
     * \param color_fill color of the  inside of slices
+    * \param type type of pen to use
     * \param from_first_to_last boolean to say in which order the slices are drawn
     * \param smooth_drawing use polygons for drawing (TO DO)
     */
     void draw_tubeVector(const codac::TubeVector *tube_v, const int index_x, const int index_y, const ipe::Color& color_stroke,
-                         ipe::Color& color_fill,const bool from_first_to_last, const bool smooth_drawing);
+                         ipe::Color& color_fill, const PATH_TYPE& type = STROKE_AND_FILL,
+                         const bool from_first_to_last=false, const bool smooth_drawing=false);
 
     /**
     * \brief Draws a 2D projection of a TubeVector. The drawing style (dashing, opacity...) should be set
@@ -253,11 +271,13 @@ public:
     * \param index_x the vector dimension to be put as abscissa
     * \param index_y the vector dimension to be put as ordinate
     * \param color_map custom color map
+    * \param type type of pen to use
     * \param from_first_to_last boolean to say in which order the slices are drawn
     * \param smooth_drawing use polygons for drawing (TO DO)
     */
     void draw_tubeVector(const codac::TubeVector *tube_v, const int index_x, const int index_y, const codac::ColorMap* color_map,
-                         const codac::Trajectory* traj_coloMap=NULL, const bool from_first_to_last=false, const bool smooth_drawing=false);
+                         const codac::Trajectory* traj_coloMap=NULL, const PATH_TYPE& type = STROKE_AND_FILL,
+                         const bool from_first_to_last=false, const bool smooth_drawing=false);
 
     // Style functions
     void set_thickness_pen_factor(const double &val=1e-3);
@@ -306,7 +326,7 @@ private:
 
     double trunc_inf(double x)
     {
-        return (x == POS_INFINITY ? BOUNDED_INFINITY : (x == NEG_INFINITY ? -BOUNDED_INFINITY : x));
+        return (x == POS_INFINITY ? IPE_BOUNDED_INFINITY : (x == NEG_INFINITY ? -IPE_BOUNDED_INFINITY : x));
     }
 
 

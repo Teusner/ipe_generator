@@ -3,7 +3,7 @@
 #include <sstream>
 #include <iomanip>
 
-#define BOUNDED_INFINITY 99999.
+#define IPE_BOUNDED_INFINITY 99999.
 
 namespace ipegenerator
 {
@@ -347,36 +347,27 @@ namespace ipegenerator
     }
 
 
-    size_t Figure::draw_box(const ibex::IntervalVector& box, const ipe::Color& color_stroke, const ipe::Color& color_fill)
+    size_t Figure::draw_box(const ibex::IntervalVector& box, const ipe::Color& color_stroke, const ipe::Color& color_fill,
+                            const PATH_TYPE& type)
     {
 
         this->set_color_stroke(color_stroke);
         this->set_color_fill(color_fill);
-        this->set_color_type(STROKE_AND_FILL);
-       draw_box(box);
+        this->set_color_type(type);
+        return(draw_box(box));
     }
 
 
 
-    size_t Figure::draw_box(const ibex::IntervalVector& box, const string& color_stroke, const string& color_fill)
+    size_t Figure::draw_box(const ibex::IntervalVector& box, const string& color_stroke, const string& color_fill,
+                            const PATH_TYPE& type)
     {
-        if (color_stroke !="" && color_fill!="")
-        {
-            this->set_color_stroke(color_stroke);
-            this->set_color_fill(color_fill);
-            this->set_color_type(STROKE_AND_FILL);
-        }
-        else if(color_stroke =="")
-        {
-            this->set_color_fill(color_fill);
-            this->set_color_type(FILL_ONLY);
-        }
-        else if(color_fill == "")
-        {
-            this->set_color_stroke(color_stroke);
-            this->set_color_type(STROKE_ONLY);
-        }
-        draw_box(box);
+
+        this->set_color_stroke(color_stroke);
+        this->set_color_fill(color_fill);
+        this->set_color_type(type);
+        return(draw_box(box));
+
     }
 
 
@@ -437,34 +428,22 @@ namespace ipegenerator
     }
 
     size_t Figure::draw_polygon(const std::vector<double>& x, const std::vector<double>& y,const ipe::Color& color_stroke,const ipe::Color& color_fill,
-                                const bool &closed)
+                                const PATH_TYPE& type, const bool &closed)
     {
         this->set_color_stroke(color_stroke);
         this->set_color_fill(color_fill);
-        this->set_color_type(STROKE_AND_FILL);
-        draw_polygon(x,y,closed);
+        this->set_color_type(type);
+        return(draw_polygon(x,y,closed));
     }
 
     size_t Figure::draw_polygon(const std::vector<double>& x, const std::vector<double>& y,const string& color_stroke,const string& color_fill,
-                        const bool &closed)
+                                const PATH_TYPE& type, const bool &closed)
     {
-        if (color_stroke !="" && color_fill!="")
-        {
-            this->set_color_stroke(color_stroke);
-            this->set_color_fill(color_fill);
-            this->set_color_type(STROKE_AND_FILL);
-        }
-        else if(color_stroke =="")
-        {
-            this->set_color_fill(color_fill);
-            this->set_color_type(FILL_ONLY);
-        }
-        else if(color_fill == "")
-        {
-            this->set_color_stroke(color_stroke);
-            this->set_color_type(STROKE_ONLY);
-        }
-        draw_polygon(x,y,closed);
+
+        this->set_color_stroke(color_stroke);
+        this->set_color_fill(color_fill);
+        this->set_color_type(type);
+        return(draw_polygon(x,y,closed));
     }
 
 
@@ -528,23 +507,24 @@ namespace ipegenerator
         }
     }
 
-    void Figure::draw_slice(const codac::Slice& slice, const string& color_stroke, const string& color_fill)
+    void Figure::draw_slice(const codac::Slice& slice, const string& color_stroke, const string& color_fill, const PATH_TYPE& type)
     {
         if(slice.codomain().is_empty())
             return;
         else
         {
-            draw_box(slice.box(),color_stroke,color_fill);
+            draw_box(slice.box(),color_stroke,color_fill, type);
         }
     }
 
-    void Figure::draw_slice(const codac::Slice& slice, const ipe::Color& color_stroke, const ipe::Color& color_fill)
+    void Figure::draw_slice(const codac::Slice& slice, const ipe::Color& color_stroke, const ipe::Color& color_fill,
+                            const PATH_TYPE& type)
     {
         if(slice.codomain().is_empty())
             return;
         else
         {
-            draw_box(slice.box(),color_stroke,color_fill);
+            draw_box(slice.box(),color_stroke,color_fill,type);
         }
     }
 
@@ -562,45 +542,27 @@ namespace ipegenerator
         {
             ibex::IntervalVector gate_box(2);
             gate_box[0] = t; gate_box[0].inflate(ibex::next_float(0.));
-            gate_box[1] = gate & ibex::Interval(-BOUNDED_INFINITY,BOUNDED_INFINITY);
+            gate_box[1] = gate & ibex::Interval(-IPE_BOUNDED_INFINITY,IPE_BOUNDED_INFINITY);
             draw_box(gate_box);
         }
     }
 
-    void Figure::draw_gate(const ibex::Interval& gate, double t,const string& color_stroke, const string& color_fill)
+    void Figure::draw_gate(const ibex::Interval& gate, double t,const string& color_stroke, const string& color_fill ,
+                           const PATH_TYPE& type)
     {
-        if(gate.is_empty())
-            return; // no display
-
-        else if(gate.is_degenerated())
-        {
-            //draw_point(Point(t, gate.lb()), params);
-        }
-        else
-        {
-            ibex::IntervalVector gate_box(2);
-            gate_box[0] = t; gate_box[0].inflate(ibex::next_float(0.));
-            gate_box[1] = gate & ibex::Interval(-BOUNDED_INFINITY,BOUNDED_INFINITY);
-            draw_box(gate_box, color_stroke, color_fill);
-        }
+        this->set_color_stroke(color_stroke);
+        this->set_color_fill(color_fill);
+        this->set_color_type(type);
+        draw_gate(gate,t);
     }
 
-    void Figure::draw_gate(const ibex::Interval& gate, double t,const ipe::Color& color_stroke, const ipe::Color& color_fill)
+    void Figure::draw_gate(const ibex::Interval& gate, double t,const ipe::Color& color_stroke, const ipe::Color& color_fill,
+                           const PATH_TYPE& type)
     {
-        if(gate.is_empty())
-            return; // no display
-
-        else if(gate.is_degenerated())
-        {
-            //draw_point(Point(t, gate.lb()), params);
-        }
-        else
-        {
-            ibex::IntervalVector gate_box(2);
-            gate_box[0] = t; gate_box[0].inflate(ibex::next_float(0.));
-            gate_box[1] = gate & ibex::Interval(-BOUNDED_INFINITY,BOUNDED_INFINITY);
-            draw_box(gate_box, color_stroke, color_fill);
-        }
+        this->set_color_stroke(color_stroke);
+        this->set_color_fill(color_fill);
+        this->set_color_type(type);
+        draw_gate(gate,t);
     }
 
 
@@ -619,34 +581,23 @@ namespace ipegenerator
         }
     }
 
-    void Figure::draw_codac_polygon(const codac::Polygon& p,const string& color_stroke, const string& color_fill)
+    void Figure::draw_codac_polygon(const codac::Polygon& p,const string& color_stroke, const string& color_fill,
+                                    const PATH_TYPE& type)
     {
-        std::vector<double> v_x, v_y;
-        for(int i = 0 ; i < p.nb_vertices() ; i++)
-        {
-            v_x.push_back(trunc_inf(p[i][0]));
-            v_y.push_back(trunc_inf(p[i][1]));
-        }
-
-        if(v_x.size() > 0)
-        {
-            draw_polygon(v_x, v_y,color_stroke,color_fill);
-        }
+        this->set_color_stroke(color_stroke);
+        this->set_color_fill(color_fill);
+        this->set_color_type(type);
+        draw_codac_polygon(p);
     }
 
-    void Figure::draw_codac_polygon(const codac::Polygon& p, const ipe::Color& color_stroke, const ipe::Color& color_fill)
+    void Figure::draw_codac_polygon(const codac::Polygon& p, const ipe::Color& color_stroke, const ipe::Color& color_fill,
+                                    const PATH_TYPE& type)
     {
-        std::vector<double> v_x, v_y;
-        for(int i = 0 ; i < p.nb_vertices() ; i++)
-        {
-            v_x.push_back(trunc_inf(p[i][0]));
-            v_y.push_back(trunc_inf(p[i][1]));
-        }
 
-        if(v_x.size() > 0)
-        {
-            draw_polygon(v_x, v_y,color_stroke,color_fill);
-        }
+        this->set_color_stroke(color_stroke);
+        this->set_color_fill(color_fill);
+        this->set_color_type(type);
+        draw_codac_polygon(p);
     }
 
 
@@ -664,50 +615,32 @@ namespace ipegenerator
         }
     }
 
-    void Figure::draw_tube(const codac::Tube *tube, const string& color_stroke, const string& color_fill)
+    void Figure::draw_tube(const codac::Tube *tube, const string& color_stroke, const string& color_fill, const PATH_TYPE& type)
     {
         assert(tube != NULL);
 
-        const codac::Slice *slice = tube->first_slice();
+        this->set_color_stroke(color_stroke);
+        this->set_color_fill(color_fill);
+        this->set_color_type(type);
+        draw_tube(tube);
 
-
-        draw_gate(slice->input_gate(), tube->tdomain().lb(), color_stroke, color_fill);
-        while ( slice != NULL )
-        {
-            draw_slice(*slice, color_stroke, color_fill);
-            draw_gate(slice->output_gate(), slice->tdomain().ub(), color_stroke, color_fill);
-            slice = slice->next_slice();
-        }
     }
 
-    void Figure::draw_tube(const codac::Tube *tube, const ipe::Color &color_stroke, const ipe::Color &color_fill)
+    void Figure::draw_tube(const codac::Tube *tube, const ipe::Color &color_stroke, const ipe::Color &color_fill, const PATH_TYPE& type)
     {
         assert(tube != NULL);
-
-        const codac::Slice *slice = tube->first_slice();
-
-
-        draw_gate(slice->input_gate(), tube->tdomain().lb(), color_stroke, color_fill);
-        while ( slice != NULL )
-        {
-            draw_slice(*slice, color_stroke, color_fill);
-            draw_gate(slice->output_gate(), slice->tdomain().ub(), color_stroke, color_fill);
-            slice = slice->next_slice();
-        }
+        this->set_color_stroke(color_stroke);
+        this->set_color_fill(color_fill);
+        this->set_color_type(type);
+        draw_tube(tube);
     }
 
 
-
-
-
-    void Figure::draw_tube(const codac::Tube *tube, const codac::ColorMap *color_map, const codac::Trajectory* traj_colorMap)
+    void Figure::draw_tube(const codac::Tube *tube, const codac::ColorMap *color_map, const codac::Trajectory* traj_colorMap,
+                           const PATH_TYPE& type)
     {
         assert(tube != NULL);
-
-
         const codac::Slice *slice = tube->first_slice();
-
-
         codac::Trajectory identity_traj;
         identity_traj.set(tube->tdomain().lb(), tube->tdomain().lb());
         identity_traj.set(tube->tdomain().ub(), tube->tdomain().ub());
@@ -715,23 +648,18 @@ namespace ipegenerator
         const codac::Trajectory *traj_colormap = &identity_traj;
         if (traj_colorMap != NULL)
             traj_colormap = traj_colorMap;
-
-
         codac::rgb color = color_map->color(slice->tdomain().mid(), *traj_colormap);
-
         ipe::Color myColor = ipe::Color((int)(color.r*1000.),(int)(color.g*1000.),(int)(color.b*1000.));
-
         draw_gate(slice->input_gate(), tube->tdomain().lb(), myColor, myColor);
         while ( slice != NULL )
         {
             codac::rgb color = color_map->color(slice->tdomain().mid(), *traj_colormap);
             ipe::Color myColor = ipe::Color((int)(color.r*1000.),(int)(color.g*1000.),(int)(color.b*1000.));
-            draw_slice(*slice, myColor, myColor);
-            draw_gate(slice->output_gate(), slice->tdomain().ub(), myColor, myColor);
+            draw_slice(*slice, myColor, myColor, type);
+            draw_gate(slice->output_gate(), slice->tdomain().ub(), myColor, myColor, type);
             slice = slice->next_slice();
         }
     }
-
 
 
     void Figure::draw_tubeVector(const codac::TubeVector *tube_v, const int index_x, const int index_y,const bool from_first_to_last, const bool smooth_drawing)
@@ -800,149 +728,29 @@ namespace ipegenerator
         }
     }
 
-
     void Figure::draw_tubeVector(const codac::TubeVector *tube_v, const int index_x, const int index_y, const string& color_stroke,
-                                 const string& color_fill,const bool from_first_to_last, const bool smooth_drawing)
+                                 const string& color_fill, const PATH_TYPE& type ,const bool from_first_to_last, const bool smooth_drawing)
     {
         assert(tube_v != NULL);
+        this->set_color_stroke(color_stroke);
+        this->set_color_fill(color_fill);
+        this->set_color_type(type);
+        this->draw_tubeVector(tube_v, index_x, index_y, from_first_to_last, smooth_drawing);
 
-        // Reduced number of slices:
-        int step = std::max((int)((1. * tube_v->nb_slices()) / m_tube_max_nb_disp_slices), 1);
-
-
-
-        if((*tube_v)[index_x].is_empty() || (*tube_v)[index_y].is_empty())
-            std::cout << "warning, empty tube " << std::endl;
-
-            // Color map and related trajectory
-
-        int k0, kf;
-        codac::IntervalVector prev_box(2); // used for diff or polygon display
-
-        if(from_first_to_last) // Drawing from last to first box
-        {
-            k0 = 0;
-            kf = tube_v->nb_slices()-1;
-        }
-
-        else
-        {
-            k0 = tube_v->nb_slices()-1;
-            kf = 0;
-        }
-
-        for(int k = k0 ;
-            (from_first_to_last && k <= kf) || (!from_first_to_last && k >= kf) ;
-            k+= from_first_to_last ? std::max(1,std::min(step,kf-k)) : -std::max(1,std::min(step,k)))
-        {
-            if(!(*tube_v)[0].slice(k)->tdomain().intersects(m_restricted_tdomain))
-                continue;
-
-            codac::IntervalVector box(2);
-            box[0] = (*tube_v)[index_x].slice(k)->codomain();
-            box[1] = (*tube_v)[index_y].slice(k)->codomain();
-            // Note: the last output gate is never shown
-
-            if(box.is_empty())
-                continue;
-
-
-            if(smooth_drawing)
-            {
-                // Display using polygons
-                if(!prev_box.is_unbounded())
-                {
-                    std::vector<ibex::Vector> v_pts;
-                    codac::Point::push(box, v_pts);
-                    codac::Point::push(prev_box, v_pts);
-                    codac::ConvexPolygon p(v_pts, false);
-                    draw_codac_polygon(p, color_stroke, color_fill);
-                }
-            }
-
-
-            else
-            {
-                draw_box(box, color_stroke, color_fill);
-            }
-
-            prev_box = box;
-        }
     }
 
     void Figure::draw_tubeVector(const codac::TubeVector *tube_v, const int index_x, const int index_y, const ipe::Color& color_stroke,
-                         ipe::Color& color_fill,const bool from_first_to_last, const bool smooth_drawing)
+                         ipe::Color& color_fill, const PATH_TYPE& type, const bool from_first_to_last, const bool smooth_drawing)
     {
         assert(tube_v != NULL);
-
-        // Reduced number of slices:
-        int step = std::max((int)((1. * tube_v->nb_slices()) / m_tube_max_nb_disp_slices), 1);
-
-
-
-        if((*tube_v)[index_x].is_empty() || (*tube_v)[index_y].is_empty())
-            std::cout << "warning, empty tube " << std::endl;
-
-        // Color map and related trajectory
-
-        int k0, kf;
-        codac::IntervalVector prev_box(2); // used for diff or polygon display
-
-        if(from_first_to_last) // Drawing from last to first box
-        {
-            k0 = 0;
-            kf = tube_v->nb_slices()-1;
-        }
-
-        else
-        {
-            k0 = tube_v->nb_slices()-1;
-            kf = 0;
-        }
-
-        for(int k = k0 ;
-            (from_first_to_last && k <= kf) || (!from_first_to_last && k >= kf) ;
-            k+= from_first_to_last ? std::max(1,std::min(step,kf-k)) : -std::max(1,std::min(step,k)))
-        {
-            if(!(*tube_v)[0].slice(k)->tdomain().intersects(m_restricted_tdomain))
-                continue;
-
-            codac::IntervalVector box(2);
-            box[0] = (*tube_v)[index_x].slice(k)->codomain();
-            box[1] = (*tube_v)[index_y].slice(k)->codomain();
-            // Note: the last output gate is never shown
-
-            if(box.is_empty())
-                continue;
-
-
-            if(smooth_drawing)
-            {
-                // Display using polygons
-                if(!prev_box.is_unbounded())
-                {
-                    std::vector<ibex::Vector> v_pts;
-                    codac::Point::push(box, v_pts);
-                    codac::Point::push(prev_box, v_pts);
-                    codac::ConvexPolygon p(v_pts, false);
-                    draw_codac_polygon(p, color_stroke, color_fill);
-                }
-            }
-
-
-            else
-            {
-                draw_box(box, color_stroke, color_fill);
-            }
-
-            prev_box = box;
-        }
-
+        this->set_color_stroke(color_stroke);
+        this->set_color_fill(color_fill);
+        this->draw_tubeVector(tube_v, index_x, index_y, from_first_to_last, smooth_drawing);
     }
 
 
     void Figure::draw_tubeVector(const codac::TubeVector *tube_v, const int index_x, const int index_y, const codac::ColorMap* color_map,
-                                 const codac::Trajectory* traj_colorMap, const bool from_first_to_last, const bool smooth_drawing)
+                                 const codac::Trajectory* traj_colorMap, const PATH_TYPE& type,const bool from_first_to_last, const bool smooth_drawing)
     {
         assert(tube_v != NULL);
 
@@ -1008,7 +816,7 @@ namespace ipegenerator
                     codac::Point::push(box, v_pts);
                     codac::Point::push(prev_box, v_pts);
                     codac::ConvexPolygon p(v_pts, false);
-                    draw_codac_polygon(p, myColor,myColor);
+                    draw_codac_polygon(p, myColor,myColor,type);
                 }
             }
             else
@@ -1025,20 +833,13 @@ namespace ipegenerator
                     delete[] diff_list;
                 }
                 else
-                    draw_box(box, myColor, myColor);
+                    draw_box(box, myColor, myColor,type);
             }
 
             prev_box = box;
         }
 
     }
-
-
-
-
-
-
-
 
 
     void Figure::set_color_stroke(const std::string &color_stroke)
@@ -1058,13 +859,17 @@ namespace ipegenerator
 
     void Figure::set_color_stroke(const ipe::Color& color)
     {
+
         ipe::Attribute myAttr = ipe::Attribute(color);
         m_current_attr.iStroke = myAttr;
     }
 
     void Figure::set_color_fill(const std::string &color_fill)
     {
-        m_current_attr.iFill = m_steel_sheet->find(ipe::EColor,ipe::Attribute(true, color_fill.c_str()));
+        if (color_fill!="")
+        {
+            m_current_attr.iFill = m_steel_sheet->find(ipe::EColor,ipe::Attribute(true, color_fill.c_str()));
+        }
     }
 
     void Figure::set_color_fill(const int r, const int g, const int b)
@@ -1076,6 +881,7 @@ namespace ipegenerator
 
     void Figure::set_color_fill(const ipe::Color& color)
     {
+
         ipe::Attribute myAttr = ipe::Attribute(color);
         m_current_attr.iFill = myAttr;
     }
