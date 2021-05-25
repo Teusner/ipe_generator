@@ -8,6 +8,7 @@
 #include "codac_ColorMap.h"
 
 #define TUBE_MAX_NB_DISPLAYED_SLICES 2000
+#define BOUNDED_INFINITY 99999.
 
 namespace ipegenerator {
 
@@ -85,6 +86,11 @@ public:
     size_t draw_curve(const std::vector<double> &x, const std::vector<double> &y);
     size_t draw_segment(const double &x0, const double &y0, const double &x1, const double &y1);
     size_t draw_polygon(const std::vector<double>& x, const std::vector<double>& y, const bool& closed=true);
+    size_t draw_polygon(const std::vector<double>& x, const std::vector<double>& y, const string& color_stroke, const string& color_fill,
+                        const bool &closed=true);
+    size_t draw_polygon(const std::vector<double>& x, const std::vector<double>& y, const ipe::Color& color_stroke, const ipe::Color& color_fill,
+                        const bool &closed=true);
+
     size_t draw_ellipse(const double& x, const double& y, const double& r1, const double& r2);
     size_t draw_circle(const double &x, const double &y, const double &r);
     size_t draw_circle_radius_final(const double &x, const double &y, const double &r);
@@ -150,6 +156,11 @@ public:
     * \param color_fill color of the  inside of slices
     */
     void draw_gate(const ibex::Interval& gate, double t,const ipe::Color& color_stroke, const ipe::Color& color_fill);
+
+    void draw_codac_polygon(const codac::Polygon& p);
+    void draw_codac_polygon(const codac::Polygon& p,const string& color_stroke, const string& color_fill);
+    void draw_codac_polygon(const codac::Polygon& p,const ipe::Color& color_stroke, const ipe::Color& color_fill);
+
 
     /**
     * \brief Draws a tube on the figure. The drawing style (color, dashing, opacity...) should be set
@@ -292,6 +303,11 @@ private:
     enum AXIS_SENS{AXIS_VERTICAL,AXIS_HORIZONTAL};
     void draw_axis_number(const double &number, const ipe::Vector &pos, const AXIS_SENS &sens);
     void draw_axis_numbers();
+
+    double trunc_inf(double x)
+    {
+        return (x == POS_INFINITY ? BOUNDED_INFINITY : (x == NEG_INFINITY ? -BOUNDED_INFINITY : x));
+    }
 
 
     // scale and translate in x axis

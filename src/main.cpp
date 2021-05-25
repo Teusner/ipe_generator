@@ -184,8 +184,7 @@ void test5()
     fig.set_dashed("dotted");
     fig.set_color_type(ipegenerator::STROKE_AND_FILL);
     fig.set_opacity(30);
-    fig.draw_tubeVector(&tubeVectorBig,0,1);
-
+    fig.draw_tubeVector(&tubeVectorBig,0,1,false,true);
     fig.set_opacity(100);
 
     codac::ColorMap colorMap(codac::InterpolMode::RGB);

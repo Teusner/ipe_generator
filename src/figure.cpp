@@ -353,20 +353,13 @@ namespace ipegenerator
         this->set_color_stroke(color_stroke);
         this->set_color_fill(color_fill);
         this->set_color_type(STROKE_AND_FILL);
-
-        ipe::Rect rec(m_transform_global*ipe::Vector(box[0].lb(), box[1].lb()), m_transform_global*ipe::Vector(box[0].ub(), box[1].ub()));
-        ipe::Shape shape(rec);
-        ipe::Path *path = new ipe::Path(m_current_attr, shape);
-        m_page->append(ipe::TSelect::ENotSelected, m_current_layer, path);
-        return m_page->count()-1;
+       draw_box(box);
     }
 
 
 
     size_t Figure::draw_box(const ibex::IntervalVector& box, const string& color_stroke, const string& color_fill)
     {
-        this->set_opacity(100);
-        this->set_dashed("");
         if (color_stroke !="" && color_fill!="")
         {
             this->set_color_stroke(color_stroke);
@@ -383,12 +376,7 @@ namespace ipegenerator
             this->set_color_stroke(color_stroke);
             this->set_color_type(STROKE_ONLY);
         }
-
-        ipe::Rect rec(m_transform_global*ipe::Vector(box[0].lb(), box[1].lb()), m_transform_global*ipe::Vector(box[0].ub(), box[1].ub()));
-        ipe::Shape shape(rec);
-        ipe::Path *path = new ipe::Path(m_current_attr, shape);
-        m_page->append(ipe::TSelect::ENotSelected, m_current_layer, path);
-        return m_page->count()-1;
+        draw_box(box);
     }
 
 
@@ -447,6 +435,39 @@ namespace ipegenerator
         m_page->append(ipe::TSelect::ENotSelected,m_current_layer, path);
         return m_page->count()-1;
     }
+
+    size_t Figure::draw_polygon(const std::vector<double>& x, const std::vector<double>& y,const ipe::Color& color_stroke,const ipe::Color& color_fill,
+                                const bool &closed)
+    {
+        this->set_color_stroke(color_stroke);
+        this->set_color_fill(color_fill);
+        this->set_color_type(STROKE_AND_FILL);
+        draw_polygon(x,y,closed);
+    }
+
+    size_t Figure::draw_polygon(const std::vector<double>& x, const std::vector<double>& y,const string& color_stroke,const string& color_fill,
+                        const bool &closed)
+    {
+        if (color_stroke !="" && color_fill!="")
+        {
+            this->set_color_stroke(color_stroke);
+            this->set_color_fill(color_fill);
+            this->set_color_type(STROKE_AND_FILL);
+        }
+        else if(color_stroke =="")
+        {
+            this->set_color_fill(color_fill);
+            this->set_color_type(FILL_ONLY);
+        }
+        else if(color_fill == "")
+        {
+            this->set_color_stroke(color_stroke);
+            this->set_color_type(STROKE_ONLY);
+        }
+        draw_polygon(x,y,closed);
+    }
+
+
 
     size_t Figure::draw_ellipse(const double &x, const double &y, const double &r1, const double &r2)
     {
@@ -582,6 +603,53 @@ namespace ipegenerator
         }
     }
 
+
+    void Figure::draw_codac_polygon(const codac::Polygon& p)
+    {
+        std::vector<double> v_x, v_y;
+        for(int i = 0 ; i < p.nb_vertices() ; i++)
+        {
+            v_x.push_back(trunc_inf(p[i][0]));
+            v_y.push_back(trunc_inf(p[i][1]));
+        }
+
+        if(v_x.size() > 0)
+        {
+            draw_polygon(v_x, v_y);
+        }
+    }
+
+    void Figure::draw_codac_polygon(const codac::Polygon& p,const string& color_stroke, const string& color_fill)
+    {
+        std::vector<double> v_x, v_y;
+        for(int i = 0 ; i < p.nb_vertices() ; i++)
+        {
+            v_x.push_back(trunc_inf(p[i][0]));
+            v_y.push_back(trunc_inf(p[i][1]));
+        }
+
+        if(v_x.size() > 0)
+        {
+            draw_polygon(v_x, v_y,color_stroke,color_fill);
+        }
+    }
+
+    void Figure::draw_codac_polygon(const codac::Polygon& p, const ipe::Color& color_stroke, const ipe::Color& color_fill)
+    {
+        std::vector<double> v_x, v_y;
+        for(int i = 0 ; i < p.nb_vertices() ; i++)
+        {
+            v_x.push_back(trunc_inf(p[i][0]));
+            v_y.push_back(trunc_inf(p[i][1]));
+        }
+
+        if(v_x.size() > 0)
+        {
+            draw_polygon(v_x, v_y,color_stroke,color_fill);
+        }
+    }
+
+
     void Figure::draw_tube(const codac::Tube *tube)
     {
         assert(tube != NULL);
@@ -716,11 +784,11 @@ namespace ipegenerator
                     // Display using polygons
                     if(!prev_box.is_unbounded())
                     {
-                        //vector<Vector> v_pts;
-                        //Point::push(box, v_pts);
-                        //Point::push(prev_box, v_pts);
-                        //ConvexPolygon p(v_pts, false);
-                        //draw_polygon(p, color, params);
+                        std::vector<ibex::Vector> v_pts;
+                        codac::Point::push(box, v_pts);
+                        codac::Point::push(prev_box, v_pts);
+                        codac::ConvexPolygon p(v_pts, false);
+                        draw_codac_polygon(p);
                     }
                 }
                 else
@@ -784,11 +852,11 @@ namespace ipegenerator
                 // Display using polygons
                 if(!prev_box.is_unbounded())
                 {
-                    //vector<Vector> v_pts;
-                    //Point::push(box, v_pts);
-                    //Point::push(prev_box, v_pts);
-                    //ConvexPolygon p(v_pts, false);
-                    //draw_polygon(p, color, params);
+                    std::vector<ibex::Vector> v_pts;
+                    codac::Point::push(box, v_pts);
+                    codac::Point::push(prev_box, v_pts);
+                    codac::ConvexPolygon p(v_pts, false);
+                    draw_codac_polygon(p, color_stroke, color_fill);
                 }
             }
 
@@ -853,11 +921,11 @@ namespace ipegenerator
                 // Display using polygons
                 if(!prev_box.is_unbounded())
                 {
-                    //vector<Vector> v_pts;
-                    //Point::push(box, v_pts);
-                    //Point::push(prev_box, v_pts);
-                    //ConvexPolygon p(v_pts, false);
-                    //draw_polygon(p, color, params);
+                    std::vector<ibex::Vector> v_pts;
+                    codac::Point::push(box, v_pts);
+                    codac::Point::push(prev_box, v_pts);
+                    codac::ConvexPolygon p(v_pts, false);
+                    draw_codac_polygon(p, color_stroke, color_fill);
                 }
             }
 
@@ -871,8 +939,6 @@ namespace ipegenerator
         }
 
     }
-
-
 
 
     void Figure::draw_tubeVector(const codac::TubeVector *tube_v, const int index_x, const int index_y, const codac::ColorMap* color_map,
@@ -938,11 +1004,11 @@ namespace ipegenerator
                 if(!prev_box.is_unbounded())
                 {
 
-                    //vector<Vector> v_pts;
-                    //Point::push(box, v_pts);
-                    //Point::push(prev_box, v_pts);
-                    //ConvexPolygon p(v_pts, false);
-                    //draw_polygon(p, color, params);
+                    std::vector<ibex::Vector> v_pts;
+                    codac::Point::push(box, v_pts);
+                    codac::Point::push(prev_box, v_pts);
+                    codac::ConvexPolygon p(v_pts, false);
+                    draw_codac_polygon(p, myColor,myColor);
                 }
             }
             else
