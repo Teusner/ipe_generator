@@ -1,5 +1,5 @@
 # ==================================================================
-#  invariant-lib - cmake configuration file
+#  ipegenerator - cmake configuration file
 # ==================================================================
 
 cmake_minimum_required(VERSION 3.5.1)
@@ -22,140 +22,107 @@ set(PROJECT_DESCRIPTION "Lib to generate ipe file using ibex-lib")
 project(${PACKAGE_NAME})
 
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/)
 
-### Find package ###
-FIND_PACKAGE(PkgConfig)
+################################################################################
+# Options for directories
+################################################################################
+
+# Install directories
+set(CMAKE_INSTALL_INCLUDEDIR "include" CACHE PATH "C++ header files (include)")
+set(CMAKE_INSTALL_LIBDIR "lib" CACHE PATH "object code libraries (lib)")
+set(CMAKE_INSTALL_BINDIR "bin" CACHE PATH "user executables (bin)")
+set(CMAKE_INSTALL_STYLE_DIR "style" CACHE PATH "sheet style directory (style)")
+set(CMAKE_INSTALL_PKGCONFIG "share/pkgconfig" CACHE PATH "pkg files (share/pkgconfig)")
+set(CMAKE_INSTALL_CMAKE "share/ipegenerator/cmake" CACHE PATH "cmake files (share/ipegenerator/cmake)")
 
 
-find_package(Boost REQUIRED COMPONENTS system thread filesystem)
-if(Boost_FOUND)
-	include_directories(${Boost_INCLUDE_DIR})
-	message(STATUS "[BOOST] OK")
+################################################################################
+# Compilation configuration
+################################################################################
+
+#  # Check that the compiler supports c++11
+#  include(CheckCXXCompilerFlag)
+#  check_cxx_compiler_flag("-std=c++17" COMPILER_SUPPORTS_CXX17)
+#
+#  if(COMPILER_SUPPORTS_CXX17)
+#    add_compile_options(-std=c++17)
+#  else()
+#    message(FATAL_ERROR "Codac needs a compiler with C++17 support")
+#  endif()
+
+#  if(WIN32)
+#    # We need this for strdup under Windows (see issue #287 of ibex-lib repo)
+#    add_definitions(-U__STRICT_ANSI__)
+#  endif()
+
+if(MSVC)
+    add_compile_options(/D _CRT_SECURE_NO_WARNINGS)
 else()
-	message(FATAL_ERROR "[BOOST] NO")
+    add_compile_options(-Wall)
+    add_compile_options(-O3)
 endif()
 
-find_package(OpenMP)
-if(OPENMP_FOUND)
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-	message(STATUS "[OPENMP] OK")
-else()
-	message(FATAL_ERROR "[OPENMP] NO")
-endif()
 
+################################################################################
+# Looking for IBEX
+################################################################################
 
-find_package (IBEX REQUIRED)
-message (STATUS "Found Ibex version ${IBEX_VERSION}")
-ibex_init_common() # Ibex should have installed this function
+find_package(IBEX REQUIRED)
+ibex_init_common() # IBEX should have installed this function
+message(STATUS "Found IBEX version ${IBEX_VERSION}")
+
+################################################################################
+# Looking for CODAC
+################################################################################
 
 find_package(CODAC REQUIRED)
 message(STATUS "Found Codac version ${CODAC_VERSION}")
 include_directories(${CODAC_INCLUDE_DIRS})
 
-# Eigen
+################################################################################
+# Looking for Eigen3
+################################################################################
+
 find_package(Eigen3 REQUIRED NO_MODULE)
+message(STATUS "Found Eigen3 version ${EIGEN3_VERSION}")
+add_definitions(${EIGEN3_DEFINITIONS})
 include_directories(${EIGEN3_INCLUDE_DIRS})
 
+### Find package ###
+find_package(PkgConfig)
 
-FIND_PACKAGE(Ipe REQUIRED)
-if(IPE_FOUND)
 
- message(STATUS "[IPE] IPE_LIBRARIES = ${IPE_LIBRARY}")
+find_package(Boost REQUIRED COMPONENTS system thread filesystem)
+if(Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIR})
+    message(STATUS "[BOOST] OK")
 else()
- message(FATAL_ERROR "Unable to find IPE-lib.")
+    message(FATAL_ERROR "[BOOST] NO")
 endif()
 
-include_directories(include)
-include_directories(include/ipe)
-
-############## Generate Library
-add_library(ipegenerator SHARED
- src/figure.cpp
- src/model.cpp
- )
-target_link_libraries(ipegenerator
- ${IPE_LIBRARY}
- ${CODAC_LIBRARIES}
- Ibex::ibex
- ${CODAC_LIBRARIES}
- )
-
-set_target_properties(${PACKAGE_NAME} PROPERTIES VERSION 1.0)
-set_target_properties(${PACKAGE_NAME} PROPERTIES PUBLIC_HEADER src/figure.h)
-include(GNUInstallDirs)
-install(TARGETS ${PACKAGE_NAME}
- EXPORT ipegeneratorTargets
- LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
- PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PACKAGE_NAME}
- )
-INSTALL(
-    DIRECTORY ${CMAKE_SOURCE_DIR}/include/ipe/
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PACKAGE_NAME}
-    FILES_MATCHING PATTERN "*.h*"
-    )
-
-install(FILES style/basic.ipe DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/${PACKAGE_NAME} COMPONENT config)
-
-configure_file(install/${PACKAGE_NAME}.pc.in ${PACKAGE_NAME}.pc @ONLY)
-install(FILES ${CMAKE_BINARY_DIR}/${PACKAGE_NAME}.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
-
-### Generate .cmake
-
-set(INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")
-set(INSTALL_INCLUDE_DIR include CACHE PATH "Installation directory for header files")
-set(DEF_INSTALL_CMAKE_DIR "lib/cmake/${PACKAGE_NAME}")
-set(INSTALL_CMAKE_DIR ${DEF_INSTALL_CMAKE_DIR} CACHE PATH "Installation directory for CMake files")
-
-foreach(p LIB BIN INCLUDE CMAKE)
-  set(var INSTALL_${p}_DIR)
-  if(NOT IS_ABSOLUTE "${${var}}")
-    set(${var} "${CMAKE_INSTALL_PREFIX}/${${var}}")
-  endif()
-endforeach()
-
-export(TARGETS ipegenerator FILE "${PROJECT_BINARY_DIR}/${PACKAGE_NAME}Targets.cmake")
-export(PACKAGE ${PACKAGE_NAME})
-
-file(RELATIVE_PATH REL_INCLUDE_DIR "${INSTALL_CMAKE_DIR}" "${INSTALL_INCLUDE_DIR}")
-
-set(CONF_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/${PACKAGE_NAME}")
-configure_file(cmake/ipegeneratorConfig.cmake.in "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${PACKAGE_NAME}Config.cmake" @ONLY)
-
-set(CONF_LIBRARIES "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/lib${PACKAGE_NAME}.so")
-configure_file(cmake/ipegeneratorConfig.cmake.in "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${PACKAGE_NAME}Config.cmake" @ONLY)
-
-# ... for both
-configure_file(cmake/ipegeneratorConfigVersion.cmake.in "${PROJECT_BINARY_DIR}/${PACKAGE_NAME}ConfigVersion.cmake" @ONLY)
-
-# Install the FooBarConfig.cmake and FooBarConfigVersion.cmake
-install(FILES
-  "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${PACKAGE_NAME}Config.cmake"
-  "${PROJECT_BINARY_DIR}/${PACKAGE_NAME}ConfigVersion.cmake"
-  DESTINATION "${INSTALL_CMAKE_DIR}" COMPONENT dev)
-
-## Install the export set for use with the install-tree
-install(EXPORT ipegeneratorTargets DESTINATION "${INSTALL_CMAKE_DIR}" COMPONENT dev)
-
-#######################
+find_package(OpenMP)
+if(OPENMP_FOUND)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    message(STATUS "[OPENMP] OK")
+else()
+    message(FATAL_ERROR "[OPENMP] NO")
+endif()
 
 
-set(SRC
- src/main.cpp
- src/figure.cpp
- src/model.cpp
- )
 
-set(HEADERS
- src/figure.h
- )
 
-add_executable(ipe_test ${SRC})
 
-target_link_libraries(ipe_test
- ${IPE_LIBRARY}
- ${CODAC_LIBRARIES}
- Ibex::ibex
- ${CODAC_LIBRARIES}
- )
+################################################################################
+# Compile sources
+################################################################################
+
+add_subdirectory(src) # C++ sources
+add_executable(test test/main.cpp)
+target_link_libraries(test ipe ipegenerator -lz -lpng -lspiro -ljpeg)
+
+################################################################################
+# Copy style sheet
+################################################################################
+install(FILES style/basic.ipe DESTINATION ${CMAKE_INSTALL_STYLE_DIR})
+
