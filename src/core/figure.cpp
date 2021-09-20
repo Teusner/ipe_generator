@@ -339,7 +339,9 @@ namespace ipegenerator
 
     size_t Figure::draw_box(const ibex::IntervalVector &box)
     {
-        ipe::Rect rec(m_transform_global*ipe::Vector(box[0].lb(), box[1].lb()), m_transform_global*ipe::Vector(box[0].ub(), box[1].ub()));
+
+        ibex::IntervalVector to_draw = box & ibex::IntervalVector({{-IPE_BOUNDED_INFINITY,IPE_BOUNDED_INFINITY},{-IPE_BOUNDED_INFINITY,IPE_BOUNDED_INFINITY}});
+        ipe::Rect rec(m_transform_global*ipe::Vector(to_draw[0].lb(), to_draw[1].lb()), m_transform_global*ipe::Vector(to_draw[0].ub(), to_draw[1].ub()));
         ipe::Shape shape(rec);
         ipe::Path *path = new ipe::Path(m_current_attr, shape);
         m_page->append(ipe::TSelect::ENotSelected, m_current_layer, path);

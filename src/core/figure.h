@@ -387,6 +387,8 @@ private:
     //tube display
     codac::Interval m_restricted_tdomain = codac::Interval(codac::Interval::ALL_REALS);
     unsigned int m_tube_max_nb_disp_slices = TUBE_MAX_NB_DISPLAYED_SLICES;
+
+
 };
 
 inline void Figure::add_layer(const std::string &layer_name)
