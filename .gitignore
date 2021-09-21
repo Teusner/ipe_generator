@@ -44,3 +44,6 @@ CTestTestfile.cmake
 _deps
 
 build/
+build-debug/
+build-release/
+.idea/
