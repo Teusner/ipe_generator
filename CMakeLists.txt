@@ -88,6 +88,16 @@ message(STATUS "Found Eigen3 version ${EIGEN3_VERSION}")
 add_definitions(${EIGEN3_DEFINITIONS})
 include_directories(${EIGEN3_INCLUDE_DIRS})
 
+################################################################################
+# Looking for IPE
+################################################################################
+find_package(IPE REQUIRED)
+message(STATUS "Found Ipe")
+
+
+
+
+
 ### Find package ###
 find_package(PkgConfig)
 
@@ -119,7 +129,7 @@ endif()
 
 add_subdirectory(src) # C++ sources
 add_executable(test test/main.cpp)
-target_link_libraries(test ipe ipegenerator -lz -lpng -lspiro -ljpeg)
+target_link_libraries(test  ipegenerator -lz -lpng -lspiro -ljpeg -lipe)
 
 ################################################################################
 # Copy style sheet
