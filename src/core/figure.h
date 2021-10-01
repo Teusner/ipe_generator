@@ -304,6 +304,8 @@ public:
 
     void set_color_type(const PATH_TYPE &type);
     void set_opacity(const int &opacity);
+    void set_fill_opacity(const int &opacity);
+    void set_stroke_opacity(const int &opacity);
     void set_current_layer(const std::string &layer_name);
     void set_dashed(const std::string &dashed);
     void set_line_width(const double &val);

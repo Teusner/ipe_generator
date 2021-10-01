@@ -894,7 +894,7 @@ namespace ipegenerator
         m_current_attr.iPathMode = (ipe::TPathMode)type; // To be checked
     }
 
-    void Figure::set_opacity(const int &opacity){
+    void Figure::set_fill_opacity(const int &opacity){
         if(opacity != 100)
         {
             std::string opacity_value = std::to_string(opacity)+"\%";
@@ -903,6 +903,31 @@ namespace ipegenerator
         else
         {
             m_current_attr.iOpacity = ipe::Attribute::OPAQUE();
+        }
+    }
+    void Figure::set_stroke_opacity(const int &opacity){
+        if(opacity != 100)
+        {
+            std::string opacity_value = std::to_string(opacity)+"\%";
+            m_current_attr.iStrokeOpacity = ipe::Attribute(true, opacity_value.c_str());
+        }
+        else
+        {
+            m_current_attr.iStrokeOpacity = ipe::Attribute::OPAQUE();
+        }
+    }
+
+    void Figure::set_opacity(const int &opacity){
+        if(opacity != 100)
+        {
+            std::string opacity_value = std::to_string(opacity)+"\%";
+            m_current_attr.iOpacity = ipe::Attribute(true, opacity_value.c_str());
+            m_current_attr.iStrokeOpacity = ipe::Attribute(true, opacity_value.c_str());
+        }
+        else
+        {
+            m_current_attr.iOpacity = ipe::Attribute::OPAQUE();
+            m_current_attr.iStrokeOpacity = ipe::Attribute::OPAQUE();
         }
     }
 
