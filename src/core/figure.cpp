@@ -603,10 +603,11 @@ namespace ipegenerator
     }
 
 
-    void Figure::draw_tube(const codac::Tube *tube)
+    void Figure::draw_tube(const codac::Tube *tube, const string& name)
     {
         assert(tube != NULL);
-
+        this->add_layer(name);
+        this->set_current_layer(name);
         const codac::Slice *slice = tube->first_slice();
         draw_gate(slice->input_gate(), tube->tdomain().lb());
         while ( slice != NULL )
@@ -615,33 +616,36 @@ namespace ipegenerator
             draw_gate(slice->output_gate(), slice->tdomain().ub());
             slice = slice->next_slice();
         }
+        this->set_current_layer("data");
     }
 
-    void Figure::draw_tube(const codac::Tube *tube, const string& color_stroke, const string& color_fill, const PATH_TYPE& type)
+    void Figure::draw_tube(const codac::Tube *tube, const string& name, const string& color_stroke, const string& color_fill, const PATH_TYPE& type)
     {
         assert(tube != NULL);
 
         this->set_color_stroke(color_stroke);
         this->set_color_fill(color_fill);
         this->set_color_type(type);
-        draw_tube(tube);
+        draw_tube(tube, name);
 
     }
 
-    void Figure::draw_tube(const codac::Tube *tube, const ipe::Color &color_stroke, const ipe::Color &color_fill, const PATH_TYPE& type)
+    void Figure::draw_tube(const codac::Tube *tube, const string& name, const ipe::Color &color_stroke, const ipe::Color &color_fill, const PATH_TYPE& type)
     {
         assert(tube != NULL);
         this->set_color_stroke(color_stroke);
         this->set_color_fill(color_fill);
         this->set_color_type(type);
-        draw_tube(tube);
+        draw_tube(tube, name);
     }
 
 
-    void Figure::draw_tube(const codac::Tube *tube, const codac::ColorMap *color_map, const codac::Trajectory* traj_colorMap,
+    void Figure::draw_tube(const codac::Tube *tube, const string& name, const codac::ColorMap *color_map, const codac::Trajectory* traj_colorMap,
                            const PATH_TYPE& type)
     {
         assert(tube != NULL);
+        this->add_layer(name);
+        this->set_current_layer(name);
         const codac::Slice *slice = tube->first_slice();
         codac::Trajectory identity_traj;
         identity_traj.set(tube->tdomain().lb(), tube->tdomain().lb());
@@ -661,13 +665,15 @@ namespace ipegenerator
             draw_gate(slice->output_gate(), slice->tdomain().ub(), myColor, myColor, type);
             slice = slice->next_slice();
         }
+        this->set_current_layer("data");
     }
 
 
-    void Figure::draw_tubeVector(const codac::TubeVector *tube_v, const int index_x, const int index_y,const bool from_first_to_last, const bool smooth_drawing)
+    void Figure::draw_tubeVector(const codac::TubeVector *tube_v, const string& name, const int index_x, const int index_y,const bool from_first_to_last, const bool smooth_drawing)
     {
         assert(tube_v != NULL);
-
+        this->add_layer(name);
+        this->set_current_layer(name);
         // Reduced number of slices:
         int step = std::max((int)((1. * tube_v->nb_slices()) / m_tube_max_nb_disp_slices), 1);
 
@@ -728,33 +734,36 @@ namespace ipegenerator
                 prev_box = box;
             }
         }
+        this->set_current_layer("data");
     }
 
-    void Figure::draw_tubeVector(const codac::TubeVector *tube_v, const int index_x, const int index_y, const string& color_stroke,
+    void Figure::draw_tubeVector(const codac::TubeVector *tube_v, const string& name, const int index_x, const int index_y, const string& color_stroke,
                                  const string& color_fill, const PATH_TYPE& type ,const bool from_first_to_last, const bool smooth_drawing)
     {
         assert(tube_v != NULL);
         this->set_color_stroke(color_stroke);
         this->set_color_fill(color_fill);
         this->set_color_type(type);
-        this->draw_tubeVector(tube_v, index_x, index_y, from_first_to_last, smooth_drawing);
+        this->draw_tubeVector(tube_v, name, index_x, index_y, from_first_to_last, smooth_drawing);
 
     }
 
-    void Figure::draw_tubeVector(const codac::TubeVector *tube_v, const int index_x, const int index_y, const ipe::Color& color_stroke,
+    void Figure::draw_tubeVector(const codac::TubeVector *tube_v, const string& name, const int index_x, const int index_y, const ipe::Color& color_stroke,
                          ipe::Color& color_fill, const PATH_TYPE& type, const bool from_first_to_last, const bool smooth_drawing)
     {
         assert(tube_v != NULL);
         this->set_color_stroke(color_stroke);
         this->set_color_fill(color_fill);
-        this->draw_tubeVector(tube_v, index_x, index_y, from_first_to_last, smooth_drawing);
+        this->draw_tubeVector(tube_v, name, index_x, index_y, from_first_to_last, smooth_drawing);
     }
 
 
-    void Figure::draw_tubeVector(const codac::TubeVector *tube_v, const int index_x, const int index_y, const codac::ColorMap* color_map,
+    void Figure::draw_tubeVector(const codac::TubeVector *tube_v, const string& name, const int index_x, const int index_y, const codac::ColorMap* color_map,
                                  const codac::Trajectory* traj_colorMap, const PATH_TYPE& type,const bool from_first_to_last, const bool smooth_drawing)
     {
         assert(tube_v != NULL);
+        this->add_layer(name);
+        this->set_current_layer(name);
 
         // Reduced number of slices:
         int step = std::max((int)((1. * tube_v->nb_slices()) / m_tube_max_nb_disp_slices), 1);
@@ -840,6 +849,7 @@ namespace ipegenerator
 
             prev_box = box;
         }
+        this->set_current_layer("data");
 
     }
 

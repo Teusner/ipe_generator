@@ -139,14 +139,14 @@ void test4()
     codac::rgb green= codac::make_rgb((float)0.,(float)1.,(float)0.);
     colorMap.add_color_point(red,0);
     colorMap.add_color_point(green,1);
-    fig.draw_tube(&tube_sin,&colorMap);
+    fig.draw_tube(&tube_sin,"sin", &colorMap);
 
     fig.set_color_fill("red");
     fig.set_color_stroke(0,1000,0);
     fig.set_dashed("dotted");
     fig.set_color_type(ipegenerator::STROKE_AND_FILL);
     fig.set_opacity(30);
-    fig.draw_tube(&tube_cos);
+    fig.draw_tube(&tube_cos, "cos");
 
     fig.save_ipe("test4.ipe");
     fig.save_pdf("test4.pdf");
@@ -169,7 +169,7 @@ void test5()
     codac::TubeVector tubeVector(domain,0.1,codac::TFunction("(cos(t);sin(t))"));
     codac::TubeVector tubeVectorBig(tubeVector);
     tubeVectorBig.inflate(0.5);
-    fig.draw_tubeVector(&tubeVectorBig,0,1,"black","red",ipegenerator::STROKE_AND_FILL,
+    fig.draw_tubeVector(&tubeVectorBig,"big",0,1,"black","red",ipegenerator::STROKE_AND_FILL,
                         false,true);
     fig.set_opacity(100);
 
@@ -179,7 +179,7 @@ void test5()
     colorMap.add_color_point(red,0);
     colorMap.add_color_point(green,1);
 
-    fig.draw_tubeVector(&tubeVector,0,1,&colorMap);
+    fig.draw_tubeVector(&tubeVector,"normal",0,1,&colorMap);
 
     fig.save_ipe("test5.ipe");
     fig.save_pdf("test5.pdf");

@@ -176,18 +176,20 @@ public:
     * before calling this function
     *
     * \param tube the tube to be drawn
+    * \param name the name of the layer dedicated for the tube
     */
-    void draw_tube(const codac::Tube *tube);
+    void draw_tube(const codac::Tube *tube, const string& name);
 
     /**
     * \brief Draws a tube on the figure. The drawing style (dashing, opacity...) should be set
     * before calling this function
     *
     * \param tube the tube to be drawn
+    * \param name the name of the layer dedicated for the tube
     * \param color_stroke color the envelope of slices
     * \param color_fill color of the  inside of slices
     */
-    void draw_tube(const codac::Tube *tube, const string& color_stroke, const string& color_fill,
+    void draw_tube(const codac::Tube *tube, const string& name, const string& color_stroke, const string& color_fill,
                    const PATH_TYPE &type=STROKE_AND_FILL);
 
     /**
@@ -195,11 +197,12 @@ public:
     * before calling this function
     *
     * \param tube the tube to be drawn
+    * \param name the name of the layer dedicated for the tube
     * \param color_stroke color the envelope of slices
     * \param color_fill color of the  inside of slices
     * \param type type of pen to use
     */
-    void draw_tube(const codac::Tube *tube, const ipe::Color& color_stroke, const ipe::Color& color_fill,
+    void draw_tube(const codac::Tube *tube, const string& name, const ipe::Color& color_stroke, const ipe::Color& color_fill,
                    const PATH_TYPE &type=STROKE_AND_FILL);
 
     /**
@@ -213,7 +216,7 @@ public:
     * \param traj_colorMap custom color trajectory (see codac library documentation for more info http://codac.io/manual/07-graphics/04-colormaps.html?highlight=color%20map#color-maps)
     * \param type type of pen to use
     */
-    void draw_tube(const codac::Tube *tube, const codac::ColorMap* color_map, const codac::Trajectory* traj_colorMap=NULL,
+    void draw_tube(const codac::Tube *tube, const string& name, const codac::ColorMap* color_map, const codac::Trajectory* traj_colorMap=NULL,
                    const PATH_TYPE &type=STROKE_AND_FILL);
 
     /**
@@ -221,12 +224,13 @@ public:
      * before calling this function
      *
      * \param tube_v the tubeVector to be drawn
+     * \param name the name of the layer dedicated for the tube
      * \param index_x the vector dimension to be put as abscissa
      * \param index_y the vector dimension to be put as ordinate
      * \param from_first_to_last boolean to say in which order the slices are drawn
      * \param smooth_drawing use polygons for drawing (TO DO)
      */
-    void draw_tubeVector(const codac::TubeVector *tube_v, const int index_x, const int index_y,
+    void draw_tubeVector(const codac::TubeVector *tube_v, const string& name, const int index_x, const int index_y,
                          const bool from_first_to_last=false, const bool smooth_drawing=false);
 
     /**
@@ -234,6 +238,7 @@ public:
     * before calling this function
     *
     * \param tube_v the tubeVector to be drawn
+    * \param name the name of the layer dedicated for the tube
     * \param index_x the vector dimension to be put as abscissa
     * \param index_y the vector dimension to be put as ordinate
     * \param color_stroke color the envelope of slices
@@ -242,7 +247,7 @@ public:
     * \param from_first_to_last boolean to say in which order the slices are drawn
     * \param smooth_drawing use polygons for drawing (TO DO)
      */
-    void draw_tubeVector(const codac::TubeVector *tube_v, const int index_x, const int index_y, const string& color_stroke,
+    void draw_tubeVector(const codac::TubeVector *tube_v, const string& name, const int index_x, const int index_y, const string& color_stroke,
                          const string& color_fill,const PATH_TYPE& type = STROKE_AND_FILL,
                          const bool from_first_to_last= false, const bool smooth_drawing=false);
 
@@ -259,7 +264,7 @@ public:
     * \param from_first_to_last boolean to say in which order the slices are drawn
     * \param smooth_drawing use polygons for drawing (TO DO)
     */
-    void draw_tubeVector(const codac::TubeVector *tube_v, const int index_x, const int index_y, const ipe::Color& color_stroke,
+    void draw_tubeVector(const codac::TubeVector *tube_v, const string& name, const int index_x, const int index_y, const ipe::Color& color_stroke,
                          ipe::Color& color_fill, const PATH_TYPE& type = STROKE_AND_FILL,
                          const bool from_first_to_last=false, const bool smooth_drawing=false);
 
@@ -268,6 +273,7 @@ public:
     * before calling this function
     *
     * \param tube_v the tubeVector to be drawn
+    * \param name the name of the layer dedicated for the tube
     * \param index_x the vector dimension to be put as abscissa
     * \param index_y the vector dimension to be put as ordinate
     * \param color_map custom color map
@@ -275,7 +281,7 @@ public:
     * \param from_first_to_last boolean to say in which order the slices are drawn
     * \param smooth_drawing use polygons for drawing (TO DO)
     */
-    void draw_tubeVector(const codac::TubeVector *tube_v, const int index_x, const int index_y, const codac::ColorMap* color_map,
+    void draw_tubeVector(const codac::TubeVector *tube_v, const string& name, const int index_x, const int index_y, const codac::ColorMap* color_map,
                          const codac::Trajectory* traj_coloMap=NULL, const PATH_TYPE& type = STROKE_AND_FILL,
                          const bool from_first_to_last=false, const bool smooth_drawing=false);
 

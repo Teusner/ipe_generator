@@ -15,9 +15,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 
 
 set(CMAKE_BUILD_TYPE "DEBUG")
-set(PROJECT_VERSION 1.0.0)
-set(Upstream_VERSION 1.0.0)
-set(PROJECT_DESCRIPTION "Lib to generate ipe file using ibex-lib")
+set(PROJECT_VERSION 1.1.0)
+set(Upstream_VERSION 1.1.0)
+set(PROJECT_DESCRIPTION "Lib to generate ipe file using ibex-lib and codac")
 
 project(${PACKAGE_NAME})
 
