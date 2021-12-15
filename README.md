@@ -9,6 +9,15 @@ with  the current version of IPE [7.2.24](https://ipe.otfried.org/) (if this not
 generate an issue, I will update it ^^)
 
 
+## Dependencies
+
+To build *ipe-generator* you need to install some dependencies :
+
+```bash
+sudo apt install libpng-dev libjpeg-dev libspiro-dev
+```
+
+
 ## Installation guidelines (most recent ipe version with master branch)
 
 To use this API you first need to install **IBEX** and **CODAC** using the guidelines
