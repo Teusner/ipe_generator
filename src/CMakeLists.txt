@@ -34,7 +34,7 @@ Libs: ${IPEGENERATOR_PKG_CONFIG_LIBS}")
 install(FILES ${IPEGENERATOR_PKG_CONFIG_FILE} DESTINATION ${CMAKE_INSTALL_PKGCONFIG})
 
 
-# Generating codac-config.cmake file
+# Generating ipegenerator-config.cmake file
 # ==================================
 
 set(IPEGENERATOR_CMAKE_CONFIG_FILE ${CMAKE_CURRENT_BINARY_DIR}/ipegenerator-config.cmake)

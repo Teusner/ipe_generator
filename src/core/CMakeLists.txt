@@ -16,7 +16,6 @@ add_library(ipegenerator ${SRC})
 #set_property(TARGET codac PROPERTY CXX_STANDARD 17)
 add_compile_options(-O3 -Wall)
 target_link_libraries(ipegenerator ipe ${CODAC_LIBRARIES} Ibex::ibex ${CODAC_LIBRARIES})
-target_compile_definitions(ipegenerator PUBLIC IPE_STYLE_PATH="${CMAKE_INSTALL_PREFIX}/style/basic.ipe")
 #set_property(TARGET codac PROPERTY CXX_STANDARD_REQUIRED ON)
 
 
@@ -50,6 +49,6 @@ file(COPY ${IPE_GENERATOR_MAIN_HEADER} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/.
 
 # Install files in system directories
 
-install(TARGETS ipegenerator DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(TARGETS ipegenerator DESTINATION ${CMAKE_INSTALL_LIBDIR} EXPORT ipegenerator)
 install(FILES ${HDR} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/ipegenerator)
 install(FILES ${IPE_GENERATOR_MAIN_HEADER} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/ipegenerator)
