@@ -96,5 +96,116 @@ size_t Figure::draw_float(const double &x, const double &y, const double &piston
     return m_page->count()-1;
 }
 
+
+size_t Figure::draw_auv(const double &x, const double &y, const double& yaw, const double &zoom, const bool &custom_color)
+{
+    ipe::Group *group = new ipe::Group();
+    const double min_size_frame = std::min(m_frame_data[0].diam(), m_frame_data[1].diam());
+    ipe::Matrix zoom_operator(ipe::Linear(zoom*min_size_frame, 0.0, 0.0, zoom*min_size_frame)*m_transform_global_keep_dimension_keep_y.linear(), ipe::Vector(0.0, 0.0));
+    ipe::Matrix translate_operator(ipe::Linear(), m_transform_global*ipe::Vector(x, y));
+    ipe::Matrix rotate_operator(cos(yaw),sin(yaw), -sin(yaw),cos(yaw),0,0);
+    ipe::Matrix final_operator=translate_operator*rotate_operator*zoom_operator;
+
+    // ********************** Main Body **********************
+    ipe::Curve *curve_auv=new ipe::Curve();
+    ipe::Vector auv0 = final_operator * ipe::Vector(0, 1);
+    ipe::Vector auv1 = final_operator * ipe::Vector(3, 1);
+    curve_auv->appendSegment(auv0, auv1);
+    ipe::Vector auv2 = final_operator * ipe::Vector(4, 0);
+    ipe::Vector auv3 = final_operator * ipe::Vector(3, -1);
+    std::vector<ipe::Vector> spline1{auv1, auv2,auv3};
+    curve_auv->appendSpline(spline1);
+    ipe::Vector auv4 = final_operator * ipe::Vector(0, -1);
+    curve_auv->appendSegment(auv3, auv4);
+    ipe::Vector auv5 = final_operator * ipe::Vector(-0.7, -0.7);
+    ipe::Vector auv6 = final_operator * ipe::Vector(-1, -0.1);
+    std::vector<ipe::Vector> spline2{auv4, auv5,auv6};
+    curve_auv->appendSpline(spline2);
+    ipe::Vector auv7 = final_operator * ipe::Vector(-1.3, -0.7);
+    ipe::Vector auv8 = final_operator * ipe::Vector(-1.5, -1);
+    std::vector<ipe::Vector> spline3{auv6, auv7,auv8};
+    curve_auv->appendSpline(spline3);
+    ipe::Vector auv9 = final_operator * ipe::Vector(-2, -1);
+    curve_auv->appendSegment(auv8, auv9);
+    ipe::Vector auv10 = final_operator * ipe::Vector(-2, 1);
+    curve_auv->appendSegment(auv9, auv10);
+    ipe::Vector auv11 = final_operator * ipe::Vector(-1.5, 1);
+    curve_auv->appendSegment(auv10, auv11);
+    ipe::Vector auv12 = final_operator * ipe::Vector(-1.3, 0.7);
+    ipe::Vector auv13 = final_operator * ipe::Vector(-1, 0.1);
+    std::vector<ipe::Vector> spline4{auv11, auv12,auv13};
+    curve_auv->appendSpline(spline4);
+    ipe::Vector auv14 = final_operator * ipe::Vector(-0.7, 0.7);
+    std::vector<ipe::Vector> spline5{auv13, auv14,auv0};
+    curve_auv->appendSpline(spline5);
+    curve_auv->setClosed(true);
+    ipe::Shape shape_auv;
+    shape_auv.appendSubPath(curve_auv);
+
+    ipe::AllAttributes attr_auv;
+
+    ipe::Path *path_auv;
+    if(!custom_color)
+    {
+        attr_auv.iFill = m_steel_sheet->find(ipe::EColor,ipe::Attribute(true, "yellow"));
+        attr_auv.iStroke = ipe::Attribute::BLACK();
+        attr_auv.iPathMode  = ipe::EStrokedAndFilled;
+        path_auv = new ipe::Path(attr_auv, shape_auv);
+    }
+    else
+    {
+        path_auv = new ipe::Path(this->m_current_attr, shape_auv);
+    }
+    group->push_back(path_auv);
+
+
+    m_page->append(ipe::TSelect::ENotSelected, m_current_layer, group);
+    return m_page->count()-1;
+
+}
+
+size_t Figure::draw_simple_auv(const double &x, const double &y, const double& yaw, const double &zoom, const bool &custom_color)
+    {
+        ipe::Group *group = new ipe::Group();
+        const double min_size_frame = std::min(m_frame_data[0].diam(), m_frame_data[1].diam());
+        ipe::Matrix zoom_operator(ipe::Linear(zoom*min_size_frame, 0.0, 0.0, zoom*min_size_frame)*m_transform_global_keep_dimension_keep_y.linear(), ipe::Vector(0.0, 0.0));
+        ipe::Matrix translate_operator(ipe::Linear(), m_transform_global*ipe::Vector(x, y));
+        ipe::Matrix rotate_operator(cos(yaw),sin(yaw), -sin(yaw),cos(yaw),0,0);
+        ipe::Matrix final_operator=translate_operator*rotate_operator*zoom_operator;
+
+        // ********************** Main Body **********************
+        ipe::Curve *curve_auv=new ipe::Curve();
+        ipe::Vector auv0 = final_operator * ipe::Vector(-1, 1);
+        ipe::Vector auv1 = final_operator * ipe::Vector(-1, -1);
+        curve_auv->appendSegment(auv0, auv1);
+        ipe::Vector auv2 = final_operator * ipe::Vector(2, 0);
+        curve_auv->appendSegment(auv1, auv2);
+        curve_auv->appendSegment(auv2, auv0);
+        curve_auv->setClosed(true);
+        ipe::Shape shape_auv;
+        shape_auv.appendSubPath(curve_auv);
+
+        ipe::AllAttributes attr_auv;
+
+        ipe::Path *path_auv;
+        if(!custom_color)
+        {
+            attr_auv.iFill = m_steel_sheet->find(ipe::EColor,ipe::Attribute(true, "yellow"));
+            attr_auv.iStroke = ipe::Attribute::BLACK();
+            attr_auv.iPathMode  = ipe::EStrokedAndFilled;
+            path_auv = new ipe::Path(attr_auv, shape_auv);
+        }
+        else
+        {
+            path_auv = new ipe::Path(this->m_current_attr, shape_auv);
+        }
+        group->push_back(path_auv);
+
+
+        m_page->append(ipe::TSelect::ENotSelected, m_current_layer, group);
+        return m_page->count()-1;
+
+    }
+
 }
 

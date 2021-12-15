@@ -15,9 +15,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 
 
 set(CMAKE_BUILD_TYPE "DEBUG")
-set(PROJECT_VERSION 1.0.0)
-set(Upstream_VERSION 1.0.0)
-set(PROJECT_DESCRIPTION "Lib to generate ipe file using ibex-lib")
+set(PROJECT_VERSION 1.1.0)
+set(Upstream_VERSION 1.1.0)
+set(PROJECT_DESCRIPTION "Lib to generate ipe file using ibex-lib and codac")
 
 project(${PACKAGE_NAME})
 
@@ -28,12 +28,16 @@ project(${PACKAGE_NAME})
 ################################################################################
 
 # Install directories
-set(CMAKE_INSTALL_INCLUDEDIR "include" CACHE PATH "C++ header files (include)")
-set(CMAKE_INSTALL_LIBDIR "lib" CACHE PATH "object code libraries (lib)")
-set(CMAKE_INSTALL_BINDIR "bin" CACHE PATH "user executables (bin)")
-set(CMAKE_INSTALL_STYLE_DIR "style" CACHE PATH "sheet style directory (style)")
-set(CMAKE_INSTALL_PKGCONFIG "share/pkgconfig" CACHE PATH "pkg files (share/pkgconfig)")
-set(CMAKE_INSTALL_CMAKE "share/ipegenerator/cmake" CACHE PATH "cmake files (share/ipegenerator/cmake)")
+message(STATUS "[INSTALL] project will be installed in ${CMAKE_INSTALL_PREFIX}/ipegenerator")
+
+
+set(CMAKE_INSTALL_INCLUDEDIR "ipegenerator/include" CACHE PATH "C++ header files
+(include)")
+set(CMAKE_INSTALL_LIBDIR "ipegenerator/lib" CACHE PATH "object code libraries (lib)")
+set(CMAKE_INSTALL_BINDIR "ipegenerator/bin" CACHE PATH "user executables (bin)")
+set(CMAKE_INSTALL_STYLE_DIR "ipegenerator/style" CACHE PATH "sheet style directory (style)")
+set(CMAKE_INSTALL_PKGCONFIG "ipegenerator/share/pkgconfig" CACHE PATH "pkg files (share/pkgconfig)")
+set(CMAKE_INSTALL_CMAKE "ipegenerator/share/ipegenerator/cmake" CACHE PATH "cmake files (share/ipegenerator/cmake)")
 
 
 ################################################################################
