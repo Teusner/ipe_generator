@@ -16,6 +16,7 @@ add_library(ipegenerator ${SRC})
 #set_property(TARGET codac PROPERTY CXX_STANDARD 17)
 add_compile_options(-O3 -Wall)
 target_link_libraries(ipegenerator ipe ${CODAC_LIBRARIES} Ibex::ibex ${CODAC_LIBRARIES})
+target_compile_definitions(ipegenerator PUBLIC IPE_STYLE_PATH="${CMAKE_INSTALL_PREFIX}/style/basic.ipe")
 #set_property(TARGET codac PROPERTY CXX_STANDARD_REQUIRED ON)
 
 
