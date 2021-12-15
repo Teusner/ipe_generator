@@ -603,6 +603,25 @@ namespace ipegenerator
     }
 
 
+    void Figure::draw_trajectory(const codac::Trajectory *traj, const string name)
+    {
+        this->add_layer(name);
+        this->set_current_layer(name);
+        double dt = traj->tdomain().diam()/ this->m_width;
+        double t = 0.;
+        std::vector<double> x;
+        std::vector<double> y;
+
+        while (t<=traj->tdomain().ub())
+        {
+             x.push_back(t);
+             y.push_back((*traj)(t));
+             t += dt;
+        }
+        draw_curve(x,y);
+    }
+
+
     void Figure::draw_tube(const codac::Tube *tube, const string& name)
     {
         assert(tube != NULL);
