@@ -383,7 +383,7 @@ private:
     int                 m_current_layer=1;
 
     // Ipe parameters
-    std::string m_ref_document = "/usr/local/ipegenerator/style/basic.ipe";
+    const std::string m_ref_document = IPE_STYLE_PATH;
     double m_thickness_pen_factor = 1e-3; // thickness of pen
     double m_arrow_axis_size = 4.294; // Corresponds to /normalsize in latex
     double m_distance_axis_text = 3.0;
