@@ -185,6 +185,29 @@ void test5()
     fig.save_pdf("test5.pdf");
 }
 
+void test6()
+{
+    ibex::IntervalVector frame_data(2);
+    frame_data[0] = ibex::Interval(-4., 4.);
+    frame_data[1] = ibex::Interval(-4., 4.);
+    ipegenerator::Figure fig(frame_data, 120, 120);
+
+    fig.set_number_digits_axis_x(0);
+    fig.set_number_digits_axis_y(1);
+    fig.set_graduation_parameters(-4, 1., -4., 1.);
+    fig.draw_axis("x_1", "x_2");
+    fig.set_color_fill("red");
+    fig.set_color_stroke(0,1000,0);
+    fig.set_dashed("dotted");
+    fig.set_color_type(ipegenerator::STROKE_AND_FILL);
+    fig.set_opacity(30);
+    fig.draw_auv(1,0,M_PI,0.005,true);
+    fig.draw_auv(0,0,0,0.005);
+    fig.draw_simple_auv(1,1,M_PI/2,0.01);
+    fig.save_ipe("test6.ipe");
+    fig.save_pdf("test6.pdf");
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -193,5 +216,6 @@ int main(int argc, char *argv[])
     test3();
     test4();
     test5();
+    test6();
 }
 
