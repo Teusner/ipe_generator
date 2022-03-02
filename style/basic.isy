@@ -1,7 +1,5 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
-<ipe version="70212" creator="Ipe 7.2.13">
-<info created="D:20191116141944" modified="D:20191116141944"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -183,6 +181,8 @@ h
 <pen name="heavier" value="0.8"/>
 <pen name="fat" value="1.2"/>
 <pen name="ultrafat" value="2"/>
+<tiling name="falling" angle="-60" width="3" step="12"/>
+<tiling name="rising" angle="30" width="3" step="12"/>
 <symbolsize name="large" value="5"/>
 <symbolsize name="small" value="2"/>
 <symbolsize name="tiny" value="1.1"/>
@@ -939,8 +939,4 @@ h
 	\usepackage{mathrsfs}
 </preamble>
 </ipestyle>
-<page>
-<layer name="alpha"/>
-<view layers="alpha" active="alpha"/>
-</page>
-</ipe>
+
