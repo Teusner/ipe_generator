@@ -155,6 +155,7 @@ void test4()
 // Testing tubeVectors
 void test5()
 {
+
     ibex::IntervalVector frame_data(2);
     frame_data[0] = ibex::Interval(-2., 2.);
     frame_data[1] = ibex::Interval(-2., 2.);
@@ -187,6 +188,9 @@ void test5()
 
 void test6()
 {
+    /*
+     * Test drawing AUVs
+     */
     ibex::IntervalVector frame_data(2);
     frame_data[0] = ibex::Interval(-4., 4.);
     frame_data[1] = ibex::Interval(-4., 4.);
@@ -208,6 +212,31 @@ void test6()
     fig.save_pdf("test6.pdf");
 }
 
+void test7()
+{
+    /*
+     * Test drawing any curved shape
+     */
+    ibex::IntervalVector frame_data(2);
+    frame_data[0] = ibex::Interval(-4., 4.);
+    frame_data[1] = ibex::Interval(-4., 4.);
+    ipegenerator::Figure fig(frame_data, 120, 120);
+
+    fig.set_number_digits_axis_x(0);
+    fig.set_number_digits_axis_y(1);
+    fig.set_graduation_parameters(-4, 1., -4., 1.);
+    fig.draw_axis("x_1", "x_2");
+    fig.set_color_fill("red");
+    fig.set_color_stroke(0,1000,0);
+    fig.set_dashed("dotted");
+    fig.set_color_type(ipegenerator::STROKE_AND_FILL);
+    fig.set_opacity(30);
+    std::vector<std::vector<double>> pos{std::vector<double>{0,0},std::vector<double>{1,1},std::vector<double>{1,-1}};
+    fig.draw_shape(0,0,0,pos,0.1,true);
+    fig.save_ipe("test7.ipe");
+    fig.save_pdf("test7.pdf");
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -217,5 +246,6 @@ int main(int argc, char *argv[])
     test4();
     test5();
     test6();
+    test7();
 }
 

@@ -102,6 +102,7 @@ public:
     size_t draw_float(const double &x, const double &y, const double &piston, const double &compressibility, const FLOAT_PISTON_MVT &mvt=FLOAT_PISTON_EQUAL, const double &zoom=0.1);
     size_t draw_auv(const double &x, const double &y, const double &yaw, const double &zoom=0.1, const bool &custom_color=false);
     size_t draw_simple_auv(const double &x, const double &y, const double &yaw, const double &zoom=0.1, const bool &custom_color=false);
+    size_t draw_shape(const double &x, const double &y, const double& rotation,const std::vector<std::vector<double>> shape, const double &zoom=0.1, const bool &custom_color=false);
 
     // Tube drawings
     /**
@@ -294,6 +295,8 @@ public:
     void draw_tubeVector(const codac::TubeVector *tube_v, const string& name, const int index_x, const int index_y, const codac::ColorMap* color_map,
                          const codac::Trajectory* traj_coloMap=NULL, const PATH_TYPE& type = STROKE_AND_FILL,
                          const bool from_first_to_last=false, const bool smooth_drawing=false);
+
+
 
     // Style functions
     void set_thickness_pen_factor(const double &val=1e-3);

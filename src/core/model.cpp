@@ -207,5 +207,50 @@ size_t Figure::draw_simple_auv(const double &x, const double &y, const double& y
 
     }
 
+size_t Figure::draw_shape(const double &x, const double &y, const double& rotation,const std::vector<std::vector<double>> shape, const double &zoom, const bool &custom_color)
+{
+    const double min_size_frame = std::min(m_frame_data[0].diam(), m_frame_data[1].diam());
+    ipe::Matrix zoom_operator(ipe::Linear(zoom*min_size_frame, 0.0, 0.0, zoom*min_size_frame)*m_transform_global_keep_dimension_keep_y.linear(), ipe::Vector(0.0, 0.0));
+    ipe::Matrix translate_operator(ipe::Linear(), m_transform_global*ipe::Vector(x, y));
+    ipe::Matrix rotate_operator(cos(rotation),sin(rotation), -sin(rotation),cos(rotation),0,0);
+    ipe::Matrix final_operator=translate_operator*rotate_operator*zoom_operator;
+
+    ipe::Curve *curve=new ipe::Curve();
+    std::vector<ipe::Vector> spline;
+    for (size_t i= 0; i<shape.size();i++ )
+    {
+        spline.push_back(final_operator*ipe::Vector(shape[i][0],shape[i][1]));
+    }
+    spline.push_back(final_operator*ipe::Vector(shape[0][0],shape[0][1]));
+    curve->appendSpline(spline);
+    ipe::Shape shape_ipe;
+    shape_ipe.appendSubPath(curve);
+
+    ipe::AllAttributes attr;
+
+    ipe::Path *path;
+    if(!custom_color)
+    {
+        attr.iFill = m_steel_sheet->find(ipe::EColor,ipe::Attribute(true, "yellow"));
+        attr.iStroke = ipe::Attribute::BLACK();
+        attr.iPathMode  = ipe::EStrokedAndFilled;
+        path = new ipe::Path(attr, shape_ipe);
+    }
+    else
+    {
+        path = new ipe::Path(this->m_current_attr, shape_ipe);
+    }
+
+
+    m_page->append(ipe::TSelect::ENotSelected, m_current_layer, path);
+    return m_page->count()-1;
+
+
+
 }
+
+
+}
+
+
 
