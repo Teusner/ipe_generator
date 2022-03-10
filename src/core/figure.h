@@ -331,17 +331,12 @@ public:
     void set_color_fill(const std::string &color_fill="");
     void set_color_fill(const int r=0, const int g=0, const int b=0);
     void set_color_fill(const ipe::Color& color);
-
     void set_color_type(const PATH_TYPE &type);
     void set_opacity(const int &opacity);
     void set_fill_opacity(const int &opacity);
     void set_stroke_opacity(const int &opacity);
-    void set_current_layer(const std::string &layer_name);
-    void set_dashed(const std::string &dashed);
-    void set_line_width(const double &val);
-    void set_arrow_size(const double &val);
-    void reset_attribute();
 
+    // Paving colors
     void set_inner_color_stroke(const string& color);
     void set_inner_color_fill(const string& color);
     void set_outer_color_stroke(const string& color);
@@ -351,6 +346,16 @@ public:
     void set_penumbra_color_stroke(const string& color);
     void set_penumbra_color_fill(const string& color);
 
+    void set_tiling(const std::string &tiled);
+    void set_dashed(const std::string &dashed);
+    void set_line_width(const double &val);
+    void set_arrow_size(const double &val);
+    void reset_attribute();
+
+
+
+
+    void set_current_layer(const std::string &layer_name);
     void remove_object(const int &id);
 
 private:
@@ -417,7 +422,7 @@ private:
 
 
     // Ipe parameters
-    const std::string m_ref_document = "/usr/local/ipegenerator/style/basic.ipe";
+    const std::string m_ref_document = "/usr/local/ipegenerator/style/ipegenerator_style.isy";
     double m_thickness_pen_factor = 1e-3; // thickness of pen
     double m_arrow_axis_size = 4.294; // Corresponds to /normalsize in latex
     double m_distance_axis_text = 3.0;

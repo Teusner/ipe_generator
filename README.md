@@ -65,7 +65,7 @@ sudo make install
   have to specify the path to the installation folder in _src/core/figure.h_ line 386
 
 ```cpp
-std::string m_ref_document = "/path/you/want/ipegenerator/style/basic.ipe";
+std::string m_ref_document = "/path/you/want/ipegenerator/style/ipegenrator_style.isy";
 ```
 and then compile and install the source with: 
 

@@ -249,7 +249,9 @@ void test7()
 }
 
 
-// Paving
+/*
+ * Test drawing paving
+ */
 void test8()
 {
     codac::Function cos("x[2]","(x[1]-cos(x[0]))");
@@ -287,6 +289,34 @@ void test8()
     fig_sep.save_pdf("test8_sep.pdf");
 }
 
+/*
+ * Test drawing tiling
+ */
+void test9()
+{
+    codac::IntervalVector box_rising({{1,3},{0,1}});
+    codac::IntervalVector box_falling({{4,5},{0,1}});
+
+    ipegenerator::Figure fig(codac::IntervalVector({{0,10},{-1.5,1.5}}), 400, 132);
+    fig.set_number_digits_axis_x(0);
+    fig.set_number_digits_axis_y(1);
+    fig.set_graduation_parameters(0,1., -1.5, 0.5);
+
+    fig.set_color_fill("red");
+    fig.set_color_stroke("black");
+    fig.set_tiling("rising");
+    fig.set_color_type(ipegenerator::STROKE_AND_FILL);
+    fig.draw_box(box_rising);
+    fig.set_tiling("falling");
+    fig.set_color_type(ipegenerator::STROKE_AND_FILL);
+    fig.draw_box(box_falling);
+    fig.draw_axis("x_1", "x_2");
+    fig.save_ipe("test9.ipe");
+    fig.save_pdf("test9.pdf");
+
+
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -297,6 +327,7 @@ int main(int argc, char *argv[])
     //test5();
     //test6();
     //test7();
-    test8();
+    //test8();
+    test9();
 }
 

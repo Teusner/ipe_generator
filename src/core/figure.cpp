@@ -1054,6 +1054,14 @@ namespace ipegenerator
         }
     }
 
+    void Figure::set_tiling(const std::string &tiled)
+    {
+        if(tiled != "")
+        {
+            m_current_attr.iTiling = m_steel_sheet->find(ipe::ETiling,ipe::Attribute(false, tiled.c_str()));
+        }
+    }
+
     void Figure::remove_object(const int &id)
     {
         m_page->remove(id);

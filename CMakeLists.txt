@@ -128,5 +128,5 @@ target_link_libraries(test ipe ipegenerator -lz -lpng -lspiro -ljpeg)
 ################################################################################
 # Copy style sheet
 ################################################################################
-install(FILES style/basic.ipe DESTINATION ${CMAKE_INSTALL_STYLE_DIR})
+install(FILES style/ipegenerator_style.isy DESTINATION ${CMAKE_INSTALL_STYLE_DIR})
 
