@@ -8,6 +8,7 @@
 
 #include "../src/ipe/ipelib.h"
 #include "ibex_IntervalVector.h"
+#include "ibex_SepFwdBwd.h"
 #include "codac.h"
 
 #include "../src/core/figure.h"
@@ -58,6 +59,7 @@ void test1()
     fig.save_pdf("test1.pdf");
 }
 
+
 void test2()
 {
     ibex::IntervalVector frame_data(2);
@@ -77,6 +79,7 @@ void test2()
     fig.save_ipe("test2.ipe");
     fig.save_pdf("test2.pdf");
 }
+
 
 void test3(){
     ibex::IntervalVector frame_data(2);
@@ -110,7 +113,9 @@ void test3(){
     fig.save_pdf("test3.pdf");
 }
 
-// Testing Tubes
+/*
+ * Test drawing Tubes
+ */
 void test4()
 {
     ibex::IntervalVector frame_data(2);
@@ -152,7 +157,9 @@ void test4()
     fig.save_pdf("test4.pdf");
 }
 
-// Testing tubeVectors
+/*
+ * Test drawing TubeVectors
+ */
 void test5()
 {
 
@@ -186,11 +193,13 @@ void test5()
     fig.save_pdf("test5.pdf");
 }
 
+
+/*
+ * Test drawing AUVs
+ */
 void test6()
 {
-    /*
-     * Test drawing AUVs
-     */
+
     ibex::IntervalVector frame_data(2);
     frame_data[0] = ibex::Interval(-4., 4.);
     frame_data[1] = ibex::Interval(-4., 4.);
@@ -212,11 +221,13 @@ void test6()
     fig.save_pdf("test6.pdf");
 }
 
+
+/*
+ * Test drawing any curved shape
+ */
 void test7()
 {
-    /*
-     * Test drawing any curved shape
-     */
+
     ibex::IntervalVector frame_data(2);
     frame_data[0] = ibex::Interval(-4., 4.);
     frame_data[1] = ibex::Interval(-4., 4.);
@@ -238,14 +249,54 @@ void test7()
 }
 
 
+// Paving
+void test8()
+{
+    codac::Function cos("x[2]","(x[1]-cos(x[0]))");
+    codac::CtcFunction ctc_cos(cos);
+    ibex::SepFwdBwd sep_cos(cos,ibex::Interval(-0.1,0.1));
+
+    codac::SIVIAPaving pav_ctc(codac::IntervalVector({{0,10},{-1.5,1.5}}));
+    pav_ctc.compute(ctc_cos,0.01);
+    codac::SIVIAPaving pav_sep(codac::IntervalVector({{0,10},{-1.5,1.5}}));
+    pav_sep.compute(sep_cos,0.01);
+    //pav.compute(sep_cos,0.01);
+
+
+    ipegenerator::Figure fig_ctc(codac::IntervalVector({{0,10},{-1.5,1.5}}), 400, 132);
+    fig_ctc.set_number_digits_axis_x(0);
+    fig_ctc.set_number_digits_axis_y(1);
+    fig_ctc.set_graduation_parameters(0,1., -1.5, 0.5);
+    fig_ctc.draw_axis("x_1", "x_2");
+    fig_ctc.set_thickness_pen_factor(1e-6);
+    fig_ctc.draw_paving(&pav_ctc,0,1);
+    fig_ctc.save_ipe("test8_ctc.ipe");
+    fig_ctc.save_pdf("test8_ctc.pdf");
+
+
+
+    ipegenerator::Figure fig_sep(codac::IntervalVector({{0,10},{-1.5,1.5}}), 400, 132);
+    fig_sep.set_number_digits_axis_x(0);
+    fig_sep.set_number_digits_axis_y(1);
+    fig_sep.set_graduation_parameters(0,1., -1.5, 0.5);
+    fig_sep.draw_axis("x_1", "x_2");
+    fig_sep.set_thickness_pen_factor(1e-6);
+    fig_sep.set_inner_color_fill("white");
+    fig_sep.draw_paving(&pav_sep,0,1);
+    fig_sep.save_ipe("test8_sep.ipe");
+    fig_sep.save_pdf("test8_sep.pdf");
+}
+
+
 int main(int argc, char *argv[])
 {
-    test1();
-    test2();
-    test3();
-    test4();
-    test5();
-    test6();
-    test7();
+    //test1();
+    //test2();
+    //test3();
+    //test4();
+    //test5();
+    //test6();
+    //test7();
+    test8();
 }
 

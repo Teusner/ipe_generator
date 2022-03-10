@@ -30,6 +30,7 @@ namespace ipegenerator
         m_page->addLayer("outer");
         m_page->addLayer("inner");
         m_page->addLayer("uncertain");
+        m_page->addLayer("penumbra");
 
         // Create a view and set layers visibility
         m_page->insertView(0, "");
@@ -872,6 +873,83 @@ namespace ipegenerator
 
     }
 
+    void Figure::draw_paving(const codac::Paving *pav, const int index_x, const int index_y)
+    {
+        if(pav->is_leaf())
+        {
+            codac::IntervalVector to_draw({pav->box()[index_x],pav->box()[index_y]});
+
+            switch(pav->value())
+            {
+                case codac::SetValue::IN:
+                    this->set_current_layer("inner");
+                    draw_box(to_draw,this->m_color_inner_stroke,this->m_color_inner_fill,STROKE_AND_FILL);
+                    break;
+
+                case codac::SetValue::OUT:
+                    this->set_current_layer("outer");
+                    draw_box(to_draw,this->m_color_outer_stroke,this->m_color_outer_fill,STROKE_AND_FILL);
+                    break;
+
+                case codac::SetValue::PENUMBRA:
+                    this->set_current_layer("penumbra");
+                    draw_box(to_draw,this->m_color_penumbra_stroke,this->m_color_penumbra_fill,STROKE_AND_FILL);
+                    break;
+
+                case codac::SetValue::UNKNOWN:
+                default:
+                    this->set_current_layer("uncertain");
+                    draw_box(to_draw,this->m_color_uncertain_stroke,this->m_color_uncertain_fill,STROKE_AND_FILL);
+
+
+            }
+        }
+        else
+        {
+            draw_paving(pav->get_first_subpaving(), index_x, index_y);
+            draw_paving(pav->get_second_subpaving(), index_x, index_y);
+        }
+    }
+
+    void Figure::set_inner_color_stroke(const string &color)
+    {
+        this->m_color_inner_stroke = color;
+    }
+
+    void Figure::set_inner_color_fill(const string &color)
+    {
+        this->m_color_inner_fill = color;
+    }
+
+    void Figure::set_outer_color_stroke(const string &color)
+    {
+        this->m_color_outer_stroke = color;
+    }
+
+    void Figure::set_outer_color_fill(const string &color)
+    {
+        this->m_color_outer_fill = color;
+    }
+
+    void Figure::set_uncertain_color_stroke(const string &color)
+    {
+        this->m_color_uncertain_stroke = color;
+    }
+
+    void Figure::set_uncertain_color_fill(const string &color)
+    {
+        this->m_color_uncertain_fill = color;
+    }
+
+    void Figure::set_penumbra_color_stroke(const string &color)
+    {
+        this->m_color_penumbra_stroke = color;
+    }
+
+    void Figure::set_penumbra_color_fill(const string &color)
+    {
+        this->m_color_penumbra_fill = color;
+    }
 
     void Figure::set_color_stroke(const std::string &color_stroke)
     {

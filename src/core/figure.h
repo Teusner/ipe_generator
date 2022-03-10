@@ -6,6 +6,7 @@
 #include "codac_TubeVector.h"
 #include "codac_Figure.h"
 #include "codac_ColorMap.h"
+#include "codac_Paving.h"
 
 #define TUBE_MAX_NB_DISPLAYED_SLICES 2000
 #define IPE_BOUNDED_INFINITY 99999.
@@ -296,6 +297,16 @@ public:
                          const codac::Trajectory* traj_coloMap=NULL, const PATH_TYPE& type = STROKE_AND_FILL,
                          const bool from_first_to_last=false, const bool smooth_drawing=false);
 
+    /**
+    * \brief Draws a 2D projection of a Paving. The drawing style (dashing, opacity...) should be set
+    * before calling this function
+    *
+    * \param pav the tubeVector to be drawn
+    * \param index_x the vector dimension to be put as abscissa
+    * \param index_y the vector dimension to be put as ordinate
+    */
+    void draw_paving(const codac::Paving* pav, const int index_x, const int index_y);
+
 
 
     // Style functions
@@ -330,6 +341,15 @@ public:
     void set_line_width(const double &val);
     void set_arrow_size(const double &val);
     void reset_attribute();
+
+    void set_inner_color_stroke(const string& color);
+    void set_inner_color_fill(const string& color);
+    void set_outer_color_stroke(const string& color);
+    void set_outer_color_fill(const string& color);
+    void set_uncertain_color_stroke(const string& color);
+    void set_uncertain_color_fill(const string& color);
+    void set_penumbra_color_stroke(const string& color);
+    void set_penumbra_color_fill(const string& color);
 
     void remove_object(const int &id);
 
@@ -375,6 +395,15 @@ private:
     double m_width, m_height;
     bool m_keep_ratio;
 
+    string m_color_inner_stroke = "colorBlindInStroke";
+    string m_color_inner_fill = "colorBlindInFill";
+    string m_color_outer_stroke = "colorBlindOutStroke";
+    string m_color_outer_fill = "colorBlindOutFill";
+    string m_color_uncertain_stroke = "colorBlindMaybeStroke";
+    string m_color_uncertain_fill = "colorBlindMaybeFill";
+    string m_color_penumbra_stroke = "black";
+    string m_color_penumbra_fill = "black";
+
     // Ipe objects
     ipe::Document   * m_document;
     ipe::Cascade    * m_cascade_ref;
@@ -384,6 +413,8 @@ private:
 
     ipe::AllAttributes m_current_attr;
     int                 m_current_layer=1;
+
+
 
     // Ipe parameters
     const std::string m_ref_document = "/usr/local/ipegenerator/style/basic.ipe";
