@@ -7,7 +7,6 @@
 #include <codac/codac_Figure.h>
 #include <codac/codac_ColorMap.h>
 #include <codac/codac_Paving.h>
-#include <codac/codac_Point.h>
 
 #define TUBE_MAX_NB_DISPLAYED_SLICES 2000
 #define IPE_BOUNDED_INFINITY 99999.
