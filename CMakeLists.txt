@@ -31,13 +31,13 @@ project(${PACKAGE_NAME})
 message(STATUS "[INSTALL] project will be installed in ${CMAKE_INSTALL_PREFIX}/ipegenerator")
 
 
-set(CMAKE_INSTALL_INCLUDEDIR "ipegenerator/include" CACHE PATH "C++ header files
-(include)")
-set(CMAKE_INSTALL_LIBDIR "ipegenerator/lib" CACHE PATH "object code libraries (lib)")
-set(CMAKE_INSTALL_BINDIR "ipegenerator/bin" CACHE PATH "user executables (bin)")
-set(CMAKE_INSTALL_STYLE_DIR "ipegenerator/style" CACHE PATH "sheet style directory (style)")
-set(CMAKE_INSTALL_PKGCONFIG "ipegenerator/share/pkgconfig" CACHE PATH "pkg files (share/pkgconfig)")
-set(CMAKE_INSTALL_CMAKE "ipegenerator/share/ipegenerator/cmake" CACHE PATH "cmake files (share/ipegenerator/cmake)")
+# set(CMAKE_INSTALL_INCLUDEDIR "ipegenerator/include" CACHE PATH "C++ header files
+# (include)")
+# set(CMAKE_INSTALL_LIBDIR "ipegenerator/lib" CACHE PATH "object code libraries (lib)")
+# set(CMAKE_INSTALL_BINDIR "ipegenerator/bin" CACHE PATH "user executables (bin)")
+# set(CMAKE_INSTALL_STYLE_DIR "ipegenerator/style" CACHE PATH "sheet style directory (style)")
+# set(CMAKE_INSTALL_PKGCONFIG "ipegenerator/share/pkgconfig" CACHE PATH "pkg files (share/pkgconfig)")
+# set(CMAKE_INSTALL_CMAKE "ipegenerator/share/ipegenerator/cmake" CACHE PATH "cmake files (share/ipegenerator/cmake)")
 
 
 ################################################################################
