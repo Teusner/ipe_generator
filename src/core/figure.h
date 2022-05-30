@@ -422,7 +422,7 @@ private:
 
 
     // Ipe parameters
-    const std::string m_ref_document = "/home/quentin/Dev/Intervals/install/style/ipegenerator_style.isy";
+    const std::string m_ref_document = "/usr/local/style/ipegenerator_style.isy";
     double m_thickness_pen_factor = 1e-3; // thickness of pen
     double m_arrow_axis_size = 4.294; // Corresponds to /normalsize in latex
     double m_distance_axis_text = 3.0;
