@@ -96,22 +96,22 @@ include_directories(${EIGEN3_INCLUDE_DIRS})
 find_package(PkgConfig)
 
 
-find_package(Boost REQUIRED COMPONENTS system thread filesystem)
-if(Boost_FOUND)
-    include_directories(${Boost_INCLUDE_DIR})
-    message(STATUS "[BOOST] OK")
-else()
-    message(FATAL_ERROR "[BOOST] NO")
-endif()
+# find_package(Boost REQUIRED COMPONENTS system thread filesystem)
+# if(Boost_FOUND)
+#     include_directories(${Boost_INCLUDE_DIR})
+#     message(STATUS "[BOOST] OK")
+# else()
+#     message(FATAL_ERROR "[BOOST] NO")
+# endif()
 
-find_package(OpenMP)
-if(OPENMP_FOUND)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-    message(STATUS "[OPENMP] OK")
-else()
-    message(FATAL_ERROR "[OPENMP] NO")
-endif()
+# find_package(OpenMP)
+# if(OPENMP_FOUND)
+#     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+#     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+#     message(STATUS "[OPENMP] OK")
+# else()
+#     message(FATAL_ERROR "[OPENMP] NO")
+# endif()
 
 
 
@@ -122,8 +122,8 @@ endif()
 ################################################################################
 
 add_subdirectory(src) # C++ sources
-add_executable(test test/main.cpp)
-target_link_libraries(test ipe ipegenerator -lz -lpng -lspiro -ljpeg)
+# add_executable(test test/main.cpp)
+# target_link_libraries(test ipe ipegenerator -lz -lpng -lspiro -ljpeg)
 
 ################################################################################
 # Copy style sheet
