@@ -2,12 +2,12 @@
 #define FIGURE_H
 
 #include "../ipe/ipelib.h"
-#include "ibex_IntervalVector.h"
-#include "codac_TubeVector.h"
-#include "codac_Figure.h"
-#include "codac_ColorMap.h"
-#include "codac_Paving.h"
-#include "codac_Point.h"
+#include "ibex/ibex_IntervalVector.h"
+#include "codac/codac_TubeVector.h"
+#include "codac/codac_Figure.h"
+#include "codac/codac_ColorMap.h"
+#include "codac/codac_Paving.h"
+#include "codac/codac_Point.h"
 
 #define TUBE_MAX_NB_DISPLAYED_SLICES 2000
 #define IPE_BOUNDED_INFINITY 99999.
