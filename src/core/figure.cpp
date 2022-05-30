@@ -689,189 +689,189 @@ namespace ipegenerator
     }
 
 
-    void Figure::draw_tubeVector(const codac::TubeVector *tube_v, const string& name, const int index_x, const int index_y,const bool from_first_to_last, const bool smooth_drawing)
-    {
-        assert(tube_v != NULL);
-        this->add_layer(name);
-        this->set_current_layer(name);
-        // Reduced number of slices:
-        int step = std::max((int)((1. * tube_v->nb_slices()) / m_tube_max_nb_disp_slices), 1);
+//    void Figure::draw_tubeVector(const codac::TubeVector *tube_v, const string& name, const int index_x, const int index_y,const bool from_first_to_last, const bool smooth_drawing)
+//    {
+//        assert(tube_v != NULL);
+//        this->add_layer(name);
+//        this->set_current_layer(name);
+//        // Reduced number of slices:
+//        int step = std::max((int)((1. * tube_v->nb_slices()) / m_tube_max_nb_disp_slices), 1);
 
 
-        {
-            if((*tube_v)[index_x].is_empty() || (*tube_v)[index_y].is_empty())
-                std::cout << "warning, empty tube " << std::endl;
+//        {
+//            if((*tube_v)[index_x].is_empty() || (*tube_v)[index_y].is_empty())
+//                std::cout << "warning, empty tube " << std::endl;
 
             // Color map and related trajectory
 
-            int k0, kf;
-            codac::IntervalVector prev_box(2); // used for diff or polygon display
+//            int k0, kf;
+//           codac::IntervalVector prev_box(2); // used for diff or polygon display
 
-            if(from_first_to_last) // Drawing from last to first box
-            {
-                k0 = 0;
-                kf = tube_v->nb_slices()-1;
-            }
+//            if(from_first_to_last) // Drawing from last to first box
+//            {
+//                k0 = 0;
+//                kf = tube_v->nb_slices()-1;
+//            }
 
-            else
-            {
-                k0 = tube_v->nb_slices()-1;
-                kf = 0;
-            }
+//            else
+//            {
+//                k0 = tube_v->nb_slices()-1;
+//                kf = 0;
+//            }
+//
+//            for(int k = k0 ;
+//                (from_first_to_last && k <= kf) || (!from_first_to_last && k >= kf) ;
+//                k+= from_first_to_last ? std::max(1,std::min(step,kf-k)) : -std::max(1,std::min(step,k)))
+//            {
+//                if(!(*tube_v)[0].slice(k)->tdomain().intersects(m_restricted_tdomain))
+//                    continue;
+//
+//                codac::IntervalVector box(2);
+//                box[0] = (*tube_v)[index_x].slice(k)->codomain();
+//                box[1] = (*tube_v)[index_y].slice(k)->codomain();
+//                // Note: the last output gate is never shown
+//
+//               if(box.is_empty())
+//                    continue;
+//
+//
+//                if(smooth_drawing)
+//                {
+//                    // Display using polygons
+//                    if(!prev_box.is_unbounded())
+//                    {
+//                        std::vector<ibex::Vector> v_pts;
+//                        codac::Point::push(box, v_pts);
+//                        codac::Point::push(prev_box, v_pts);
+//                        codac::ConvexPolygon p(v_pts, false);
+//                        draw_codac_polygon(p);
+//                    }
+//                }
+//                else
+//                {
+//                    draw_box(box);
+//                }
+//                prev_box = box;
+//            }
+//        }
+//        this->set_current_layer("data");
+//    }
 
-            for(int k = k0 ;
-                (from_first_to_last && k <= kf) || (!from_first_to_last && k >= kf) ;
-                k+= from_first_to_last ? std::max(1,std::min(step,kf-k)) : -std::max(1,std::min(step,k)))
-            {
-                if(!(*tube_v)[0].slice(k)->tdomain().intersects(m_restricted_tdomain))
-                    continue;
+    // void Figure::draw_tubeVector(const codac::TubeVector *tube_v, const string& name, const int index_x, const int index_y, const string& color_stroke,
+    //                              const string& color_fill, const PATH_TYPE& type ,const bool from_first_to_last, const bool smooth_drawing)
+    // {
+    //     assert(tube_v != NULL);
+    //     this->set_color_stroke(color_stroke);
+    //     this->set_color_fill(color_fill);
+    //     this->set_color_type(type);
+    //     this->draw_tubeVector(tube_v, name, index_x, index_y, from_first_to_last, smooth_drawing);
 
-                codac::IntervalVector box(2);
-                box[0] = (*tube_v)[index_x].slice(k)->codomain();
-                box[1] = (*tube_v)[index_y].slice(k)->codomain();
-                // Note: the last output gate is never shown
+    // }
 
-                if(box.is_empty())
-                    continue;
-
-
-                if(smooth_drawing)
-                {
-                    // Display using polygons
-                    if(!prev_box.is_unbounded())
-                    {
-                        std::vector<ibex::Vector> v_pts;
-                        codac::Point::push(box, v_pts);
-                        codac::Point::push(prev_box, v_pts);
-                        codac::ConvexPolygon p(v_pts, false);
-                        draw_codac_polygon(p);
-                    }
-                }
-                else
-                {
-                    draw_box(box);
-                }
-                prev_box = box;
-            }
-        }
-        this->set_current_layer("data");
-    }
-
-    void Figure::draw_tubeVector(const codac::TubeVector *tube_v, const string& name, const int index_x, const int index_y, const string& color_stroke,
-                                 const string& color_fill, const PATH_TYPE& type ,const bool from_first_to_last, const bool smooth_drawing)
-    {
-        assert(tube_v != NULL);
-        this->set_color_stroke(color_stroke);
-        this->set_color_fill(color_fill);
-        this->set_color_type(type);
-        this->draw_tubeVector(tube_v, name, index_x, index_y, from_first_to_last, smooth_drawing);
-
-    }
-
-    void Figure::draw_tubeVector(const codac::TubeVector *tube_v, const string& name, const int index_x, const int index_y, const ipe::Color& color_stroke,
-                         ipe::Color& color_fill, const PATH_TYPE& type, const bool from_first_to_last, const bool smooth_drawing)
-    {
-        assert(tube_v != NULL);
-        this->set_color_stroke(color_stroke);
-        this->set_color_fill(color_fill);
-        this->draw_tubeVector(tube_v, name, index_x, index_y, from_first_to_last, smooth_drawing);
-    }
-
-
-    void Figure::draw_tubeVector(const codac::TubeVector *tube_v, const string& name, const int index_x, const int index_y, const codac::ColorMap* color_map,
-                                 const codac::Trajectory* traj_colorMap, const PATH_TYPE& type,const bool from_first_to_last, const bool smooth_drawing)
-    {
-        assert(tube_v != NULL);
-        this->add_layer(name);
-        this->set_current_layer(name);
-
-        // Reduced number of slices:
-        int step = std::max((int)((1. * tube_v->nb_slices()) / m_tube_max_nb_disp_slices), 1);
-
-        // 2. Foreground
-        if((*tube_v)[index_x].is_empty() || (*tube_v)[index_y].is_empty())
-            std::cout << "warning, empty tube " <<  std::endl;
+    // void Figure::draw_tubeVector(const codac::TubeVector *tube_v, const string& name, const int index_x, const int index_y, const ipe::Color& color_stroke,
+    //                      ipe::Color& color_fill, const PATH_TYPE& type, const bool from_first_to_last, const bool smooth_drawing)
+    // {
+    //     assert(tube_v != NULL);
+    //     this->set_color_stroke(color_stroke);
+    //     this->set_color_fill(color_fill);
+    //     this->draw_tubeVector(tube_v, name, index_x, index_y, from_first_to_last, smooth_drawing);
+    // }
 
 
-        // Color map and related trajectory
+    // void Figure::draw_tubeVector(const codac::TubeVector *tube_v, const string& name, const int index_x, const int index_y, const codac::ColorMap* color_map,
+    //                              const codac::Trajectory* traj_colorMap, const PATH_TYPE& type,const bool from_first_to_last, const bool smooth_drawing)
+    // {
+    //     assert(tube_v != NULL);
+    //     this->add_layer(name);
+    //     this->set_current_layer(name);
 
-        codac::Trajectory identity_traj;
-        identity_traj.set(tube_v->tdomain().lb(), tube_v->tdomain().lb());
-        identity_traj.set(tube_v->tdomain().ub(), tube_v->tdomain().ub());
+    //     // Reduced number of slices:
+    //     int step = std::max((int)((1. * tube_v->nb_slices()) / m_tube_max_nb_disp_slices), 1);
 
-        const codac::Trajectory *traj_colormap = &identity_traj;
-        if(traj_colorMap != NULL)
-            traj_colormap = traj_colorMap;
-
-        int k0, kf;
-        codac::IntervalVector prev_box(2); // used for diff or polygon display
-
-        if(from_first_to_last) // Drawing from last to first box
-        {
-            k0 = 0;
-            kf = tube_v->nb_slices()-1;
-        }
-
-        else
-        {
-            k0 = tube_v->nb_slices()-1;
-            kf = 0;
-        }
-
-        for(int k = k0 ;
-            (from_first_to_last && k <= kf) || (!from_first_to_last && k >= kf) ;
-            k+= from_first_to_last ? std::max(1,std::min(step,kf-k)) : -std::max(1,std::min(step,k)))
-        {
-            if(!(*tube_v)[0].slice(k)->tdomain().intersects(m_restricted_tdomain))
-                continue;
-
-            codac::IntervalVector box(2);
-            box[0] = (*tube_v)[index_x].slice(k)->codomain();
-            box[1] = (*tube_v)[index_y].slice(k)->codomain();
-            // Note: the last output gate is never shown
-
-            if(box.is_empty())
-                continue;
+    //     // 2. Foreground
+    //     if((*tube_v)[index_x].is_empty() || (*tube_v)[index_y].is_empty())
+    //         std::cout << "warning, empty tube " <<  std::endl;
 
 
-            codac::rgb color = color_map->color((*tube_v)[0].slice(k)->tdomain().mid(), *traj_colormap);
-            ipe::Color myColor = ipe::Color((int)(color.r*1000.),(int)(color.g*1000.),(int)(color.b*1000.));
+    //     // Color map and related trajectory
 
-            if(smooth_drawing)
-            {
-                // Display using polygons
-                if(!prev_box.is_unbounded())
-                {
+    //     codac::Trajectory identity_traj;
+    //     identity_traj.set(tube_v->tdomain().lb(), tube_v->tdomain().lb());
+    //     identity_traj.set(tube_v->tdomain().ub(), tube_v->tdomain().ub());
 
-                    std::vector<ibex::Vector> v_pts;
-                    codac::Point::push(box, v_pts);
-                    codac::Point::push(prev_box, v_pts);
-                    codac::ConvexPolygon p(v_pts, false);
-                    draw_codac_polygon(p, myColor,myColor,type);
-                }
-            }
-            else
-            {
-                // Displaying tube's slices
-                if(!color_map->is_opaque() && k != k0)
-                {
-                    codac::IntervalVector* diff_list;
-                    int nb_box = box.diff(prev_box, diff_list);
+    //     const codac::Trajectory *traj_colormap = &identity_traj;
+    //     if(traj_colorMap != NULL)
+    //         traj_colormap = traj_colorMap;
 
-                    for (int i = 0; i < nb_box; i++ )
-                        draw_box(*(diff_list+i), myColor, myColor);
+    //     int k0, kf;
+    //     codac::IntervalVector prev_box(2); // used for diff or polygon display
 
-                    delete[] diff_list;
-                }
-                else
-                    draw_box(box, myColor, myColor,type);
-            }
+    //     if(from_first_to_last) // Drawing from last to first box
+    //     {
+    //         k0 = 0;
+    //         kf = tube_v->nb_slices()-1;
+    //     }
 
-            prev_box = box;
-        }
-        this->set_current_layer("data");
+    //     else
+    //     {
+    //         k0 = tube_v->nb_slices()-1;
+    //         kf = 0;
+    //     }
 
-    }
+    //     for(int k = k0 ;
+    //         (from_first_to_last && k <= kf) || (!from_first_to_last && k >= kf) ;
+    //         k+= from_first_to_last ? std::max(1,std::min(step,kf-k)) : -std::max(1,std::min(step,k)))
+    //     {
+    //         if(!(*tube_v)[0].slice(k)->tdomain().intersects(m_restricted_tdomain))
+    //             continue;
+
+    //         codac::IntervalVector box(2);
+    //         box[0] = (*tube_v)[index_x].slice(k)->codomain();
+    //         box[1] = (*tube_v)[index_y].slice(k)->codomain();
+    //         // Note: the last output gate is never shown
+
+    //         if(box.is_empty())
+    //             continue;
+
+
+    //         codac::rgb color = color_map->color((*tube_v)[0].slice(k)->tdomain().mid(), *traj_colormap);
+    //         ipe::Color myColor = ipe::Color((int)(color.r*1000.),(int)(color.g*1000.),(int)(color.b*1000.));
+
+    //         if(smooth_drawing)
+    //         {
+    //             // Display using polygons
+    //             if(!prev_box.is_unbounded())
+    //             {
+
+    //                 std::vector<ibex::Vector> v_pts;
+    //                 codac::Point::push(box, v_pts);
+    //                 codac::Point::push(prev_box, v_pts);
+    //                 codac::ConvexPolygon p(v_pts, false);
+    //                 draw_codac_polygon(p, myColor,myColor,type);
+    //             }
+    //         }
+    //         else
+    //         {
+    //             // Displaying tube's slices
+    //             if(!color_map->is_opaque() && k != k0)
+    //             {
+    //                 codac::IntervalVector* diff_list;
+    //                 int nb_box = box.diff(prev_box, diff_list);
+
+    //                 for (int i = 0; i < nb_box; i++ )
+    //                     draw_box(*(diff_list+i), myColor, myColor);
+
+    //                 delete[] diff_list;
+    //             }
+    //             else
+    //                 draw_box(box, myColor, myColor,type);
+    //         }
+
+    //         prev_box = box;
+    //     }
+    //     this->set_current_layer("data");
+
+    // }
 
     void Figure::draw_paving(const codac::Paving *pav, const int index_x, const int index_y)
     {

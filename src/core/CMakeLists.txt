@@ -15,7 +15,7 @@ list(APPEND SRC ${CMAKE_CURRENT_SOURCE_DIR}/figure.cpp
 add_library(ipegenerator ${SRC})
 #set_property(TARGET codac PROPERTY CXX_STANDARD 17)
 add_compile_options(-O3 -Wall)
-target_link_libraries(ipegenerator ipe ${CODAC_LIBRARIES} Ibex::ibex ${CODAC_LIBRARIES})
+target_link_libraries(ipegenerator PUBLIC ipe ${CODAC_LIBRARIES} Ibex::ibex ${CODAC_LIBRARIES})
 #set_property(TARGET codac PROPERTY CXX_STANDARD_REQUIRED ON)
 
 

@@ -243,8 +243,8 @@ public:
      * \param from_first_to_last boolean to say in which order the slices are drawn
      * \param smooth_drawing use polygons for drawing (TO DO)
      */
-    void draw_tubeVector(const codac::TubeVector *tube_v, const string& name, const int index_x, const int index_y,
-                         const bool from_first_to_last=false, const bool smooth_drawing=false);
+    // void draw_tubeVector(const codac::TubeVector *tube_v, const string& name, const int index_x, const int index_y,
+                        //  const bool from_first_to_last=false, const bool smooth_drawing=false);
 
     /**
     * \brief Draws a 2D projection of a TubeVector. The drawing style (dashing, opacity...) should be set
@@ -260,9 +260,9 @@ public:
     * \param from_first_to_last boolean to say in which order the slices are drawn
     * \param smooth_drawing use polygons for drawing (TO DO)
      */
-    void draw_tubeVector(const codac::TubeVector *tube_v, const string& name, const int index_x, const int index_y, const string& color_stroke,
-                         const string& color_fill,const PATH_TYPE& type = STROKE_AND_FILL,
-                         const bool from_first_to_last= false, const bool smooth_drawing=false);
+    // void draw_tubeVector(const codac::TubeVector *tube_v, const string& name, const int index_x, const int index_y, const string& color_stroke,
+    //                      const string& color_fill,const PATH_TYPE& type = STROKE_AND_FILL,
+    //                      const bool from_first_to_last= false, const bool smooth_drawing=false);
 
     /**
     * \brief Draws a 2D projection of a TubeVector. The drawing style (dashing, opacity...) should be set
@@ -277,9 +277,9 @@ public:
     * \param from_first_to_last boolean to say in which order the slices are drawn
     * \param smooth_drawing use polygons for drawing (TO DO)
     */
-    void draw_tubeVector(const codac::TubeVector *tube_v, const string& name, const int index_x, const int index_y, const ipe::Color& color_stroke,
-                         ipe::Color& color_fill, const PATH_TYPE& type = STROKE_AND_FILL,
-                         const bool from_first_to_last=false, const bool smooth_drawing=false);
+    // void draw_tubeVector(const codac::TubeVector *tube_v, const string& name, const int index_x, const int index_y, const ipe::Color& color_stroke,
+    //                      ipe::Color& color_fill, const PATH_TYPE& type = STROKE_AND_FILL,
+    //                      const bool from_first_to_last=false, const bool smooth_drawing=false);
 
     /**
     * \brief Draws a 2D projection of a TubeVector. The drawing style (dashing, opacity...) should be set
@@ -294,9 +294,9 @@ public:
     * \param from_first_to_last boolean to say in which order the slices are drawn
     * \param smooth_drawing use polygons for drawing (TO DO)
     */
-    void draw_tubeVector(const codac::TubeVector *tube_v, const string& name, const int index_x, const int index_y, const codac::ColorMap* color_map,
-                         const codac::Trajectory* traj_coloMap=NULL, const PATH_TYPE& type = STROKE_AND_FILL,
-                         const bool from_first_to_last=false, const bool smooth_drawing=false);
+    // void draw_tubeVector(const codac::TubeVector *tube_v, const string& name, const int index_x, const int index_y, const codac::ColorMap* color_map,
+    //                      const codac::Trajectory* traj_coloMap=NULL, const PATH_TYPE& type = STROKE_AND_FILL,
+    //                      const bool from_first_to_last=false, const bool smooth_drawing=false);
 
     /**
     * \brief Draws a 2D projection of a Paving. The drawing style (dashing, opacity...) should be set
@@ -423,7 +423,7 @@ private:
 
 
     // Ipe parameters
-    const std::string m_ref_document = "/usr/local/ipegenerator/style/ipegenerator_style.isy";
+    const std::string m_ref_document = "/home/quentin/Dev/Intervals/install/style/ipegenerator_style.isy";
     double m_thickness_pen_factor = 1e-3; // thickness of pen
     double m_arrow_axis_size = 4.294; // Corresponds to /normalsize in latex
     double m_distance_axis_text = 3.0;
