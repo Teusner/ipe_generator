@@ -244,13 +244,53 @@ size_t Figure::draw_shape(const double &x, const double &y, const double& rotati
 
     m_page->append(ipe::TSelect::ENotSelected, m_current_layer, path);
     return m_page->count()-1;
-
-
-
 }
 
+size_t Figure::draw_boat(const double &x, const double &y, const double& yaw, const double &zoom, const bool &custom_color)
+{
+    ipe::Group *group = new ipe::Group();
+    const double min_size_frame = std::min(m_frame_data[0].diam(), m_frame_data[1].diam());
+    ipe::Matrix zoom_operator(ipe::Linear(zoom*min_size_frame, 0.0, 0.0, zoom*min_size_frame)*m_transform_global_keep_dimension_keep_y.linear(), ipe::Vector(0.0, 0.0));
+    ipe::Matrix translate_operator(ipe::Linear(), m_transform_global*ipe::Vector(x, y));
+    ipe::Matrix rotate_operator(cos(yaw),sin(yaw), -sin(yaw),cos(yaw),0,0);
+    ipe::Matrix final_operator=translate_operator*rotate_operator*zoom_operator;
 
+    // ********************** Main Body **********************
+    ipe::Curve *curve_boat = new ipe::Curve();
+    ipe::Vector p0 = final_operator * ipe::Vector(-1, 0.7);
+    ipe::Vector p1 = final_operator * ipe::Vector(-0.5, 1);
+    ipe::Vector p2 = final_operator * ipe::Vector(2.3, 0.85);
+    ipe::Vector p3 = final_operator * ipe::Vector(3, 0);
+    ipe::Vector m0 = final_operator * ipe::Vector(-1, -0.7);
+    ipe::Vector m1 = final_operator * ipe::Vector(-0.5, -1);
+    ipe::Vector m2 = final_operator * ipe::Vector(2.3, -0.85);
+    ipe::Vector m3 = final_operator * ipe::Vector(3, 0);
+    std::vector<ipe::Vector> spline1{p1, p2, p3};
+    std::vector<ipe::Vector> spline2{m3, m2, m1};
+    curve_boat->appendSegment(p0, p1);
+    curve_boat->appendSpline(spline1);
+    curve_boat->appendSpline(spline2);
+    curve_boat->appendSegment(m1, m0);
+    curve_boat->appendSegment(m0, p0);
+    curve_boat->setClosed(true);
+    ipe::Shape shape_boat;
+    shape_boat.appendSubPath(curve_boat);
+
+    ipe::AllAttributes attr_boat;
+    ipe::Path *path_boat;
+    if(!custom_color) {
+        attr_boat.iFill = m_steel_sheet->find(ipe::EColor,ipe::Attribute(true, "yellow"));
+        attr_boat.iStroke = ipe::Attribute::BLACK();
+        attr_boat.iPathMode  = ipe::EStrokedAndFilled;
+        path_boat = new ipe::Path(attr_boat, shape_boat);
+    }
+    else
+    {
+        path_boat = new ipe::Path(this->m_current_attr, shape_boat);
+    }
+    group->push_back(path_boat);
+
+    m_page->append(ipe::TSelect::ENotSelected, m_current_layer, group);
+    return m_page->count()-1;
 }
-
-
-
+}

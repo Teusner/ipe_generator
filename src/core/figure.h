@@ -104,6 +104,7 @@ public:
     size_t draw_auv(const double &x, const double &y, const double &yaw, const double &zoom=0.1, const bool &custom_color=false);
     size_t draw_simple_auv(const double &x, const double &y, const double &yaw, const double &zoom=0.1, const bool &custom_color=false);
     size_t draw_shape(const double &x, const double &y, const double& rotation,const std::vector<std::vector<double>> shape, const double &zoom=0.1, const bool &custom_color=false);
+    size_t draw_boat(const double &x, const double &y, const double& yaw=0, const double &zoom=1, const bool &custom_color=false);
 
     // Tube drawings
     /**
